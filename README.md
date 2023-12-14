@@ -5,19 +5,13 @@
 
 ## 开始使用
 ### 模块引入
-先引入parent
-```xml
-<parent>
-    <groupId>org.devops</groupId>
-    <artifactId>devops-parent</artifactId>
-    <version>6.0.0-SNAPSHOT</version>
-</parent>
-```
-再引入相应的模块
+
+pom引入相应的模块
 ```xml
 <dependency>
   <groupId>com.devops.data</groupId>
   <artifactId>devops-data-xjpa</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
