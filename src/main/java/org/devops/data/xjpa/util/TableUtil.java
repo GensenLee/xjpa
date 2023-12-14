@@ -3,6 +3,8 @@ package org.devops.data.xjpa.util;
 import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.exception.XjpaInitException;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
+import org.devops.data.xjpa.repository.impl.DefaultRepositoryController;
+import org.devops.data.xjpa.repository.impl.RepositoryController;
 import org.devops.data.xjpa.table.EntityTable;
 import org.devops.data.xjpa.table.TableFieldContainer;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -90,6 +92,12 @@ public class TableUtil {
      */
     public static Type getTableEntityType(Class<?> repository) {
         return parameterizedTypeUtil.getParameterizedType(repository, 1);
+    }
+
+
+    public static <K, T extends StandardJpaRepository> K getNextId(T repository){
+        RepositoryController repositoryController = new DefaultRepositoryController(repository);
+        return repositoryController.getNextId();
     }
 
 }
