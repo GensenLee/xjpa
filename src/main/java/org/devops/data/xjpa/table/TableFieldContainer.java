@@ -1,0 +1,14 @@
+package org.devops.data.xjpa.table;
+
+import java.util.List;
+
+/**
+ * @author GENSEN
+ * @date 2022/11/5
+ * @description TableField容器
+ */
+public interface TableFieldContainer {
+
+    List<TableFieldMetadata> get();
+
+}
