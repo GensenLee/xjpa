@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.configuration.RepositoriesConfigurationManager;
 import org.devops.data.xjpa.repository.IXjpaRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
@@ -12,7 +11,6 @@ import org.devops.data.xjpa.util.TableUtil;
  * @date 2022/11/3
  * @description 默认
  */
-@Slf4j
 @SuppressWarnings("rawtypes")
 public abstract class AbstractRepositoryProxyBeanFactory<T extends IXjpaRepository> implements RepositoryProxyBeanFactory<T> {
     protected final RepositoriesConfigurationManager repositoriesConfigurationManager;

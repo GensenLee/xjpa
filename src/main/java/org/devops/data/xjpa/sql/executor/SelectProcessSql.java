@@ -1,9 +1,5 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -13,9 +9,6 @@ import java.util.*;
  * @date 2022/10/31
  * @description 查询 sql
  */
-@Setter(AccessLevel.PACKAGE)
-@EqualsAndHashCode
-@Getter
 public class SelectProcessSql implements ProcessSql {
 
     /**
@@ -75,6 +68,33 @@ public class SelectProcessSql implements ProcessSql {
         return finalSqlParameters;
     }
 
+    void setFinalSql(String finalSql) {
+        this.finalSql = finalSql;
+    }
+
+    void setWhereString(String whereString) {
+        this.whereString = whereString;
+    }
+
+    void setWhereParameters(Map<Integer, Object> whereParameters) {
+        this.whereParameters = whereParameters;
+    }
+
+    public String getFinalSql() {
+        return finalSql;
+    }
+
+    public Map<Integer, Object> getFinalSqlParameters() {
+        return finalSqlParameters;
+    }
+
+    public String getWhereString() {
+        return whereString;
+    }
+
+    public Map<Integer, Object> getWhereParameters() {
+        return whereParameters;
+    }
 
     public static final class ProcessSqlBuilder {
         private String finalSql;

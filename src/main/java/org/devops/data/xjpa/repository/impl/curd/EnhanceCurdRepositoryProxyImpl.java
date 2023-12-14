@@ -1,19 +1,16 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.devops.data.xjpa.repository.*;
+import cn.hutool.core.bean.BeanUtil;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
-import org.devops.data.xjpa.repository.impl.RepositoryContextBean;
+import org.devops.data.xjpa.repository.*;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
+import org.devops.data.xjpa.repository.impl.RepositoryContextBean;
 import org.devops.data.xjpa.repository.impl.enhance.EnhanceCurdBound;
 import org.devops.data.xjpa.repository.impl.enhance.ThreadLocalEnhanceCurdBound;
 import org.devops.data.xjpa.sql.executor.SortType;
 import org.devops.data.xjpa.table.EntityTable;
 import org.devops.data.xjpa.table.EntityTableField;
 import org.devops.data.xjpa.util.EntityUtil;
-import org.devops.core.utils.util.BeanUtil;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -28,8 +25,6 @@ import java.util.stream.Collectors;
  * @description curd代理实现类
  */
 @SuppressWarnings({"rawtypes"})
-@Slf4j
-@Setter(AccessLevel.PACKAGE)
 public class EnhanceCurdRepositoryProxyImpl<K extends Serializable, V> extends RepositoryContextBean<K, V> implements IEnhanceCurdRepository<K, V> {
 
     private final EnhanceCurdBound enhanceCurdBound;
@@ -93,7 +88,7 @@ public class EnhanceCurdRepositoryProxyImpl<K extends Serializable, V> extends R
 
         Set<V> deleteSet = entities.stream()
                 .filter(Objects::nonNull)
-                .filter(e -> BeanUtil.getValue(e, javaField.getName()) != null)
+                .filter(e -> BeanUtil.getFieldValue(e, javaField.getName()) != null)
                 .collect(Collectors.toSet());
 
         return deleteRepository.delete(deleteSet);
@@ -232,8 +227,6 @@ public class EnhanceCurdRepositoryProxyImpl<K extends Serializable, V> extends R
             return 0;
         }
 
-        log.trace("filter no change entities: {}", entities.size() - needUpdate.size());
-
         return updateRepository.update(needUpdate);
     }
 
@@ -357,10 +350,10 @@ public class EnhanceCurdRepositoryProxyImpl<K extends Serializable, V> extends R
             return Collections.emptyList();
         }
         Map<Object, V> entityFromDbMap = entityListFromDb.stream()
-                .collect(Collectors.toMap(e -> BeanUtil.getValue(e, keyField.getName()), Function.identity()));
+                .collect(Collectors.toMap(e -> BeanUtil.getFieldValue(e, keyField.getName()), Function.identity()));
 
         return entities.stream()
-                .filter(e -> !noChange(entityFromDbMap.get(BeanUtil.getValue(e, keyField.getName())), e, entityTable, includeColumns))
+                .filter(e -> !noChange(entityFromDbMap.get(BeanUtil.getFieldValue(e, keyField.getName())), e, entityTable, includeColumns))
                 .collect(Collectors.toList());
     }
 
@@ -383,11 +376,11 @@ public class EnhanceCurdRepositoryProxyImpl<K extends Serializable, V> extends R
                 continue;
             }
 
-            Object valueToUpdate = BeanUtil.getValue(entityToUpdate, entityTableField.getJavaField().getName());
+            Object valueToUpdate = BeanUtil.getFieldValue(entityToUpdate, entityTableField.getJavaField().getName());
             if (valueToUpdate == null) {
                 continue;
             }
-            Object valueFromDb = BeanUtil.getValue(entityFromDb, entityTableField.getJavaField().getName());
+            Object valueFromDb = BeanUtil.getFieldValue(entityFromDb, entityTableField.getJavaField().getName());
             if (!valueToUpdate.equals(valueFromDb)) {
                 return false;
             }

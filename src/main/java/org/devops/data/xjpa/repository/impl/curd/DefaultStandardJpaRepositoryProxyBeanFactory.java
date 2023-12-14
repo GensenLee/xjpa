@@ -1,7 +1,6 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.configuration.*;
 import org.devops.data.xjpa.exception.XjpaInitException;
 import org.devops.data.xjpa.repository.IEnhanceCurdRepository;
@@ -21,10 +20,12 @@ import org.devops.data.xjpa.table.identifier.DefaultIdentifierGeneratorFactory;
 import org.devops.data.xjpa.table.identifier.IdentifierGenerator;
 import org.devops.data.xjpa.table.identifier.IdentifierGeneratorFactory;
 import org.devops.data.xjpa.table.identifier.IdentifierGeneratorType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.env.Environment;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -33,23 +34,27 @@ import java.util.Optional;
  * @date 2022/11/3
  * @description 默认
  */
-@Slf4j
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultStandardJpaRepositoryProxyBeanFactory extends AbstractRepositoryProxyBeanFactory<StandardJpaRepositoryProxyImpl> {
+    protected static final Logger logger = LoggerFactory.getLogger(StandardJpaRepositoryProxyImpl.class);
 
     private final RepositoryProxyBeanFactoryFactory implProxyBeanFactoryFactory;
 
+    private final DefaultListableBeanFactory beanFactory;
+
     protected DefaultStandardJpaRepositoryProxyBeanFactory(RepositoriesConfigurationManager repositoriesConfigurationManager,
+                                                           DefaultListableBeanFactory beanFactory,
                                                            RepositoryProxyBeanFactoryFactory implProxyBeanFactoryFactory) {
         super(repositoriesConfigurationManager);
+        this.beanFactory = beanFactory;
         this.implProxyBeanFactoryFactory = implProxyBeanFactoryFactory;
     }
 
 
     @Override
-    public StandardJpaRepositoryProxyImpl getProxy(@NotNull Class repositoryType) {
+    public StandardJpaRepositoryProxyImpl getProxy(Class repositoryType) {
 
-        log.trace("create standard jpa repository");
+        logger.trace("create standard jpa repository");
 
         RepositoryProperties repositoryProperties = repositoriesConfigurationManager.getRepositoryProperties(repositoryType);
 
@@ -66,7 +71,8 @@ public class DefaultStandardJpaRepositoryProxyBeanFactory extends AbstractReposi
                 sqlLogger,
                 repositoryProperties,
                 resultParser,
-                repositoryContextAttribute);
+                repositoryContextAttribute,
+                beanFactory);
 
         standardJpaRepositoryProxy.register((RepositoryContextObserver) repositoryContextAttribute);
 
@@ -133,9 +139,9 @@ public class DefaultStandardJpaRepositoryProxyBeanFactory extends AbstractReposi
         // 配置主键生成器
         if (entityTable.getPrimaryKeyField() != null && entityTable.getPrimaryKeyField().getGeneratedValue() != null) {
 
-            String generator = StringUtil.getDefault(entityTable.getPrimaryKeyField().getGeneratedValue().generator(), defaultType.name());
+            String generator = StrUtil.emptyToDefault(entityTable.getPrimaryKeyField().getGeneratedValue().generator(), defaultType.name());
             // 默认使用 SnowflakeTo36
-            IdentifierGeneratorType generatorType = StringUtil.isNotEmpty(generator) ? IdentifierGeneratorType.getInstance(generator) : defaultType;
+            IdentifierGeneratorType generatorType = StrUtil.isNotEmpty(generator) ? IdentifierGeneratorType.getInstance(generator) : defaultType;
             if (generatorType == null) {
                 throw new XjpaInitException("unsupported generator: " + IdentifierGeneratorType.getInstance(entityTable.getPrimaryKeyField().getGeneratedValue().generator()));
             }
@@ -153,7 +159,7 @@ public class DefaultStandardJpaRepositoryProxyBeanFactory extends AbstractReposi
         SoftDeleteConfig softDeleteConfig = new SoftDeleteConfig(globalConfig, repositoryProperties);
         originalRepositoryProxy.setAttribute(SoftDeleteConfig.class.getName(), softDeleteConfig);
 
-        log.trace("repositoryType={} softDeleteConfig={}", repositoryType.getName(), softDeleteConfig);
+        logger.trace("repositoryType={} softDeleteConfig={}", repositoryType.getName(), softDeleteConfig);
 
         QueryWhereHandlerFactory queryWhereHandlerFactory;
         if (softDeleteConfig.isEnabled()) {
@@ -162,7 +168,7 @@ public class DefaultStandardJpaRepositoryProxyBeanFactory extends AbstractReposi
             queryWhereHandlerFactory = new DefaultQueryWhereHandlerFactory(originalRepositoryProxy);
         }
 
-        log.trace("repositoryType={} set queryWhereHandlerFactory={}", repositoryType.getName(), queryWhereHandlerFactory.getClass());
+        logger.trace("repositoryType={} set queryWhereHandlerFactory={}", repositoryType.getName(), queryWhereHandlerFactory.getClass());
 
         originalRepositoryProxy.setAttribute(QueryWhereHandlerFactory.class.getName(), queryWhereHandlerFactory);
 

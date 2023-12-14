@@ -1,8 +1,8 @@
 package org.devops.data.xjpa.lifecycle;
 
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.configuration.RepositoryPackageDataSourceMapper;
+import org.devops.data.xjpa.constant.XjpaConstant;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,20 +29,20 @@ public class ContainerRepositoryPackageDataSourceMapper implements RepositoryPac
 
     @Override
     public String getDataSourceName(String packageName) {
-        if (StringUtil.isEmpty(packageName)) {
+        if (StrUtil.isEmpty(packageName)) {
             return DEFAULT_DATASOURCE_NAME;
         }
-        if (!packageName.contains(CommonConstant.POINT_MARK)) {
+        if (!packageName.contains(XjpaConstant.POINT_MARK)) {
             return getDataSourceName(null);
         }
 
         String dataSourceName = repositoryPackageDataSourceMapping.get(packageName);
 
-        if (StringUtil.isNotEmpty(dataSourceName)) {
+        if (StrUtil.isNotEmpty(dataSourceName)) {
             return dataSourceName;
         }
 
-        int endIndex = packageName.lastIndexOf(CommonConstant.POINT_MARK);
+        int endIndex = packageName.lastIndexOf(XjpaConstant.POINT_MARK);
         return getDataSourceName(packageName.substring(0, endIndex));
     }
 }

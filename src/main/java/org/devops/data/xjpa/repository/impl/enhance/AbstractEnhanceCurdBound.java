@@ -1,7 +1,7 @@
 package org.devops.data.xjpa.repository.impl.enhance;
 
-import org.devops.core.utils.util.IntUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.sql.executor.DefaultSortHandler;
 import org.devops.data.xjpa.sql.executor.LimitHandler;
@@ -30,7 +30,7 @@ public abstract class AbstractEnhanceCurdBound<K extends Serializable, V> implem
 
 
     protected SortHandler createSortHandler(String sortString, List<OrderParameter> orderParameters) {
-        if (StringUtil.isNotEmpty(sortString)) {
+        if (StrUtil.isNotEmpty(sortString)) {
             return new DefaultSortHandler(Collections.singletonList(new SortHandler.SortSet(
                     sortString, SortType.plain
             )));
@@ -50,7 +50,7 @@ public abstract class AbstractEnhanceCurdBound<K extends Serializable, V> implem
         if (limitParameter == null || limitParameter.start == null) {
             return LimitHandler.empty();
         }
-        int offset = IntUtil.toInt(limitParameter.limit) <= 0 ? -1 : limitParameter.limit;
+        int offset = NumberUtil.parseInt(String.valueOf(limitParameter.limit)) <= 0 ? -1 : limitParameter.limit;
         return LimitHandler.limit(limitParameter.start, offset);
     }
 

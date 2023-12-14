@@ -1,24 +1,14 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author GENSEN
  * @date 2022/10/31
  * @description 删除sql
  */
-@Setter(AccessLevel.PACKAGE)
-@EqualsAndHashCode
-@Getter
 public class DeleteProcessSql implements ProcessSql {
 
     /**
@@ -114,5 +104,49 @@ public class DeleteProcessSql implements ProcessSql {
             }
             return processSql;
         }
+    }
+
+    void setFinalSql(String finalSql) {
+        this.finalSql = finalSql;
+    }
+
+    void setWhereString(String whereString) {
+        this.whereString = whereString;
+    }
+
+    void setWhereParameters(Map<Integer, Object> whereParameters) {
+        this.whereParameters = whereParameters;
+    }
+
+    public String getFinalSql() {
+        return finalSql;
+    }
+
+    public Map<Integer, Object> getFinalSqlParameters() {
+        return finalSqlParameters;
+    }
+
+    public String getWhereString() {
+        return whereString;
+    }
+
+    public Map<Integer, Object> getWhereParameters() {
+        return whereParameters;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeleteProcessSql that = (DeleteProcessSql) o;
+        return Objects.equals(finalSql, that.finalSql) &&
+                Objects.equals(finalSqlParameters, that.finalSqlParameters) &&
+                Objects.equals(whereString, that.whereString) &&
+                Objects.equals(whereParameters, that.whereParameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(finalSql, finalSqlParameters, whereString, whereParameters);
     }
 }

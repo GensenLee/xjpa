@@ -1,6 +1,7 @@
 package org.devops.data.xjpa.table.identifier;
 
-import org.devops.core.utils.constant.CommonConstant;
+
+import org.devops.data.xjpa.constant.XjpaConstant;
 
 import java.util.UUID;
 
@@ -12,6 +13,6 @@ import java.util.UUID;
 public class UuidIdentifierGenerator implements IdentifierGenerator<String> {
     @Override
     public String next() {
-        return UUID.randomUUID().toString().replaceAll(CommonConstant.CROSS_MARK, CommonConstant.EMPTY_STRING);
+        return UUID.randomUUID().toString().replaceAll(XjpaConstant.CROSS_MARK, XjpaConstant.EMPTY_STRING);
     }
 }

@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.sql.executor.query;
 
-import lombok.Getter;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.List;
  * @date 2022/10/31
  * @description 插入
  */
-@Getter
 public class InsertQueryRequest<K, V> extends AbstractQueryRequest<K, V> {
 
     final List<V> entityValues;
@@ -20,4 +18,7 @@ public class InsertQueryRequest<K, V> extends AbstractQueryRequest<K, V> {
         this.entityValues = entityValues;
     }
 
+    public List<V> getEntityValues() {
+        return entityValues;
+    }
 }

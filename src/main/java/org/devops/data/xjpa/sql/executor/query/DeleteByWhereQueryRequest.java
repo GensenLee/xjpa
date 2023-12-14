@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.sql.executor.query;
 
-import lombok.Getter;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.sql.executor.LimitHandler;
 import org.devops.data.xjpa.sql.executor.SortHandler;
@@ -10,7 +9,6 @@ import org.devops.data.xjpa.sql.executor.SortHandler;
  * @date 2022/10/31
  * @description 删除
  */
-@Getter
 public class DeleteByWhereQueryRequest<K, V> extends AbstractQueryRequest<K, V> {
 
     /**
@@ -29,4 +27,11 @@ public class DeleteByWhereQueryRequest<K, V> extends AbstractQueryRequest<K, V> 
         this.sortHandler = sortHandler;
     }
 
+    public LimitHandler getLimitHandler() {
+        return limitHandler;
+    }
+
+    public SortHandler getSortHandler() {
+        return sortHandler;
+    }
 }

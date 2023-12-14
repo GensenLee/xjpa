@@ -1,7 +1,6 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.repository.IRepositoryWhereAttach;
 import org.devops.data.xjpa.sql.where.XQueryWhere;
 import org.devops.data.xjpa.sql.where.XjpaQueryWhere;
@@ -9,14 +8,16 @@ import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author GENSEN
  * @date 2022/11/2
  * @description 条件处理
  */
-@Slf4j
 public class RepositoryWhereLocal<K, V> implements IRepositoryWhereAttach {
+    protected static final Logger logger = LoggerFactory.getLogger(RepositoryWhereLocal.class);
 
     /**
      * 内部条件
@@ -117,7 +118,7 @@ public class RepositoryWhereLocal<K, V> implements IRepositoryWhereAttach {
 
     @Override
     public RepositoryWhereLocal<K, V> where(String column, Object value, WhereOperator operator, Condition condition) {
-        if (StringUtil.isEmpty(column)) {
+        if (StrUtil.isEmpty(column)) {
             return this;
         }
         switch (operator) {
@@ -148,6 +149,6 @@ public class RepositoryWhereLocal<K, V> implements IRepositoryWhereAttach {
 
     void clearLocalQueryWhere() {
         modelWhereCompositeValueThreadLocal.remove();
-        log.trace("clean local where");
+        logger.trace("clean local where");
     }
 }

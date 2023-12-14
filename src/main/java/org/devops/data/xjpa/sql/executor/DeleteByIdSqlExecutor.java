@@ -1,13 +1,12 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.extern.slf4j.Slf4j;
+import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.DeleteByIdQueryRequest;
 import org.devops.data.xjpa.sql.executor.result.reader.Result;
 import org.devops.data.xjpa.sql.executor.session.ExecuteSession;
 import org.devops.data.xjpa.sql.logger.SqlLogger;
 import org.devops.data.xjpa.table.EntityTable;
-import org.devops.core.utils.exception.CommonRuntimeException;
 import org.devops.data.xjpa.table.EntityTableField;
 
 import java.sql.SQLException;
@@ -20,7 +19,6 @@ import java.util.List;
  * @date 2022/10/31
  * @description 根据传入id删除
  */
-@Slf4j
 public class DeleteByIdSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
     public DeleteByIdSqlExecutor(ExecuteSession executeSession, SqlLogger sqlLogger) {
         super(executeSession, sqlLogger);
@@ -58,7 +56,7 @@ public class DeleteByIdSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
     protected List<DeleteProcessSql> prepareSql(EntityTable<K, V> entityTable, List<K> keys) {
         EntityTableField entityTableField = entityTable.getPrimaryKeyField();
         if (entityTableField.getJavaField() == null) {
-            throw new CommonRuntimeException("A primary key field required");
+            throw new XjpaExecuteException("A primary key field required");
         }
 
         String whereString = entityTableField.getTableFieldMetadata().getField() + " = ?";

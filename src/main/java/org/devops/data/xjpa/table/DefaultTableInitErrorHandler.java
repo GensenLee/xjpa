@@ -1,14 +1,19 @@
 package org.devops.data.xjpa.table;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.ResourceUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.annotation.TableSetting;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
 import org.devops.data.xjpa.util.TableUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -19,9 +24,11 @@ import java.sql.SQLSyntaxErrorException;
  * @date 2023/1/4
  * @description 默认异常处理
  */
-@Slf4j
 @Component
 public class DefaultTableInitErrorHandler implements TableInitErrorHandler {
+
+    protected static final Logger logger = LoggerFactory.getLogger(DefaultTableInitErrorHandler.class);
+
 
     /**
      * @param repositoryType
@@ -44,7 +51,7 @@ public class DefaultTableInitErrorHandler implements TableInitErrorHandler {
 
 
     private boolean createTable(Class<?> repositoryType, String tableName, RepositoryProperties repositoryProperties) {
-        Class tableEntityType = (Class)TableUtil.getTableEntityType(repositoryType);
+        Class tableEntityType = (Class) TableUtil.getTableEntityType(repositoryType);
         TableSetting tableSetting = AnnotationUtils.findAnnotation(tableEntityType, TableSetting.class);
 
         if (tableSetting == null) {
@@ -52,22 +59,28 @@ public class DefaultTableInitErrorHandler implements TableInitErrorHandler {
         }
 
         String createTableSql = tableSetting.ddl();
-        if (StringUtil.isEmpty(createTableSql) && StringUtil.isNotEmpty(tableSetting.ddlPath())) {
-            createTableSql = ResourceUtil.readResourceAsString(tableSetting.ddlPath()).trim();
+        if (StrUtil.isEmpty(createTableSql) && StrUtil.isNotEmpty(tableSetting.ddlPath())) {
+            try {
+                File file = ResourceUtils.getFile(tableSetting.ddlPath());
+                createTableSql = FileUtil.readString(file, StandardCharsets.UTF_8);
+            } catch (FileNotFoundException e) {
+                logger.error("create table", e);
+                return false;
+            }
         }
 
-        if (StringUtil.isEmpty(createTableSql)) {
-            log.info("table ddl not found");
+        if (StrUtil.isEmpty(createTableSql)) {
+            logger.info("table ddl not found");
             return false;
         }
 
-        log.info("create table: {} use sql: {}", tableName, createTableSql);
+        logger.info("create table: {} use sql: {}", tableName, createTableSql);
 
         try (Connection connection = repositoryProperties.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(createTableSql);
             preparedStatement.execute();
         } catch (SQLException e) {
-            log.error("create table error", e);
+            logger.error("create table error", e);
             return false;
         }
 

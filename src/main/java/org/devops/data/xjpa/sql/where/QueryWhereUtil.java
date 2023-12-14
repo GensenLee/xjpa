@@ -1,15 +1,16 @@
 package org.devops.data.xjpa.sql.where;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.util.DateUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereNodes;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.devops.data.xjpa.sql.where.subquery.InlineSubQuery;
 import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -21,8 +22,8 @@ import java.util.stream.Collectors;
  * @date 2022/11/23
  * @description where工具
  */
-@Slf4j
 public class QueryWhereUtil {
+    protected static final Logger logger = LoggerFactory.getLogger(QueryWhereUtil.class);
 
     /**
      * source 和 value 同级连接， { source...（and|or） value}
@@ -121,7 +122,7 @@ public class QueryWhereUtil {
     }
 
     private static void errorBetween() {
-        log.error("between operate require 2 parameters, supported pattern: String('1,3'),Array([1,3]),Collection([1,3])");
+        logger.error("between operate require 2 parameters, supported pattern: String('1,3'),Array([1,3]),Collection([1,3])");
         throw new XjpaExecuteException("between operate require 2 parameters");
     }
 
@@ -141,7 +142,7 @@ public class QueryWhereUtil {
                 result.add(Array.get(rawValue, i));
             }
         } else if (rawValue instanceof String) {
-            result.addAll(Arrays.asList(((String) rawValue).split(CommonConstant.COMMA_MARK)));
+            result.addAll(Arrays.asList(((String) rawValue).split(XjpaConstant.COMMA_MARK)));
         } else {
             result.add(rawValue);
         }
@@ -155,10 +156,10 @@ public class QueryWhereUtil {
     private static Object[] formatBetweenValues(final Object rawValue) {
         Object[] result = new Object[2];
         if (rawValue instanceof String) {
-            if (StringUtil.isEmpty(rawValue) || !((String) rawValue).contains(CommonConstant.COMMA_MARK)) {
+            if (StrUtil.isEmpty((CharSequence) rawValue) || !((String) rawValue).contains(XjpaConstant.COMMA_MARK)) {
                 errorBetween();
             }
-            String[] split = ((String) rawValue).split(CommonConstant.COMMA_MARK);
+            String[] split = ((String) rawValue).split(XjpaConstant.COMMA_MARK);
             result[0] = split[0];
             result[1] = split[1];
         } else if (rawValue instanceof Collection) {
@@ -271,7 +272,7 @@ public class QueryWhereUtil {
             return String.valueOf(rawValue);
         }
         if (rawValue instanceof Date) {
-            return "'" + DateUtil.getDateTimeFormat((Date) rawValue) + "'";
+            return "'" + DateUtil.formatDateTime((Date) rawValue) + "'";
         }
         if (rawValue instanceof String) {
             return "'" + rawValue + "'";

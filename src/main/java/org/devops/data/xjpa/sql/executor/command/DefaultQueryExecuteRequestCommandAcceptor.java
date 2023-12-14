@@ -1,15 +1,16 @@
 package org.devops.data.xjpa.sql.executor.command;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
-import org.devops.data.xjpa.sql.result.parser.ResultParser;
 import org.devops.data.xjpa.sql.executor.AbstractSqlExecutor;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.result.reader.Result;
 import org.devops.data.xjpa.sql.executor.session.ExecuteSession;
 import org.devops.data.xjpa.sql.logger.SqlLogger;
+import org.devops.data.xjpa.sql.result.parser.ResultParser;
 import org.devops.data.xjpa.util.SqlExecutorUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Constructor;
@@ -23,8 +24,8 @@ import java.util.List;
  * @description 默认执行器
  */
 @SuppressWarnings({"rawtypes"})
-@Slf4j
 public class DefaultQueryExecuteRequestCommandAcceptor<K, V> implements QueryExecuteRequestCommandAcceptor {
+    protected static final Logger logger = LoggerFactory.getLogger(DefaultQueryExecuteRequestCommandAcceptor.class);
 
     private final RepositoryContext<K, V> context;
 
@@ -49,10 +50,10 @@ public class DefaultQueryExecuteRequestCommandAcceptor<K, V> implements QueryExe
         try {
             long start = System.currentTimeMillis();
             Result result = SqlExecutorUtil.execute(executor, queryRequest);
-            log.debug("[{}] executed with {} ms", executor.getClass().getSimpleName(), System.currentTimeMillis() - start);
+            logger.debug("[{}] executed with {} ms", executor.getClass().getSimpleName(), System.currentTimeMillis() - start);
             return result;
         } catch (SQLException e) {
-            log.error("execute error", e);
+            logger.error("execute error", e);
             throw new XjpaExecuteException(e);
         } finally {
             // 要往上层移动，否则delete、update这来需要前置检查的操作 会导致重复创建数据源连接 connection

@@ -1,12 +1,13 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.extern.slf4j.Slf4j;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.sql.executor.session.ExecuteSession;
 import org.devops.data.xjpa.sql.logger.SqlLogger;
 import org.devops.data.xjpa.table.EntityTableField;
 import org.devops.data.xjpa.util.PreparedStatementUtil;
-import org.devops.core.utils.constant.CommonConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
  * @date 2022/10/31
  * @description 默认执行
  */
-@Slf4j
 public abstract class AbstractSqlExecutor<K, V> implements ISqlExecutor<K, V> {
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractSqlExecutor.class);
 
     /**
      *
@@ -56,7 +57,7 @@ public abstract class AbstractSqlExecutor<K, V> implements ISqlExecutor<K, V> {
                     }
                     return "`" + sortSet.getColumn() + "` " + sortSet.getSortType().getOperator();
                 })
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK)));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK)));
     }
 
     /**

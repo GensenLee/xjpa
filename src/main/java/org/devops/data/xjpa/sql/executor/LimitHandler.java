@@ -1,6 +1,7 @@
 package org.devops.data.xjpa.sql.executor;
 
-import org.devops.core.utils.util.AssertUtil;
+
+import org.springframework.util.Assert;
 
 /**
  * @author GENSEN
@@ -20,7 +21,7 @@ public interface LimitHandler {
     }
 
     static LimitHandler limit(int start, int limit) {
-        AssertUtil.isTrue(start >= 0, "start must >= 0");
+        Assert.isTrue(start >= 0, "start must >= 0");
         return new Limit(start, limit);
     }
 

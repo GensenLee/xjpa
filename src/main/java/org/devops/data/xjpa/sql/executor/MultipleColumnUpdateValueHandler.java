@@ -1,9 +1,7 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
-import org.devops.core.utils.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,8 +13,6 @@ import java.util.Map;
  * @date 2022/11/8
  * @description 多列更新
  */
-@Slf4j
-@Getter
 public class MultipleColumnUpdateValueHandler implements UpdateValueHandler {
 
 
@@ -58,7 +54,7 @@ public class MultipleColumnUpdateValueHandler implements UpdateValueHandler {
         }
         switch (updateColumn.getUpdateOperator()) {
             case ADD:case SUB:case MCL:case DIV:
-                String optColumn = StringUtil.isNotEmpty(updateColumn.getOperatorColumn()) ? updateColumn.getOperatorColumn() : targetColumn;
+                String optColumn = StrUtil.isNotEmpty(updateColumn.getOperatorColumn()) ? updateColumn.getOperatorColumn() : targetColumn;
                 return String.format("`%s` = (`%s` %s ?)", targetColumn, optColumn, updateColumn.getUpdateOperator().getOperator());
             default:
                 return UpdateValueHandler.super.defineSetPhrase(targetColumn);

@@ -1,12 +1,9 @@
 package org.devops.data.xjpa.sql.where.usermodel;
 
-import org.devops.core.utils.util.BeanUtil;
 import org.devops.data.xjpa.sql.where.XQueryWhereExplorer;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
-
-import java.io.IOException;
 
 public class QueryWhere extends GenericQueryWhere<String> {
 
@@ -113,23 +110,6 @@ public class QueryWhere extends GenericQueryWhere<String> {
     @Override
     public QueryWhere add(boolean valid, String column, Object value, WhereOperator operator, Condition condition) {
         return (QueryWhere) super.add(valid, column, value, operator, condition);
-    }
-
-    @Override
-    public QueryWhere clone() {
-        QueryWhere clone = new QueryWhere();
-
-        if (whereObject != null) {
-            try {
-                Object deepClone = BeanUtil.deepClone(whereObject);
-                clone.whereObject = (IQueryWhereObject) deepClone;
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        clone.condition = condition;
-        return clone;
     }
 
     @Override

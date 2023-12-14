@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.repository.IUpdateRepository;
 import org.devops.data.xjpa.repository.UpdateOperator;
 import org.devops.data.xjpa.repository.UpdateRequest;
@@ -30,7 +29,6 @@ import java.util.Collections;
  * @description update代理实现
  */
 @SuppressWarnings({"rawtypes"})
-@Slf4j
 public class UpdateRepositoryProxyImpl<K extends Serializable,V> extends RepositoryContextBean<K ,V> implements IUpdateRepository<K, V> {
 
     private final QueryExecuteRequestCommandAcceptor queryExecuteRequestCommandAcceptor;

@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.sql.where.usermodel;
 
-import org.devops.core.utils.util.BeanUtil;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObjectVisitor;
 import org.devops.data.xjpa.sql.where.operate.Condition;

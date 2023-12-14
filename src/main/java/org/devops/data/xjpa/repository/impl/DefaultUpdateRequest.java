@@ -1,9 +1,9 @@
 package org.devops.data.xjpa.repository.impl;
 
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.repository.UpdateOperator;
 import org.devops.data.xjpa.repository.UpdateRequest;
 import org.devops.data.xjpa.sql.executor.UpdateColumn;
-import org.devops.core.utils.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class DefaultUpdateRequest implements UpdateRequest {
 
     @Override
     public UpdateRequest add(UpdateColumn updateColumn) {
-        if (StringUtil.isEmpty(updateColumn.getTargetColumn())) {
+        if (StrUtil.isEmpty(updateColumn.getTargetColumn())) {
             throw new IllegalArgumentException("targetColumn = " + updateColumn.getTargetColumn());
         }
         if (updateColumn.getValue() == null) {

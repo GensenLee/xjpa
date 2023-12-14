@@ -1,6 +1,6 @@
 package org.devops.data.xjpa.sql.where;
 
-import org.devops.core.utils.constant.CommonConstant;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereNode;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereNodes;
 
@@ -36,6 +36,6 @@ public class AliasTableQueryWhereExplorer extends XQueryWhereExplorer {
     }
     @Override
     protected String getColumnLabel(IQueryWhereNode node) {
-        return tableAlias + CommonConstant.CHAR_POINT + super.getColumnLabel(node);
+        return tableAlias + XjpaConstant.CHAR_POINT + super.getColumnLabel(node);
     }
 }

@@ -1,7 +1,5 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.Getter;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +17,6 @@ public interface SortHandler {
      */
     boolean requiredSort();
 
-    @Getter
     class SortSet {
         private final String column;
         private final SortType sortType;
@@ -27,6 +24,14 @@ public interface SortHandler {
         public SortSet(String column, SortType sortType) {
             this.column = column;
             this.sortType = sortType;
+        }
+
+        public String getColumn() {
+            return column;
+        }
+
+        public SortType getSortType() {
+            return sortType;
         }
     }
 

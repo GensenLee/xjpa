@@ -1,12 +1,12 @@
 package org.devops.data.xjpa.table;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.BeanUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.util.EntityUtil;
-import org.springframework.util.CollectionUtils;
+import org.devops.data.xjpa.util.NameUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -21,9 +21,10 @@ import java.util.stream.Collectors;
  * @date 2022/10/31
  * @description 实体类对应的表信息
  */
-@Slf4j
-@Getter
 public class EntityTable<K, V> implements TableMetadata {
+
+    private final Logger logger = LoggerFactory.getLogger(EntityTable.class);
+
     private static final String AUTOINCREMENT = "auto_increment";
 
     private final String tableName;
@@ -68,9 +69,9 @@ public class EntityTable<K, V> implements TableMetadata {
                 .collect(Collectors.toMap(Field::getName, Function.identity()));
         return tableFields()
                 .stream()
-                .filter(tableField -> fieldMap.containsKey(tableField.getField()) || fieldMap.containsKey(StringUtil.toLHCase(tableField.getField())))
+                .filter(tableField -> fieldMap.containsKey(tableField.getField()) || fieldMap.containsKey(NameUtil.toLHCase(tableField.getField())))
                 .map(tableField -> {
-                    Field field = fieldMap.getOrDefault(tableField.getField(), fieldMap.get(StringUtil.toLHCase(tableField.getField())));
+                    Field field = fieldMap.getOrDefault(tableField.getField(), fieldMap.get(NameUtil.toLHCase(tableField.getField())));
                     Column column = field.getAnnotation(Column.class);
                     GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
                     boolean isPriKey = tableField.getKey().equals(XjpaConstant.PRI_KEY);
@@ -89,7 +90,7 @@ public class EntityTable<K, V> implements TableMetadata {
         if (primaryKeyField != null) {
             return primaryKeyField;
         }
-        return CollectionUtils.firstElement(getEntityTableFieldList());
+        return CollectionUtil.getFirst(getEntityTableFieldList());
     }
 
 
@@ -102,7 +103,7 @@ public class EntityTable<K, V> implements TableMetadata {
         EntityTableField entityTableField = getPrimaryKeyField();
         Field field = entityTableField.getJavaField();
 
-        Object value = BeanUtil.getValue(entity, field.getName());
+        Object value = BeanUtil.getFieldValue(entity, field.getName());
         if (value != null) {
             return (K) value;
         }
@@ -111,7 +112,7 @@ public class EntityTable<K, V> implements TableMetadata {
             field.setAccessible(true);
             return (K) field.get(entity);
         } catch (IllegalAccessException e) {
-            log.error("get primaryKeyFieldValue error", e);
+            logger.error("get primaryKeyFieldValue error", e);
             return null;
         }finally {
             field.setAccessible(false);
@@ -154,5 +155,22 @@ public class EntityTable<K, V> implements TableMetadata {
                 ", keyType=" + keyType +
                 ", tableFieldContainer=" + tableFieldContainer +
                 '}';
+    }
+
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public Class<V> getEntityType() {
+        return entityType;
+    }
+
+    public Class<K> getKeyType() {
+        return keyType;
+    }
+
+    public TableFieldContainer getTableFieldContainer() {
+        return tableFieldContainer;
     }
 }

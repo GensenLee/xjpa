@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.join;
 
-import org.devops.core.utils.util.BeanUtil;
 import org.devops.data.xjpa.sql.where.XQueryWhereExplorer;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
@@ -128,22 +127,6 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
         return (JoinQueryWhere) super.add(valid, column, value, operator, condition);
     }
 
-    @Override
-    public JoinQueryWhere clone() {
-        JoinQueryWhere clone = new JoinQueryWhere();
-
-        if (whereObject != null) {
-            try {
-                Object deepClone = BeanUtil.deepClone(whereObject);
-                clone.whereObject = (IQueryWhereObject) deepClone;
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        clone.condition = condition;
-        return clone;
-    }
 
     @Override
     public JoinQueryWhere condition(Condition condition) {

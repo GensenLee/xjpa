@@ -3,25 +3,30 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.devops.data</groupId>
     <artifactId>devops-data-xjpa</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 
     <parent>
-        <groupId>org.devops</groupId>
-        <artifactId>devops-parent</artifactId>
-        <version>6.0.0-SNAPSHOT</version>
-        <relativePath/>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.12.RELEASE</version>
     </parent>
 
     <properties>
         <java.version>1.8</java.version>
         <jakarta.persistence.version>2.2.3</jakarta.persistence.version>
         <reflections.version>0.10.2</reflections.version>
+        <hutool.version>5.8.12</hutool.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <mysql-connector-java.version>8.0.26</mysql-connector-java.version>
+        <log4j.version>1.2.17</log4j.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.devops.core</groupId>
-            <artifactId>devops-core-utils</artifactId>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
             <scope>provided</scope>
+            <version>${hutool.version}</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
@@ -32,6 +37,41 @@
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>${jakarta.persistence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector-java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
     </dependencies>
 

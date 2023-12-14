@@ -1,10 +1,10 @@
 package org.devops.data.xjpa.util;
 
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.exception.XjpaInitException;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
 import org.devops.data.xjpa.table.EntityTable;
 import org.devops.data.xjpa.table.TableFieldContainer;
-import org.devops.core.utils.util.StringUtil;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import javax.persistence.Entity;
@@ -42,15 +42,15 @@ public class TableUtil {
             throw new XjpaInitException("entity:" + tableEntityType + " missing Entity annotation");
         }
 
-        if (table != null && StringUtil.isNotEmpty(table.name())) {
+        if (table != null && StrUtil.isNotEmpty(table.name())) {
             return table.name();
         }
 
-        if (StringUtil.isNotEmpty(entity.name())) {
+        if (StrUtil.isNotEmpty(entity.name())) {
             return entity.name();
         }
 
-        return StringUtil.toUUCase(tableEntityType.getSimpleName());
+        return NameUtil.toUUCase(tableEntityType.getSimpleName());
     }
 
 

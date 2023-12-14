@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.sql.executor.command;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.sql.executor.AbstractSqlExecutor;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
@@ -18,7 +17,6 @@ import java.util.List;
  * @description 单列查询执行
  */
 @SuppressWarnings({"rawtypes"})
-@Slf4j
 public class SingleColumnQueryExecuteRequestCommandAcceptor<K, V> implements QueryExecuteRequestCommandAcceptor {
 
     private final QueryExecuteRequestCommandAcceptor queryExecuteRequestCommandAcceptor;

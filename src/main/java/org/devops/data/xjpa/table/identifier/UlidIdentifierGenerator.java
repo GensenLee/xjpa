@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.table.identifier;
 
-import org.devops.core.utils.util.identifier.ULID;
 
 /**
  * @author GENSEN

@@ -1,7 +1,6 @@
 package org.devops.data.xjpa.sql.where.usermodel;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.sql.where.QueryWhereUtil;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereNode;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
@@ -10,6 +9,7 @@ import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2022/11/23
  * @description 单值条件
  */
-@Slf4j
 public class XQueryWhereValue implements Serializable, IQueryWhereNode {
 
 
@@ -58,9 +57,9 @@ public class XQueryWhereValue implements Serializable, IQueryWhereNode {
     public boolean isEmpty() {
         switch (operator) {
             case IS_NULL:case IS_NOT_NULL:
-                return StringUtil.isEmpty(column);
+                return Objects.isNull(column) || StrUtil.isEmpty(String.valueOf(column));
             default:
-                return StringUtil.isEmpty(column) || value == null;
+                return Objects.isNull(column) || StrUtil.isEmpty(String.valueOf(column)) || value == null;
         }
 
     }

@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import org.devops.core.utils.util.AssertUtil;
 import org.devops.data.xjpa.repository.IDeleteRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.RepositoryContextBean;
@@ -16,6 +15,7 @@ import org.devops.data.xjpa.sql.executor.query.DeleteByWhereQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.QueryRequestBuilder;
 import org.devops.data.xjpa.table.EntityTableField;
 import org.devops.data.xjpa.util.EntityUtil;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -40,7 +40,7 @@ public class DeleteRepositoryProxyImpl<K extends Serializable, V> extends Reposi
 
     @Override
     public int deleteById(K key) {
-        AssertUtil.notNull(key, "delete key required");
+        Assert.notNull(key, "delete key required");
 
         AbstractQueryRequest<K, V> queryRequest = QueryRequestBuilder
                 .bind(DeleteByIdQueryRequest.class, context)
@@ -50,7 +50,7 @@ public class DeleteRepositoryProxyImpl<K extends Serializable, V> extends Reposi
 
     @Override
     public int deleteByIds(Collection<K> keys) {
-        AssertUtil.notEmpty(keys, "delete keys required");
+        Assert.notEmpty(keys, "delete keys required");
 
         AbstractQueryRequest<K, V> queryRequest = QueryRequestBuilder
                 .bind(DeleteByIdQueryRequest.class, context)
@@ -79,7 +79,7 @@ public class DeleteRepositoryProxyImpl<K extends Serializable, V> extends Reposi
 
     @Override
     public int delete() {
-        AssertUtil.isTrue(!context.localQueryWhere().isEmpty(), "delete where condition required");
+        Assert.isTrue(!context.localQueryWhere().isEmpty(), "delete where condition required");
 
         AbstractQueryRequest<K, V> queryRequest = QueryRequestBuilder
                 .bind(DeleteByWhereQueryRequest.class, context)

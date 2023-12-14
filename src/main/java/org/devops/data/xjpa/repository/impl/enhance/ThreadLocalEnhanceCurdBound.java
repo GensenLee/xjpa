@@ -1,13 +1,14 @@
 package org.devops.data.xjpa.repository.impl.enhance;
 
-import org.devops.core.utils.util.AssertUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.repository.IEnhanceRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.RepositoryContextObserver;
 import org.devops.data.xjpa.sql.executor.LimitHandler;
 import org.devops.data.xjpa.sql.executor.SortHandler;
 import org.devops.data.xjpa.sql.executor.SortType;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.*;
@@ -47,7 +48,7 @@ public class ThreadLocalEnhanceCurdBound<K extends Serializable, V> extends Abst
 
     @Override
     public IEnhanceRepository<K, V> groupByColumns(String... columns) {
-        AssertUtil.notEmpty(columns, "distinct columns must be set");
+        Assert.notEmpty(columns, "distinct columns must be set");
 
         groupByColumnsThreadLocal.set(Arrays.stream(columns).collect(Collectors.toSet()));
         return this;
@@ -55,7 +56,7 @@ public class ThreadLocalEnhanceCurdBound<K extends Serializable, V> extends Abst
 
     @Override
     public IEnhanceRepository<K, V> having(String havingString) {
-        AssertUtil.hasLength(havingString, "havingString must be set");
+        Assert.hasLength(havingString, "havingString must be set");
 
         havingStringThreadLocal.set(havingString);
         return this;
@@ -63,14 +64,14 @@ public class ThreadLocalEnhanceCurdBound<K extends Serializable, V> extends Abst
 
     @Override
     public IEnhanceRepository<K, V> distinct(String... columns) {
-        AssertUtil.notEmpty(columns, "distinct columns must be set");
+        Assert.notEmpty(columns, "distinct columns must be set");
         distinctThreadLocal.set(columns);
         return this;
     }
 
     @Override
     public IEnhanceRepository<K, V> include(String... columns) {
-        AssertUtil.notEmpty(columns, "distinct columns must be set");
+        Assert.notEmpty(columns, "distinct columns must be set");
 
         Set<String> includeColumns = includeColumnsThreadLocal.get();
         includeColumns.addAll(Arrays.stream(columns).collect(Collectors.toSet()));
@@ -108,8 +109,8 @@ public class ThreadLocalEnhanceCurdBound<K extends Serializable, V> extends Abst
 
     @Override
     public IEnhanceRepository<K, V> orderString(String orderByString) {
-        AssertUtil.hasLength(orderByString, "empty orderString");
-        AssertUtil.isTrue(orderTypesThreadLocal.get().isEmpty(), "can not use #orderString and #orderByColumn at the same time");
+        Assert.hasLength(orderByString, "empty orderString");
+        Assert.isTrue(orderTypesThreadLocal.get().isEmpty(), "can not use #orderString and #orderByColumn at the same time");
 
         orderStringThreadLocal.set(orderByString);
         return this;
@@ -117,9 +118,9 @@ public class ThreadLocalEnhanceCurdBound<K extends Serializable, V> extends Abst
 
     @Override
     public IEnhanceRepository<K, V> orderByColumn(String column, SortType sortType) {
-        AssertUtil.isTrue(StringUtil.isEmpty(orderStringThreadLocal.get()), "can not use #orderString and #orderByColumn at the same time");
-        AssertUtil.hasLength(column, "sort column required");
-        AssertUtil.notNull(sortType, "sort type required");
+        Assert.isTrue(StrUtil.isEmpty(orderStringThreadLocal.get()), "can not use #orderString and #orderByColumn at the same time");
+        Assert.hasLength(column, "sort column required");
+        Assert.notNull(sortType, "sort type required");
 
         List<OrderParameter> orderParameterList = orderTypesThreadLocal.get();
         orderParameterList.add(new OrderParameter(column, sortType));
@@ -169,7 +170,7 @@ public class ThreadLocalEnhanceCurdBound<K extends Serializable, V> extends Abst
 
     @Override
     public String getHavingString() {
-        return StringUtil.getDefault(havingStringThreadLocal.get(), "");
+        return StrUtil.emptyToDefault(havingStringThreadLocal.get(), XjpaConstant.EMPTY_STRING);
     }
 
     @Override

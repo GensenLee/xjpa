@@ -1,8 +1,6 @@
 package org.devops.data.xjpa.util;
 
 import com.mysql.cj.MysqlType;
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.ListUtil;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.springframework.util.CollectionUtils;
 
@@ -17,7 +15,6 @@ import java.util.Map;
  * @date 2022/10/31
  * @description PreparedStatement工具
  */
-@Slf4j
 public class PreparedStatementUtil {
 
     /**
@@ -54,7 +51,7 @@ public class PreparedStatementUtil {
      * @param valueList
      */
     public static void setParameters(PreparedStatement preparedStatement, List<Object> valueList) {
-        if (ListUtil.isNull(valueList)) {
+        if (CollectionUtils.isEmpty(valueList)) {
             return;
         }
         try {

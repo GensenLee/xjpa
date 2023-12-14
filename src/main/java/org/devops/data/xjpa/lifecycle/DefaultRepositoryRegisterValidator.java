@@ -1,11 +1,10 @@
 package org.devops.data.xjpa.lifecycle;
 
-import org.devops.core.utils.util.AssertUtil;
-import org.devops.core.utils.util.BeanUtil;
 import org.devops.data.xjpa.exception.XjpaInitException;
 import org.devops.data.xjpa.util.EntityUtil;
 import org.devops.data.xjpa.util.TableUtil;
 import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +13,6 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * @author GENSEN
@@ -34,24 +32,24 @@ public class DefaultRepositoryRegisterValidator implements RepositoryRegisterVal
     public void validate(Class<?> repositoryType) {
         Class entityType = (Class) TableUtil.getTableEntityType(repositoryType);
 
-        AssertUtil.isTrue(entityType.isAnnotationPresent(Entity.class), "@Entity annotation not found: " + entityType);
-        AssertUtil.isTrue(entityType.isAnnotationPresent(Table.class), "@Table annotation not found: " + entityType);
+        Assert.isTrue(entityType.isAnnotationPresent(Entity.class), "@Entity annotation not found: " + entityType);
+        Assert.isTrue(entityType.isAnnotationPresent(Table.class), "@Table annotation not found: " + entityType);
 
         List<Field> allField = EntityUtil.getFields(entityType);
         long idCount = allField.stream().filter(field -> field.isAnnotationPresent(Id.class)).count();
 
         // 实体必须包含一个@Id注释字段
-        AssertUtil.isTrue(idCount == 1, "entity must contains one @Id annotated field: " + entityType);
+        Assert.isTrue(idCount == 1, "entity must contains one @Id annotated field: " + entityType);
 
         Field keyField = allField.stream().filter(field -> field.isAnnotationPresent(Id.class)).findFirst().orElseThrow(() -> new XjpaInitException("keyField get error"));
 
 
         Class keyType = (Class) TableUtil.getTableKeyType(repositoryType);
 
-        AssertUtil.isAssignable(Serializable.class, keyType, "entity id must be Serializable type: " + entityType);
-        AssertUtil.isAssignable(keyField.getType(), keyType, "entity [" + entityType +  "]: " + entityType);
+        Assert.isAssignable(Serializable.class, keyType, "entity id must be Serializable type: " + entityType);
+        Assert.isAssignable(keyField.getType(), keyType, "entity [" + entityType +  "]: " + entityType);
 
-        AssertUtil.isTrue(keyField.isAnnotationPresent(GeneratedValue.class), "entity key requires a @GeneratedValue annotation: " + entityType);
+        Assert.isTrue(keyField.isAnnotationPresent(GeneratedValue.class), "entity key requires a @GeneratedValue annotation: " + entityType);
 
 
     }

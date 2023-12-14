@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.sql.logger;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.util.PstParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +16,9 @@ import java.util.stream.Collectors;
  * @date 2022/11/2
  * @description 默认
  */
-@Slf4j
 public class DefaultSqlLogger implements SqlLogger{
 
-    protected final Logger logger = LoggerFactory.getLogger("org.devops.data.SQL");
+    protected static final Logger logger = LoggerFactory.getLogger("org.devops.data.SQL");
 
     @Override
     public void logSql(String sql, Map<Integer, Object> parameters) {
@@ -70,7 +68,7 @@ public class DefaultSqlLogger implements SqlLogger{
             resultSet.last();
             logger.info("total row {}", resultSet.getRow());
         } catch (SQLException e) {
-            log.error("logResult total error", e);
+            logger.error("logResult total error", e);
         }
     }
 }

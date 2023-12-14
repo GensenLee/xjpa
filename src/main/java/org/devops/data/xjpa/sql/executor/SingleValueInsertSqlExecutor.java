@@ -1,8 +1,7 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.util.BeanUtil;
+import cn.hutool.core.bean.BeanUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
@@ -17,11 +16,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -30,7 +25,6 @@ import java.util.stream.Collectors;
  * @date 2022/10/31
  * @description 单个值语句插入
  */
-@Slf4j
 public class SingleValueInsertSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
 
     public SingleValueInsertSqlExecutor(ExecuteSession executeSession, SqlLogger sqlLogger) {
@@ -126,7 +120,7 @@ public class SingleValueInsertSqlExecutor<K, V> extends AbstractSqlExecutor<K, V
 
             if (isNullPrimaryKey(entity, entityTableField)) continue;
 
-            Object value = BeanUtil.getValue(entity, entityTableField.getJavaField().getName());
+            Object value = BeanUtil.getFieldValue(entity, entityTableField.getJavaField().getName());
             if (value != null) {
                 setColumnList.add(entityTableField.getTableFieldMetadata().getField());
                 setValues.put(index++, value);
@@ -138,11 +132,11 @@ public class SingleValueInsertSqlExecutor<K, V> extends AbstractSqlExecutor<K, V
         }
         String columnString = setColumnList.stream()
                 .map(column -> "`" + column + "`")
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
 
         String valueString = setColumnList.stream()
-                .map(s -> CommonConstant.QUESTION_MARK)
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .map(s -> XjpaConstant.QUESTION_MARK)
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
 
         return "(" + columnString + ") values (" + valueString + ")";
     }

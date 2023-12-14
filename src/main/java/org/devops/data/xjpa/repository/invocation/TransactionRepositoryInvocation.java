@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.repository.invocation;
 
-import lombok.Getter;
 import org.springframework.transaction.TransactionStatus;
 
 import java.lang.reflect.Method;
@@ -10,7 +9,6 @@ import java.lang.reflect.Method;
  * @date 2022/11/16
  * @description default
  */
-@Getter
 public class TransactionRepositoryInvocation implements RepositoryInvocation{
     private final Object proxy;
     private final Method method;

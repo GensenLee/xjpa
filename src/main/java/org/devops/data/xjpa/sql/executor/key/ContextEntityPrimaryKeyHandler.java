@@ -1,12 +1,13 @@
 package org.devops.data.xjpa.sql.executor.key;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.BeanUtil;
+import cn.hutool.core.bean.BeanUtil;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.sql.executor.EntityWrapper;
 import org.devops.data.xjpa.table.EntityTableField;
 import org.devops.data.xjpa.table.identifier.IdentifierGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
@@ -24,8 +25,8 @@ import java.util.Map;
  * @date 2022/11/18
  * @description 借助context控制主键
  */
-@Slf4j
 public class ContextEntityPrimaryKeyHandler<V> implements EntityPrimaryKeyHandler {
+    protected static final Logger logger = LoggerFactory.getLogger(ContextEntityPrimaryKeyHandler.class);
 
     protected final Map<Integer, EntityWrapper<V>> entityWrappers;
 
@@ -66,7 +67,7 @@ public class ContextEntityPrimaryKeyHandler<V> implements EntityPrimaryKeyHandle
 
         Field field = primaryKeyField.getJavaField();
         for (EntityWrapper<V> value : entityWrappers.values()){
-            if (BeanUtil.getValue(value.getEntity(), field.getName()) != null) {
+            if (BeanUtil.getFieldValue(value.getEntity(), field.getName()) != null) {
                 continue;
             }
             PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(value.getEntity().getClass(), field.getName());
@@ -102,7 +103,7 @@ public class ContextEntityPrimaryKeyHandler<V> implements EntityPrimaryKeyHandle
 
             return primaryKeyField.getJavaField().getType().getMethod("valueOf", String.class);
         } catch (NoSuchMethodException e) {
-            log.error("find typeCastMethod error", e);
+            logger.error("find typeCastMethod error", e);
         }
         return null;
     }
@@ -134,7 +135,7 @@ public class ContextEntityPrimaryKeyHandler<V> implements EntityPrimaryKeyHandle
         try {
             return typeCastMethod.invoke(javaField.getType(), String.valueOf(val));
         } catch (IllegalAccessException | InvocationTargetException e) {
-            log.error("cast key type error", e);
+            logger.error("cast key type error", e);
         }
         return null;
     }
@@ -151,7 +152,7 @@ public class ContextEntityPrimaryKeyHandler<V> implements EntityPrimaryKeyHandle
         javaField.setAccessible(true);
         EntityWrapper<V> entityWrapper = entityWrappers.get(cursorIndex);
         if (entityWrapper == null) {
-            log.error("setPrimaryKey error index={}, key={}", cursorIndex, key);
+            logger.error("setPrimaryKey error index={}, key={}", cursorIndex, key);
             return false;
         }
         try {
@@ -163,7 +164,7 @@ public class ContextEntityPrimaryKeyHandler<V> implements EntityPrimaryKeyHandle
             Object castTypeValue = castKeyType(key);
             javaField.set(entityWrapper.getEntity(), castTypeValue);
         } catch (IllegalAccessException e) {
-            log.error("set key error", e);
+            logger.error("set key error", e);
         } finally {
             javaField.setAccessible(false);
         }
@@ -187,7 +188,7 @@ public class ContextEntityPrimaryKeyHandler<V> implements EntityPrimaryKeyHandle
                 setPrimaryKey(val);
             }
         } catch (SQLException e) {
-            log.error("writeGeneratedKeys error", e);
+            logger.error("writeGeneratedKeys error", e);
             return false;
         }
         return true;

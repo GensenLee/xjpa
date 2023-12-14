@@ -1,14 +1,12 @@
 package org.devops.data.xjpa.join;
 
-import lombok.Getter;
-import org.devops.core.utils.constant.CommonConstant;
+import org.devops.data.xjpa.constant.XjpaConstant;
 
 /**
  * @author GENSEN
  * @date 2023/6/21
  * @description 表字段
  */
-@Getter
 public class JoinTableColumn extends AbstractJoinTableColumn {
 
     private final JoinTable table;
@@ -27,7 +25,7 @@ public class JoinTableColumn extends AbstractJoinTableColumn {
     }
 
     protected String concatTableAlias() {
-        return tableAlias + CommonConstant.POINT_MARK + "`" + column + "`";
+        return tableAlias + XjpaConstant.POINT_MARK + "`" + column + "`";
     }
 
     @Override
@@ -35,4 +33,11 @@ public class JoinTableColumn extends AbstractJoinTableColumn {
         return table;
     }
 
+    public JoinTable getTable() {
+        return table;
+    }
+
+    public String getColumn() {
+        return column;
+    }
 }

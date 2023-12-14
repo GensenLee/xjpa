@@ -1,9 +1,6 @@
 package org.devops.data.xjpa.table;
 
-import lombok.AccessLevel;
-import lombok.Setter;
 
-@Setter(AccessLevel.PACKAGE)
 public class TableField implements TableFieldMetadata {
     private String Field;
     private String Comment;
@@ -75,4 +72,36 @@ public class TableField implements TableFieldMetadata {
         return Default;
     }
 
+
+    void setField(String field) {
+        Field = field;
+    }
+
+    void setComment(String comment) {
+        Comment = comment;
+    }
+
+    void setType(String type) {
+        Type = type;
+    }
+
+    void setNull(String aNull) {
+        Null = aNull;
+    }
+
+    void setExtra(String extra) {
+        Extra = extra;
+    }
+
+    void setPrivileges(String privileges) {
+        Privileges = privileges;
+    }
+
+    void setKey(String key) {
+        Key = key;
+    }
+
+    void setDefault(String aDefault) {
+        Default = aDefault;
+    }
 }

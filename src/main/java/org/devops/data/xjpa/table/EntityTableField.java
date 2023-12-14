@@ -1,8 +1,5 @@
 package org.devops.data.xjpa.table;
 
-import lombok.Getter;
-import org.devops.core.utils.util.BeanUtil;
-
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import java.lang.reflect.Field;
@@ -12,7 +9,6 @@ import java.lang.reflect.Field;
  * @date 2022/11/18
  * @description
  */
-@Getter
 public class EntityTableField {
 
     /**
@@ -33,5 +29,26 @@ public class EntityTableField {
         this.javaField = javaField;
         this.column = column;
         this.generatedValue = generatedValue;
+    }
+
+
+    public boolean isPriKey() {
+        return isPriKey;
+    }
+
+    public TableFieldMetadata getTableFieldMetadata() {
+        return tableFieldMetadata;
+    }
+
+    public Field getJavaField() {
+        return javaField;
+    }
+
+    public Column getColumn() {
+        return column;
+    }
+
+    public GeneratedValue getGeneratedValue() {
+        return generatedValue;
     }
 }

@@ -1,11 +1,12 @@
 package org.devops.data.xjpa.table;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.configuration.RepositoriesConfigurationManager;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
 import org.devops.data.xjpa.exception.XjpaInitException;
 import org.devops.data.xjpa.util.EntityUtil;
 import org.devops.data.xjpa.util.TableUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.util.StopWatch;
@@ -23,8 +24,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2022/11/5
  * @description 延迟加载的容器
  */
-@Slf4j
 public class LazyLoadTableFieldContainer implements TableFieldContainer {
+
+    protected static final Logger logger = LoggerFactory.getLogger(LazyLoadTableFieldContainer.class);
+
 
     private volatile boolean loaded;
 
@@ -69,7 +72,7 @@ public class LazyLoadTableFieldContainer implements TableFieldContainer {
             tableFieldMetadataList.addAll(loadDatabaseTable(repositoryType, TableUtil.getTableNameByRepositoryType(repositoryType)));
 
             stopWatch.stop();
-            log.trace("load table={} : {}", TableUtil.getTableNameByRepositoryType(repositoryType), stopWatch.shortSummary());
+            logger.trace("load table={} : {}", TableUtil.getTableNameByRepositoryType(repositoryType), stopWatch.shortSummary());
         } finally {
             reentrantLock.unlock();
         }

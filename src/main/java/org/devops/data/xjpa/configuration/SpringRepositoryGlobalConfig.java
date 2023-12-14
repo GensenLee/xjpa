@@ -1,7 +1,6 @@
 package org.devops.data.xjpa.configuration;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.configuration.configsource.AnnotationDataSourceBeanConfig;
 import org.devops.data.xjpa.configuration.configsource.ScanListXjpaRepositoryBeanConfig;
 import org.devops.data.xjpa.configuration.configsource.XjpaRepositoryBeanConfig;
@@ -9,6 +8,8 @@ import org.devops.data.xjpa.exception.XjpaException;
 import org.devops.data.xjpa.lifecycle.ContainerRepositoryPackageDataSourceMapper;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
 import org.devops.data.xjpa.util.ReflectionsUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.env.Environment;
@@ -23,8 +24,10 @@ import java.util.stream.Collectors;
  * @description 基于spring 支持的配置获取方式
  */
 @SuppressWarnings("rawtypes")
-@Slf4j
 public class SpringRepositoryGlobalConfig implements RepositoryGlobalConfig {
+
+    protected static final Logger logger = LoggerFactory.getLogger(SpringRepositoryGlobalConfig.class);
+
 
     private final DefaultListableBeanFactory beanFactory;
     private final Environment environment;
@@ -68,7 +71,7 @@ public class SpringRepositoryGlobalConfig implements RepositoryGlobalConfig {
     @Override
     public String getDataSourceName(String packageName) {
         String dataSourceName = repositoryPackageDataSourceMapper.getDataSourceName(packageName);
-        if (StringUtil.isNotEmpty(dataSourceName)) {
+        if (StrUtil.isNotEmpty(dataSourceName)) {
             return dataSourceName;
         }
 

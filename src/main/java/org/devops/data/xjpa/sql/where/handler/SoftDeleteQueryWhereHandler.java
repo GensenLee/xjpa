@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.sql.where.handler;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.enhance.EnhanceCurdBound;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
@@ -15,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2022/11/19
  * @description 逻辑删除控制
  */
-@Slf4j
 @SuppressWarnings("rawtypes")
 public class SoftDeleteQueryWhereHandler implements IQueryWhereHandler {
 

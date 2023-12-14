@@ -1,20 +1,16 @@
 package org.devops.data.xjpa.repository.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.exception.CommonException;
-import org.devops.core.utils.exception.CommonRuntimeException;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
 import org.devops.data.xjpa.exception.XjpaException;
 import org.devops.data.xjpa.lifecycle.Disposable;
-import org.springframework.beans.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 import org.springframework.util.ReflectionUtils;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -23,9 +19,9 @@ import java.util.Arrays;
  * @date 2022/12/6
  * @description dispose
  */
-@Slf4j
 @SuppressWarnings("rawtypes")
 public class DisposeFacadeCreatedHandle implements FacadeCreatedHandle {
+    protected static final Logger logger = LoggerFactory.getLogger(DisposeFacadeCreatedHandle.class);
 
 
     @Override
@@ -57,15 +53,14 @@ public class DisposeFacadeCreatedHandle implements FacadeCreatedHandle {
             try {
                 result = methodProxy.invokeSuper(o, objects);
             } catch (Exception e) {
-                if (e instanceof CommonException || e instanceof CommonRuntimeException ||
-                        e instanceof XjpaException) {
+                if (e instanceof XjpaException) {
                     throw e;
                 }
                 try {
                     logContext(e);
                 } catch (Exception ignored) {}
 
-                log.error("xjpa inner exception", e);
+                logger.error("xjpa inner exception", e);
                 throw e;
             } finally {
                 if (method.isAnnotationPresent(DisposeAfterReturn.class)) {
@@ -76,11 +71,11 @@ public class DisposeFacadeCreatedHandle implements FacadeCreatedHandle {
 //                if (actual instanceof RepositoryContext) {
 //                    ((RepositoryContext<?, ?>) actual).dispose();
 //                }
-                    log.trace("dispose start");
+                    logger.trace("dispose start");
                     if (o instanceof Disposable) {
                         ((Disposable) o).dispose();
                     }
-                    log.trace("dispose end");
+                    logger.trace("dispose end");
                 }
             }
             if (method.isAnnotationPresent(ReturnThis.class)) {
@@ -103,13 +98,13 @@ public class DisposeFacadeCreatedHandle implements FacadeCreatedHandle {
                     stringBuilder.append("[key=").append(key).append(",value=").append(repositoryContextAttribute.getAttribute(key)).append("] ");
                 }
             }
-            log.error(stringBuilder.toString());
+            logger.error(stringBuilder.toString());
 
             RepositoryProperties repositoryProperties = (RepositoryProperties) getObjectField(actual, "repositoryProperties");
             if (repositoryProperties != null) {
                 String msg = e.getClass().getName() + "exception context properties >>> " +
                         "repositoryProperties" + ":" + repositoryProperties;
-                log.error(msg);
+                logger.error(msg);
             }
 
         }

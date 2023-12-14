@@ -5,6 +5,7 @@ import org.devops.data.xjpa.repository.*;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.RepositoryProxyBeanFactory;
 import org.devops.data.xjpa.repository.impl.RepositoryProxyBeanFactoryFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -23,8 +24,11 @@ public class StaticRepositoryProxyBeanFactoryFactory implements RepositoryProxyB
 
     private final Map<Type, Supplier<RepositoryProxyBeanFactory>> defaultTypeFactories;
 
-    public StaticRepositoryProxyBeanFactoryFactory(RepositoriesConfigurationManager repositoriesConfigurationManager) {
+    private final DefaultListableBeanFactory beanFactory;
+
+    public StaticRepositoryProxyBeanFactoryFactory(RepositoriesConfigurationManager repositoriesConfigurationManager, DefaultListableBeanFactory beanFactory) {
         this.repositoriesConfigurationManager = repositoriesConfigurationManager;
+        this.beanFactory = beanFactory;
         this.defaultTypeFactories = new HashMap<>();
         init();
     }
@@ -46,7 +50,7 @@ public class StaticRepositoryProxyBeanFactoryFactory implements RepositoryProxyB
         *
         * */
 
-        defaultTypeFactories.put(StandardJpaRepository.class, () -> new DefaultStandardJpaRepositoryProxyBeanFactory(repositoriesConfigurationManager, this));
+        defaultTypeFactories.put(StandardJpaRepository.class, () -> new DefaultStandardJpaRepositoryProxyBeanFactory(repositoriesConfigurationManager, beanFactory, this));
 
         defaultTypeFactories.put(IEnhanceCurdRepository.class, () -> new DefaultStandardCurdRepositoryProxyBeanFactory(repositoriesConfigurationManager, this));
         defaultTypeFactories.put(IDeleteRepository.class, () -> new DefaultDeleteRepositoryProxyBeanFactory(repositoriesConfigurationManager, this));
@@ -69,6 +73,10 @@ public class StaticRepositoryProxyBeanFactoryFactory implements RepositoryProxyB
         }
         beanFactory.bindContext(context);
 
+        return beanFactory;
+    }
+
+    public DefaultListableBeanFactory getBeanFactory() {
         return beanFactory;
     }
 }

@@ -1,12 +1,13 @@
 package org.devops.data.xjpa.join;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
 import org.devops.data.xjpa.repository.impl.enhance.EnhanceCurdBound;
 import org.devops.data.xjpa.sql.executor.SortType;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -15,9 +16,9 @@ import java.util.*;
  * @date 2023/6/20
  * @description
  */
-@Slf4j
 @SuppressWarnings("rawtypes")
 public abstract class AbstractJoinModel implements JoinModel {
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractJoinModel.class);
 
     protected final StandardJpaRepository repository;
 

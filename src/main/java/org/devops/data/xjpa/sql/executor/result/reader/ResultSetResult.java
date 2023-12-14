@@ -1,6 +1,8 @@
 package org.devops.data.xjpa.sql.executor.result.reader;
 
-import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -15,8 +17,8 @@ import java.util.Map;
  * @date 2022/10/31
  * @description 操作结果
  */
-@Slf4j
 public class ResultSetResult implements Result {
+    protected static final Logger logger = LoggerFactory.getLogger(ResultSetResult.class);
 
     /**
      * 使用map承接的结果
@@ -50,7 +52,7 @@ public class ResultSetResult implements Result {
             }
 
         } catch (SQLException e) {
-            log.error("read result error", e);
+            logger.error("read result error", e);
         }
         return new ResultSetResult(rawMapTypeResult);
     }

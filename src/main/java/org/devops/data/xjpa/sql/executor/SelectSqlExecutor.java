@@ -1,7 +1,7 @@
 package org.devops.data.xjpa.sql.executor;
 
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.SelectQueryRequest;
 import org.devops.data.xjpa.sql.executor.result.reader.Result;
@@ -112,10 +112,10 @@ public class SelectSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
                     .collect(Collectors.toList());
             String groupingString = " group by " + groupingColumns.stream()
                     .map(column -> columns.contains(column) ? "`" + column + "`" : column)
-                    .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                    .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
             finalSqlBuilder.append(groupingString);
 
-            if (StringUtil.isNotEmpty(havingString)) {
+            if (StrUtil.isNotEmpty(havingString)) {
                 finalSqlBuilder.append(" having ").append(havingString);
             }
         }
@@ -135,7 +135,7 @@ public class SelectSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
      */
     private String concatIncludeColumns(Collection<String> includeColumns, EntityTable<K, V> entityTable) {
         if (CollectionUtils.isEmpty(includeColumns)) {
-            return CommonConstant.ASTERISK_MARK;
+            return XjpaConstant.ASTERISK_MARK;
         }
         List<String> tableFieldList = entityTable.getEntityTableFieldList().stream()
                 .map(entityTableField -> entityTableField.getTableFieldMetadata().getField())
@@ -143,6 +143,6 @@ public class SelectSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
         return includeColumns.stream()
                 .distinct()
                 .map(c -> tableFieldList.contains(c) ? "`" + c + "`" : c)
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
     }
 }

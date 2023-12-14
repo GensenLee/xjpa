@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import lombok.Getter;
 import org.devops.data.xjpa.configuration.RepositoriesConfigurationManager;
 import org.devops.data.xjpa.configuration.EnvironmentRepositoriesConfigurationManager;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
@@ -31,7 +30,6 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class RegisterStandardJpaRepositoryProxyBeanFactory extends AbstractRepositoryProxyBeanFactory<StandardJpaRepositoryProxyImpl> {
 
-    @Getter
     private final SqlLogger sqlLogger = new SwitchableSqlLogger();
 
     private final RepositoryProxyBeanFactoryFactory implProxyBeanFactoryFactory;
@@ -39,6 +37,9 @@ public class RegisterStandardJpaRepositoryProxyBeanFactory extends AbstractRepos
     private final DefaultListableBeanFactory beanFactory;
 
     private final Environment environment;
+
+    private final Map<Class, String> registeredRepositories;
+
 
     protected RegisterStandardJpaRepositoryProxyBeanFactory(RepositoriesConfigurationManager repositoriesConfigurationManager,
                                                             RepositoryProxyBeanFactoryFactory implProxyBeanFactoryFactory) {
@@ -50,8 +51,9 @@ public class RegisterStandardJpaRepositoryProxyBeanFactory extends AbstractRepos
     }
 
 
-    private final Map<Class, String> registeredRepositories;
-
+    public SqlLogger getSqlLogger() {
+        return sqlLogger;
+    }
 
     /**
      * @param repositoryType

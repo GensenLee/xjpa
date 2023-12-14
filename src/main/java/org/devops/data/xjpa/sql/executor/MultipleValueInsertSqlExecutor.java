@@ -1,6 +1,7 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.extern.slf4j.Slf4j;
+import cn.hutool.core.bean.BeanUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.InsertQueryRequest;
@@ -10,8 +11,6 @@ import org.devops.data.xjpa.sql.logger.SqlLogger;
 import org.devops.data.xjpa.table.EntityTable;
 import org.devops.data.xjpa.table.EntityTableField;
 import org.devops.data.xjpa.util.PreparedStatementUtil;
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.util.BeanUtil;
 import org.devops.data.xjpa.util.PstParameter;
 import org.springframework.util.CollectionUtils;
 
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
  * @date 2022/10/31
  * @description 多值语句插入，速度优于 SingleValueInsertSqlExecutor
  */
-@Slf4j
 @Deprecated
 public class MultipleValueInsertSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
 
@@ -79,16 +77,16 @@ public class MultipleValueInsertSqlExecutor<K, V> extends AbstractSqlExecutor<K,
 
         String insertColumns = entityTableFieldList.stream()
                 .map(entityTableField -> "`" + entityTableField.getTableFieldMetadata().getField() + "`")
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
         String insertValuesPlaceholderString = "(" + insertColumns + ") values ";
 
         String valuePlaceholder = "(" + entityTableFieldList.stream()
                 .map(entityTableField -> "?")
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK)) + ")";
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK)) + ")";
 
         insertValuesPlaceholderString += entityValues.stream()
                 .map(e -> valuePlaceholder)
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
 
 
         InsertProcessSql.ProcessSqlBuilder processSqlBuilder = InsertProcessSql.builder();
@@ -103,7 +101,7 @@ public class MultipleValueInsertSqlExecutor<K, V> extends AbstractSqlExecutor<K,
             Map<Integer, PstParameter> entityInsertValues = entityTableFieldList.stream()
                     .collect(Collectors.toMap(entityTableField -> index.getAndIncrement(),
                             entityTableField ->
-                                    new PstParameter(BeanUtil.getValue(entityValue,
+                                    new PstParameter(BeanUtil.getFieldValue(entityValue,
                                             entityTableField.getJavaField().getName()), entityTableField)));
             insertValues.putAll(entityInsertValues);
         }

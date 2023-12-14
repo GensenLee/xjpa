@@ -1,29 +1,26 @@
 package org.devops.data.xjpa.datasource;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.configuration.SpringApplicationContextHandle;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.repository.invocation.GlobalRepositoryInvocationHandler;
 import org.devops.data.xjpa.repository.invocation.RepositoryInvocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.util.CollectionUtils;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
 
 /**
  * @author GENSEN
  * @date 2022/11/3
  * @description 数据源对象缓存模式
  */
-@Slf4j
 public class LazyCacheSingleDataSource implements RepositoryDataSource {
+
+    protected static final Logger logger = LoggerFactory.getLogger(LazyCacheSingleDataSource.class);
 
     private DataSource dataSource;
 
@@ -56,7 +53,7 @@ public class LazyCacheSingleDataSource implements RepositoryDataSource {
                     return getConnection(closeTransaction);
                 }
             } catch (SQLException e) {
-                log.error("connection close", e);
+                logger.error("connection close", e);
             }
             return connection;
         }
@@ -65,7 +62,7 @@ public class LazyCacheSingleDataSource implements RepositoryDataSource {
                 connection = getDatasource().getConnection();
                 connection.setAutoCommit(false);
             } catch (SQLException e) {
-                log.error("open connection error", e);
+                logger.error("open connection error", e);
                 throw new XjpaExecuteException(e.getMessage());
             }
         }else {
@@ -107,7 +104,7 @@ public class LazyCacheSingleDataSource implements RepositoryDataSource {
         try {
             dataSource = (DataSource) SpringApplicationContextHandle.getApplicationContext().getBean(dataSourceName);
         } catch (Exception e) {
-            log.error("获取数据源失败 dataSourceName={}", dataSourceName);
+            logger.error("获取数据源失败 dataSourceName={}", dataSourceName);
             throw new RuntimeException(e);
         }
 

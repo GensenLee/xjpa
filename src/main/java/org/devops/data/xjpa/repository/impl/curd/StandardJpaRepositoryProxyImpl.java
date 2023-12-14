@@ -1,16 +1,15 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.annotation.SkipRepositoryScan;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
 import org.devops.data.xjpa.join.DefaultJoiningTableRepository;
 import org.devops.data.xjpa.join.JoinModel;
 import org.devops.data.xjpa.join.JoiningTableRepository;
 import org.devops.data.xjpa.lifecycle.Disposable;
-import org.devops.data.xjpa.repository.*;
+import org.devops.data.xjpa.repository.IEnhanceCurdRepository;
+import org.devops.data.xjpa.repository.StandardJpaRepository;
+import org.devops.data.xjpa.repository.UpdateOperator;
+import org.devops.data.xjpa.repository.UpdateRequest;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.RepositoryContextAttribute;
 import org.devops.data.xjpa.repository.impl.RepositoryContextObserver;
@@ -24,6 +23,9 @@ import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.devops.data.xjpa.table.EntityTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,14 +38,13 @@ import java.util.Set;
  * @date 2022/11/2
  * @description Repository代理实现
  */
-@Slf4j
-@Setter(AccessLevel.PACKAGE)
 @SkipRepositoryScan
 public class StandardJpaRepositoryProxyImpl<K extends Serializable, V> implements StandardJpaRepository<K, V>, RepositoryContext<K, V> {
 
-    @Getter
+    protected static final Logger logger = LoggerFactory.getLogger(StandardJpaRepositoryProxyImpl.class);
+
+
     private final Class<K> keyType;
-    @Getter
     private final Class<V> entityType;
 
     private final SqlLogger sqlLogger;
@@ -69,7 +70,8 @@ public class StandardJpaRepositoryProxyImpl<K extends Serializable, V> implement
                                           SqlLogger sqlLogger,
                                           RepositoryProperties repositoryProperties,
                                           ResultParser resultParser,
-                                          RepositoryContextAttribute repositoryContextAttribute) {
+                                          RepositoryContextAttribute repositoryContextAttribute,
+                                          DefaultListableBeanFactory beanFactory) {
         this.keyType = keyType;
         this.entityType = entityType;
         this.sqlLogger = sqlLogger;
@@ -77,7 +79,15 @@ public class StandardJpaRepositoryProxyImpl<K extends Serializable, V> implement
         this.resultParser = resultParser;
         this.repositoryContextAttribute = repositoryContextAttribute;
         this.executeSession = new DataSourceExecuteSession(repositoryProperties.getDataSource());
-        this.joiningTableRepository = new DefaultJoiningTableRepository(this);
+        this.joiningTableRepository = new DefaultJoiningTableRepository(this, beanFactory);
+    }
+
+    public Class<K> getKeyType() {
+        return keyType;
+    }
+
+    public Class<V> getEntityType() {
+        return entityType;
     }
 
     @Override
@@ -110,7 +120,7 @@ public class StandardJpaRepositoryProxyImpl<K extends Serializable, V> implement
     public void dispose() {
         // 清空当前次操作过程数据
 
-        log.trace("context[{}] dispose", getEntityTable().getTableName());
+        logger.trace("context[{}] dispose", getEntityTable().getTableName());
 
         repositoryWhereLocal.clearLocalQueryWhere();
         if (executeSession != null) {
@@ -513,5 +523,9 @@ public class StandardJpaRepositoryProxyImpl<K extends Serializable, V> implement
     @Override
     public JoinModel innerJoin(Class<?> rightEntityType) {
         return joiningTableRepository.innerJoin(rightEntityType);
+    }
+
+    void setEnhanceCurdRepository(IEnhanceCurdRepository<K, V> repository) {
+        this.enhanceCurdRepository = repository;
     }
 }

@@ -1,7 +1,6 @@
 package org.devops.data.xjpa.sql.where.objects;
 
-import lombok.Getter;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 
 /**
@@ -9,7 +8,6 @@ import org.devops.data.xjpa.sql.where.operate.Condition;
  * @date 2022/11/23
  * @description 遍历结果
  */
-@Getter
 public class ObjectVisitResult {
 
     private final Condition condition;
@@ -22,7 +20,7 @@ public class ObjectVisitResult {
     }
 
     public boolean isEmpty() {
-        return StringUtil.isEmpty(whereString);
+        return StrUtil.isEmpty(whereString);
     }
 
     public static ObjectVisitResult empty() {

@@ -1,6 +1,7 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.extern.slf4j.Slf4j;
+import cn.hutool.core.bean.BeanUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.exception.XjpaNoWhereException;
 import org.devops.data.xjpa.repository.impl.enhance.EnhanceCurdBound;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
@@ -9,11 +10,9 @@ import org.devops.data.xjpa.sql.executor.result.reader.Result;
 import org.devops.data.xjpa.sql.executor.session.ExecuteSession;
 import org.devops.data.xjpa.sql.logger.SqlLogger;
 import org.devops.data.xjpa.table.EntityTable;
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.exception.CommonRuntimeException;
-import org.devops.core.utils.util.BeanUtil;
-import org.devops.core.utils.util.ListUtil;
 import org.devops.data.xjpa.table.EntityTableField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Field;
@@ -26,9 +25,11 @@ import java.util.stream.Collectors;
  * @date 2022/10/31
  * @description 根据实体类更新
  */
-@Slf4j
 @SuppressWarnings({"rawtypes","unchecked"})
 public class UpdateByEntitySqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
+
+    protected static final Logger logger = LoggerFactory.getLogger(UpdateByEntitySqlExecutor.class);
+
 
     public UpdateByEntitySqlExecutor(ExecuteSession executeSession, SqlLogger sqlLogger) {
         super(executeSession, sqlLogger);
@@ -41,9 +42,9 @@ public class UpdateByEntitySqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
         UpdateByEntityQueryRequest<K, V> updateByEntityQueryRequest = (UpdateByEntityQueryRequest<K, V>) query;
 
         List<V> entityValues = updateByEntityQueryRequest.getEntityValues();
-        if (ListUtil.isNull(entityValues)) {
-            log.error("无法update空的数据列表");
-            throw new CommonRuntimeException("empty update list");
+        if (CollectionUtils.isEmpty(entityValues)) {
+            logger.error("无法update空的数据列表");
+            throw new IllegalArgumentException("empty update list");
         }
 
         Collection<String> includeColumns = Collections.emptyList();
@@ -167,7 +168,7 @@ public class UpdateByEntitySqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
         int index = 1;
         List<String> setColumnList = new ArrayList<>();
         for (Map.Entry<Field, String> entry : javaFieldColumnMap.entrySet()) {
-            Object value = BeanUtil.getValue(entity, entry.getKey().getName());
+            Object value = BeanUtil.getFieldValue(entity, entry.getKey().getName());
             if (value != null) {
                 setColumnList.add(entry.getValue());
                 setValues.put(index++, value);
@@ -179,6 +180,6 @@ public class UpdateByEntitySqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
 
         return setColumnList.stream()
                 .map(c -> "`" + c + "` = ?")
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
     }
 }

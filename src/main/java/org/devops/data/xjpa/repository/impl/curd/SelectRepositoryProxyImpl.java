@@ -1,9 +1,7 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.util.AssertUtil;
-import org.devops.core.utils.util.LongUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.NumberUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.repository.ISelectRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.RepositoryContextBean;
@@ -16,15 +14,17 @@ import org.devops.data.xjpa.sql.executor.command.QueryExecuteRequestCommandAccep
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.QueryRequestBuilder;
 import org.devops.data.xjpa.sql.executor.query.SelectQueryRequest;
-import org.devops.data.xjpa.table.EntityTable;
-import org.devops.data.xjpa.table.EntityTableField;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereValue;
+import org.devops.data.xjpa.table.EntityTableField;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author GENSEN
@@ -59,13 +59,13 @@ public class SelectRepositoryProxyImpl<K extends Serializable, V> extends Reposi
 
     @Override
     public List<V> listByIds(Collection<K> keys) {
-        AssertUtil.notEmpty(keys, "keys required");
+        Assert.notEmpty(keys, "keys required");
 
         SelectColumn selectColumn = createSelectColumn();
 
         context.localQueryWhere().clear();
         EntityTableField primaryKeyField = context.getEntityTable().getPrimaryKeyField();
-        AssertUtil.notNull(primaryKeyField, "table does not has a Primary Key");
+        Assert.notNull(primaryKeyField, "table does not has a Primary Key");
         context.localQueryWhere().add(new XQueryWhereValue(primaryKeyField.getTableFieldMetadata().getField(), keys, WhereOperator.IN));
 
         return doGetList(getContext().getEntityTable().getEntityType(),
@@ -79,7 +79,7 @@ public class SelectRepositoryProxyImpl<K extends Serializable, V> extends Reposi
 
     @Override
     public <T> List<T> list(Class<T> resultType) {
-        AssertUtil.notNull(resultType, "result type required");
+        Assert.notNull(resultType, "result type required");
 
         SelectColumn selectColumn = createSelectColumn();
 
@@ -105,10 +105,10 @@ public class SelectRepositoryProxyImpl<K extends Serializable, V> extends Reposi
 
     @Override
     public V getById(K key) {
-        AssertUtil.notNull(key, "key required");
+        Assert.notNull(key, "key required");
         context.localQueryWhere().clear();
         EntityTableField primaryKeyField = context.getEntityTable().getPrimaryKeyField();
-        AssertUtil.notNull(primaryKeyField, "table does not has a Primary Key");
+        Assert.notNull(primaryKeyField, "table does not has a Primary Key");
         context.localQueryWhere().add(new XQueryWhereValue(primaryKeyField.getTableFieldMetadata().getField(), key));
 
         List<V> result = listByIds(Collections.singleton(key));
@@ -117,7 +117,7 @@ public class SelectRepositoryProxyImpl<K extends Serializable, V> extends Reposi
 
     @Override
     public <T> T get(Class<T> resultType) {
-        AssertUtil.notNull(resultType, "result type required");
+        Assert.notNull(resultType, "result type required");
         
         List<T> result = doGetList(resultType, LimitHandler.limit(1, 0),
                 enhanceCurdBound.getSortHandler(),
@@ -143,7 +143,7 @@ public class SelectRepositoryProxyImpl<K extends Serializable, V> extends Reposi
                 includedColumns,
                 selectColumn.distinct,
                 Collections.emptyList(),
-                CommonConstant.EMPTY_STRING);
+                XjpaConstant.EMPTY_STRING);
         return !CollectionUtils.isEmpty(result);
     }
 
@@ -151,13 +151,13 @@ public class SelectRepositoryProxyImpl<K extends Serializable, V> extends Reposi
     public boolean isExistsById(K key) {
         context.localQueryWhere().clear();
         EntityTableField primaryKeyField = context.getEntityTable().getPrimaryKeyField();
-        AssertUtil.notNull(primaryKeyField, "table does not has a Primary Key");
+        Assert.notNull(primaryKeyField, "table does not has a Primary Key");
         context.localQueryWhere().add(new XQueryWhereValue(primaryKeyField.getTableFieldMetadata().getField(), key));
 
         List<V> result = doGetList(getContext().getEntityTable().getEntityType(),
                 LimitHandler.limit(1, 0), SortHandler.empty(),
                 Collections.singletonList(primaryKeyField.getTableFieldMetadata().getField()),
-                false, Collections.emptyList(), CommonConstant.EMPTY_STRING);
+                false, Collections.emptyList(), XjpaConstant.EMPTY_STRING);
         return !CollectionUtils.isEmpty(result);
     }
 
@@ -178,11 +178,11 @@ public class SelectRepositoryProxyImpl<K extends Serializable, V> extends Reposi
                 Collections.singletonList("count(" + countColumn + ") as __count__"),
                 selectColumn.distinct,
                 Collections.emptyList(),
-                CommonConstant.EMPTY_STRING);
+                XjpaConstant.EMPTY_STRING);
 
         Map countResult = CollectionUtils.firstElement(result);
         return CollectionUtils.isEmpty(countResult) ? 0 :
-                LongUtil.toLong(countResult.getOrDefault("__count__", 0));
+                NumberUtil.parseLong(String.valueOf(countResult.getOrDefault("__count__", 0)));
     }
 
     /**

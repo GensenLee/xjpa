@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.configuration.RepositoriesConfigurationManager;
 import org.devops.data.xjpa.repository.IDeleteRepository;
 import org.devops.data.xjpa.repository.IInsertRepository;
@@ -15,7 +14,6 @@ import org.devops.data.xjpa.repository.impl.enhance.EnhanceCurdBound;
  * @date 2022/11/3
  * @description StandardCurdRepositoryProxyImpl默认工厂
  */
-@Slf4j
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultStandardCurdRepositoryProxyBeanFactory extends AbstractRepositoryProxyBeanFactory<EnhanceCurdRepositoryProxyImpl> {
 

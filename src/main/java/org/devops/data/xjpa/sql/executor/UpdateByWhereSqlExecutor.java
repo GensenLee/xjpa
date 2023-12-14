@@ -1,15 +1,14 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.constant.CommonConstant;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.exception.XjpaNoWhereException;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.UpdateByWhereQueryRequest;
 import org.devops.data.xjpa.sql.executor.result.reader.Result;
 import org.devops.data.xjpa.sql.executor.session.ExecuteSession;
 import org.devops.data.xjpa.sql.logger.SqlLogger;
-import org.devops.data.xjpa.table.EntityTable;
 import org.devops.data.xjpa.sql.where.handler.IQueryWhereHandler;
+import org.devops.data.xjpa.table.EntityTable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
  * @date 2022/10/31
  * @description 根据where条件更新
  */
-@Slf4j
 public class UpdateByWhereSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
 
     public UpdateByWhereSqlExecutor(ExecuteSession executeSession, SqlLogger sqlLogger) {
@@ -129,7 +127,7 @@ public class UpdateByWhereSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
 
         return setColumnList.stream()
                 .map(updateValueHandler::defineSetPhrase)
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
     }
 
 }

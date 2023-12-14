@@ -1,8 +1,7 @@
 package org.devops.data.xjpa.sql.result.parser;
 
 import com.alibaba.fastjson.JSON;
-import org.devops.core.utils.util.ListUtil;
-import org.devops.core.utils.util.StringUtil;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,14 +24,14 @@ public class FastjsonResultParser implements ResultParser {
 
     @Override
     public <V> List<V> parseSingleColumn(List<Map<String, Object>> rawResult, String column, Class<V> resultType) {
-        if (ListUtil.isNull(rawResult)) {
+        if (CollectionUtils.isEmpty(rawResult)) {
             return Collections.emptyList();
         }
         List<Object> columnValueList = rawResult.stream()
                 .map(map -> map.get(column))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        if (StringUtil.isEmpty(columnValueList)) {
+        if (CollectionUtils.isEmpty(columnValueList)) {
             return Collections.emptyList();
         }
         return JSON.parseArray(JSON.toJSONString(columnValueList), resultType);

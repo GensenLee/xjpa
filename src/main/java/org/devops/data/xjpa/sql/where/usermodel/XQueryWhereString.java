@@ -1,6 +1,6 @@
 package org.devops.data.xjpa.sql.where.usermodel;
 
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereString;
 import org.devops.data.xjpa.sql.where.operate.Condition;
@@ -42,7 +42,7 @@ public class XQueryWhereString implements Serializable, IQueryWhereString {
 
     @Override
     public boolean isEmpty() {
-        return StringUtil.isEmpty(value);
+        return StrUtil.isEmpty(value);
     }
 
     @Override

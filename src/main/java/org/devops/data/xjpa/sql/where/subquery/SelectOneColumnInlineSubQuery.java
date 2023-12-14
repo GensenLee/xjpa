@@ -1,9 +1,9 @@
 package org.devops.data.xjpa.sql.where.subquery;
 
-import org.devops.core.utils.util.AssertUtil;
 import org.devops.data.xjpa.sql.where.QueryWhereUtil;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.util.TableUtil;
+import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.Map;
@@ -36,8 +36,8 @@ public class SelectOneColumnInlineSubQuery implements InlineSubQuery{
         this.entityType = entityType;
         this.selectColumn = selectColumn;
         this.whereObject = whereObject;
-        AssertUtil.notNull(entityType, "invalid entityType");
-        AssertUtil.notNull(selectColumn, "invalid selectColumn");
+        Assert.notNull(entityType, "invalid entityType");
+        Assert.notNull(selectColumn, "invalid selectColumn");
     }
 
     SelectOneColumnInlineSubQuery(Class entityType, String selectColumn) {

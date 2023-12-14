@@ -1,11 +1,8 @@
 package org.devops.data.xjpa.join;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.spring.SpringContextUtil;
-import org.devops.core.utils.util.ListUtil;
-import org.devops.core.utils.util.LongUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.StrUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.lifecycle.XjpaRepositoryRegister;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
@@ -22,6 +19,8 @@ import org.devops.data.xjpa.table.TableFieldMetadata;
 import org.devops.data.xjpa.table.TableMetadata;
 import org.devops.data.xjpa.util.SqlExecutorUtil;
 import org.devops.data.xjpa.util.TableUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -32,9 +31,11 @@ import java.util.stream.Collectors;
  * @date 2023/6/21
  * @description 组合连接
  */
-@Slf4j
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class MultipleJoinModel extends AbstractJoinModel {
+
+    protected static final Logger logger = LoggerFactory.getLogger(MultipleJoinModel.class);
+
 
     private final static String LEFT = "lt";
     private final static String RIGHT = "rt";
@@ -52,13 +53,13 @@ public class MultipleJoinModel extends AbstractJoinModel {
     protected final XjpaRepositoryRegister repositoryRegister;
 
 
-    protected MultipleJoinModel(StandardJpaRepository repository, JoinType joinType, Class<?> rightEntityType) {
+    protected MultipleJoinModel(StandardJpaRepository repository, JoinType joinType, Class<?> rightEntityType, XjpaRepositoryRegister repositoryRegister) {
         super(repository, new JoinQueryWhere(),
                 new DisposableEnhanceCurdBound(new DefaultRepositoryController(repository).getContext()));
         this.leftRepository = repository;
         this.joinType = joinType;
         this.rightEntityType = rightEntityType;
-        repositoryRegister = SpringContextUtil.getBean(XjpaRepositoryRegister.class);
+        this.repositoryRegister = repositoryRegister;
     }
 
     @Override
@@ -81,19 +82,19 @@ public class MultipleJoinModel extends AbstractJoinModel {
         String orderString = formatOrderString();
         String limitString = "1";
 
-        String sql = formatSql(String.format("count(%s) as __count__", StringUtil.getDefault(includedString,"*")),
+        String sql = formatSql(String.format("count(%s) as __count__", StrUtil.emptyToDefault(includedString, "*")),
                 whereString, groupString, havingString, orderString, limitString);
 
-        log.info("count sql: {}", sql);
+        logger.info("count sql: {}", sql);
 
         List<Map> result = queryForType(sql, Map.class);
         Map countResult = CollectionUtils.firstElement(result);
         long count = Optional.ofNullable(countResult)
                 .map(ct -> ct.getOrDefault("__count__", 0L))
-                .map(LongUtil::toLong)
+                .map(v -> NumberUtil.parseLong(String.valueOf(v)))
                 .orElse(0L);
 
-        log.info("count result: {}", count);
+        logger.info("count result: {}", count);
 
         return count;
     }
@@ -107,16 +108,16 @@ public class MultipleJoinModel extends AbstractJoinModel {
         String orderString = formatOrderString();
         String limitString = "1";
 
-        String sql = formatSql(StringUtil.getDefault(includedString, "*"),
+        String sql = formatSql(StrUtil.emptyToDefault(includedString, "*"),
                 whereString, groupString, havingString, orderString, limitString);
 
-        log.info("isExist sql: {}", sql);
+        logger.info("isExist sql: {}", sql);
 
         List<Map> result = queryForType(sql, Map.class);
 
         boolean isExist = !CollectionUtils.isEmpty(result);
 
-        log.info("isExist result: {}", isExist);
+        logger.info("isExist result: {}", isExist);
 
         return isExist;
     }
@@ -132,11 +133,11 @@ public class MultipleJoinModel extends AbstractJoinModel {
 
         String sql = formatSql(includedString, whereString, groupString, havingString, orderString, limitString);
 
-        log.info("list sql: {}", sql);
+        logger.info("list sql: {}", sql);
 
         List<T> result = querySingleForType(sql, type);
 
-        log.info("total row: {}", result.size());
+        logger.info("total row: {}", result.size());
 
         return result;
     }
@@ -151,11 +152,11 @@ public class MultipleJoinModel extends AbstractJoinModel {
 
         String sql = formatSql(includedString, whereString, groupString, havingString, orderString, "1");
 
-        log.info("list sql: {}", sql);
+        logger.info("list sql: {}", sql);
 
         List<T> result = querySingleForType(sql, type);
 
-        log.info("total row: {}", result.size());
+        logger.info("total row: {}", result.size());
 
         return CollectionUtils.firstElement(result);
     }
@@ -185,11 +186,11 @@ public class MultipleJoinModel extends AbstractJoinModel {
 
         String sql = formatSql(includedString, whereString, groupString, havingString, orderString, limitString);
 
-        log.info("list sql: {}", sql);
+        logger.info("list sql: {}", sql);
 
         List<T> result = queryForType(sql, resultType);
 
-        log.info("total row: {}", result.size());
+        logger.info("total row: {}", result.size());
 
         return result;
     }
@@ -197,7 +198,7 @@ public class MultipleJoinModel extends AbstractJoinModel {
     protected <T> List<T> queryForType(String sql, Class<T> resultType) {
         List<Map<String, Object>> mapList = SqlExecutorUtil.query(sql, repository);
 
-        if (ListUtil.isNull(mapList)) {
+        if (CollectionUtils.isEmpty(mapList)) {
             return Collections.emptyList();
         }
 
@@ -213,7 +214,7 @@ public class MultipleJoinModel extends AbstractJoinModel {
     protected <T> List<T> querySingleForType(String sql, Class<T> resultType) {
         List<Map<String, Object>> mapList = SqlExecutorUtil.query(sql, repository);
 
-        if (ListUtil.isNull(mapList)) {
+        if (CollectionUtils.isEmpty(mapList)) {
             return Collections.emptyList();
         }
 
@@ -237,23 +238,23 @@ public class MultipleJoinModel extends AbstractJoinModel {
                 .append(getRightTableName()).append(" as ").append(RIGHT)
                 .append(" on ").append(formatOnString());
 
-        if (StringUtil.isNotEmpty(whereString)) {
+        if (StrUtil.isNotEmpty(whereString)) {
             stringBuilder.append(" where ").append(whereString);
         }
 
-        if (StringUtil.isNotEmpty(groupString)) {
+        if (StrUtil.isNotEmpty(groupString)) {
             stringBuilder.append(" group by ").append(groupString);
         }
 
-        if (StringUtil.isNotEmpty(havingString)) {
+        if (StrUtil.isNotEmpty(havingString)) {
             stringBuilder.append(" having ").append(havingString);
         }
 
-        if (StringUtil.isNotEmpty(orderString)) {
+        if (StrUtil.isNotEmpty(orderString)) {
             stringBuilder.append(" order by ").append(orderString);
         }
 
-        if (StringUtil.isNotEmpty(limitString)) {
+        if (StrUtil.isNotEmpty(limitString)) {
             stringBuilder.append(" limit ").append(limitString);
         }
 
@@ -271,9 +272,9 @@ public class MultipleJoinModel extends AbstractJoinModel {
                 .orElse(CollectionUtils.firstElement(includedTableColumns));
         if (tableColumn instanceof AliasTableColumn) {
             includedColumn = ((AliasTableColumn) tableColumn).getColumnAlias();
-        }else if (tableColumn instanceof JoinTableColumn) {
+        } else if (tableColumn instanceof JoinTableColumn) {
             includedColumn = ((JoinTableColumn) tableColumn).getColumn();
-        }else if (!CollectionUtils.isEmpty(enhanceCurdBound.getIncludeColumns())) {
+        } else if (!CollectionUtils.isEmpty(enhanceCurdBound.getIncludeColumns())) {
             includedColumn = String.valueOf(enhanceCurdBound.getIncludeColumns().iterator().next());
         }
         if (resultKeySet.contains(includedColumn)) {
@@ -290,13 +291,13 @@ public class MultipleJoinModel extends AbstractJoinModel {
         String result = visitAndJoiningColumns(distinctTableColumns, MultipleJoinModel.this);
         Collection<String> distinctColumns = enhanceCurdBound.getDistinctColumns();
         if (!CollectionUtils.isEmpty(distinctColumns)) {
-            if (StringUtil.isNotEmpty(result)) {
-                result = result + CommonConstant.COMMA_MARK + String.join(CommonConstant.COMMA_MARK, distinctColumns);
-            }else {
-                result = String.join(CommonConstant.COMMA_MARK, distinctColumns);
+            if (StrUtil.isNotEmpty(result)) {
+                result = result + XjpaConstant.COMMA_MARK + String.join(XjpaConstant.COMMA_MARK, distinctColumns);
+            } else {
+                result = String.join(XjpaConstant.COMMA_MARK, distinctColumns);
             }
         }
-        if (StringUtil.isNotEmpty(result)) {
+        if (StrUtil.isNotEmpty(result)) {
             return "distinct " + result;
         }
 
@@ -307,20 +308,19 @@ public class MultipleJoinModel extends AbstractJoinModel {
         // 自定义字段
         Collection includeColumns = enhanceCurdBound.getIncludeColumns();
         if (!CollectionUtils.isEmpty(includeColumns)) {
-            if (StringUtil.isNotEmpty(result)) {
-                result = result + CommonConstant.COMMA_MARK + String.join(CommonConstant.COMMA_MARK, includeColumns);
-            }else {
-                result = String.join(CommonConstant.COMMA_MARK, includeColumns);
+            if (StrUtil.isNotEmpty(result)) {
+                result = result + XjpaConstant.COMMA_MARK + String.join(XjpaConstant.COMMA_MARK, includeColumns);
+            } else {
+                result = String.join(XjpaConstant.COMMA_MARK, includeColumns);
             }
         }
 
 
-        if (StringUtil.isEmpty(result)) {
-            return CommonConstant.ASTERISK_MARK;
+        if (StrUtil.isEmpty(result)) {
+            return XjpaConstant.ASTERISK_MARK;
         }
         return result;
     }
-
 
 
     private String visitAndJoiningColumns(List<TableColumn> includedTableColumns, MultipleJoinModel joinModel) {
@@ -331,7 +331,7 @@ public class MultipleJoinModel extends AbstractJoinModel {
                     }
                     return c.getColumnLabel();
                 })
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
     }
 
     private String getLeftTableName() {
@@ -373,12 +373,12 @@ public class MultipleJoinModel extends AbstractJoinModel {
             }
         }
         return "(" + onFieldMapping.entrySet().stream()
-                .map(e -> e.getKey().getColumnLabel() + " = " +  e.getValue().getColumnLabel())
+                .map(e -> e.getKey().getColumnLabel() + " = " + e.getValue().getColumnLabel())
                 .collect(Collectors.joining(" and ")) + ")";
     }
 
     private String formatColumn(String tableAlise, String column) {
-        return tableAlise + CommonConstant.POINT_MARK + "`" + column + "`";
+        return tableAlise + XjpaConstant.POINT_MARK + "`" + column + "`";
     }
 
     private String formatWhereString() {
@@ -418,7 +418,7 @@ public class MultipleJoinModel extends AbstractJoinModel {
 
     private String formatGroupString() {
         Collection<String> groupingColumns = enhanceCurdBound.getGroupingColumns();
-        String result = String.join(CommonConstant.COMMA_MARK, groupingColumns);
+        String result = String.join(XjpaConstant.COMMA_MARK, groupingColumns);
 
         if (groupingTableColumns.isEmpty()) {
             return result;
@@ -447,13 +447,13 @@ public class MultipleJoinModel extends AbstractJoinModel {
                     }
                     return concatOrderColumn(sortSet.getColumn()) + " " + sortSet.getSortType().getOperator();
                 })
-                .collect(Collectors.joining(CommonConstant.COMMA_MARK));
+                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
     }
 
     protected String concatOrderColumn(String column) {
         String alias = findTableAliasOfColumn(column);
 
-        if (StringUtil.isEmpty(alias)) {
+        if (StrUtil.isEmpty(alias)) {
             return column;
         }
 
@@ -462,6 +462,7 @@ public class MultipleJoinModel extends AbstractJoinModel {
 
     /**
      * 查找列所在的表别名
+     *
      * @param column
      * @return
      */
@@ -473,18 +474,18 @@ public class MultipleJoinModel extends AbstractJoinModel {
         Optional<TableFieldMetadata> findOnRightOptional = findTableFieldMetadata(column, rightRepository);
 
         if (findOnLeftOptional.isPresent() && findOnRightOptional.isPresent()) {
-            log.error("the column `{}` exist in both tables {},{}", column, getLeftTableName(), getRightTableName());
+            logger.error("the column `{}` exist in both tables {},{}", column, getLeftTableName(), getRightTableName());
             throw new XjpaExecuteException("ambiguous order column: " + column);
         } else if (findOnLeftOptional.isPresent()) {
             return LEFT;
         } else if (findOnRightOptional.isPresent()) {
             return RIGHT;
         }
-        return CommonConstant.EMPTY_STRING;
+        return XjpaConstant.EMPTY_STRING;
     }
 
     /**
-     * @param column find field
+     * @param column     find field
      * @param repository find on
      * @return
      */
@@ -505,7 +506,7 @@ public class MultipleJoinModel extends AbstractJoinModel {
         if (!limitHandler.requireLimit()) {
             return null;
         }
-        return limitHandler.getStart() + CommonConstant.COMMA_MARK + limitHandler.getLimit();
+        return limitHandler.getStart() + XjpaConstant.COMMA_MARK + limitHandler.getLimit();
 
     }
 }

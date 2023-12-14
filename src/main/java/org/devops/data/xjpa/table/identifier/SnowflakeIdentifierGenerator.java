@@ -1,11 +1,9 @@
 package org.devops.data.xjpa.table.identifier;
 
-import org.devops.core.utils.exception.CommonRuntimeException;
-import org.devops.core.utils.util.IPUtil;
-import org.devops.core.utils.util.IntUtil;
-import org.devops.core.utils.util.LongUtil;
-import org.devops.core.utils.util.RandomUtil;
-import org.devops.core.utils.util.identifier.SnowflakeIdGenerator;
+
+import cn.hutool.core.net.Ipv4Util;
+import cn.hutool.core.net.NetUtil;
+import cn.hutool.core.util.RandomUtil;
 
 import java.math.BigInteger;
 
@@ -38,13 +36,14 @@ public class SnowflakeIdentifierGenerator implements IdentifierGenerator<String>
 
 
     public SnowflakeIdentifierGenerator(String key, int radix) {
-        if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX){
-            throw new CommonRuntimeException("radix 超出限制");
+        if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX) {
+            throw new IllegalArgumentException("radix 超出限制");
         }
         this.radix = radix;
-        String localIP = IPUtil.getLocalIP();
-        this.workerId = IPUtil.ipv4ToLong(localIP) % 31;
-        this.datacenterId = Math.abs(new BigInteger(getNameId(key) + RandomUtil.getFourRandNumber()).longValue() % 31);
+
+        String localIP = NetUtil.getLocalhostStr();
+        this.workerId = Ipv4Util.ipv4ToLong(localIP) % 31;
+        this.datacenterId = Math.abs(new BigInteger(getNameId(key) + RandomUtil.randomString(4)).longValue() % 31);
         this.snowflakeIdGenerator = new SnowflakeIdGenerator(workerId, datacenterId);
     }
 
@@ -74,7 +73,7 @@ public class SnowflakeIdentifierGenerator implements IdentifierGenerator<String>
             }
         }
         if (tmp.toString().compareTo(String.valueOf(Long.MAX_VALUE)) <= 0) {
-            return LongUtil.toLong(tmp.toString());
+            return Long.parseLong(tmp.toString());
         }
         BigInteger bigInteger = new BigInteger(tmp.toString());
         return bigInteger.mod(new BigInteger(String.valueOf(Long.MAX_VALUE))).longValue();

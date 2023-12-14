@@ -1,11 +1,10 @@
 package org.devops.data.xjpa.repository.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.lifecycle.Closeable;
 import org.devops.data.xjpa.lifecycle.Disposable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,8 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2022/11/9
  * @description 基于threadLocal属性管理
  */
-@Slf4j
 public class ThreadLocalRepositoryContextAttribute implements RepositoryContextAttribute, RepositoryContextObserver {
+
+    protected static final Logger logger = LoggerFactory.getLogger(ThreadLocalRepositoryContextAttribute.class);
+
 
     private final Map<String, Object> attributes;
 
@@ -36,7 +37,7 @@ public class ThreadLocalRepositoryContextAttribute implements RepositoryContextA
 
     @Override
     public void dispose() {
-        log.trace("{} dispose", this.getClass());
+        logger.trace("{} dispose", this.getClass());
 
         for (Object value : attributes.values()) {
             if (value instanceof Disposable) {

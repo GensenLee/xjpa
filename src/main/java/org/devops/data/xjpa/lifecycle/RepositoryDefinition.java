@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.lifecycle;
 
-import lombok.Getter;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
 
 /**
@@ -8,7 +7,6 @@ import org.devops.data.xjpa.configuration.RepositoryProperties;
  * @date 2022/11/19
  * @description 注册信息
  */
-@Getter
 public class RepositoryDefinition {
 
     private final String repositoryPackageName;
@@ -21,6 +19,19 @@ public class RepositoryDefinition {
         this.repositoryPackageName = repositoryPackageName;
         this.repositoryType = repositoryType;
         this.properties = properties;
+    }
+
+
+    public String getRepositoryPackageName() {
+        return repositoryPackageName;
+    }
+
+    public Class<?> getRepositoryType() {
+        return repositoryType;
+    }
+
+    public RepositoryProperties getProperties() {
+        return properties;
     }
 
     public static RepositoryDefinitionBuilder builder() {

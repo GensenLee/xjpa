@@ -1,12 +1,13 @@
 package org.devops.data.xjpa.repository.impl.enhance;
 
-import org.devops.core.utils.util.AssertUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.repository.IEnhanceRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.sql.executor.LimitHandler;
 import org.devops.data.xjpa.sql.executor.SortHandler;
 import org.devops.data.xjpa.sql.executor.SortType;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.*;
@@ -39,28 +40,28 @@ public class DisposableEnhanceCurdBound<K extends Serializable, V> extends Abstr
 
     @Override
     public IEnhanceRepository<K, V> groupByColumns(String... columns) {
-        AssertUtil.notEmpty(columns, "distinct columns must be set");
+        Assert.notEmpty(columns, "distinct columns must be set");
         this.groupByColumns.addAll(Arrays.stream(columns).collect(Collectors.toSet()));
         return this;
     }
 
     @Override
     public IEnhanceRepository<K, V> having(String havingString) {
-        AssertUtil.hasLength(havingString, "havingString must be set");
+        Assert.hasLength(havingString, "havingString must be set");
         this.havingString = havingString;
         return this;
     }
 
     @Override
     public IEnhanceRepository<K, V> distinct(String... columns) {
-        AssertUtil.notEmpty(columns, "distinct columns must be set");
+        Assert.notEmpty(columns, "distinct columns must be set");
         this.distinct.addAll(Arrays.stream(columns).collect(Collectors.toSet()));
         return this;
     }
 
     @Override
     public IEnhanceRepository<K, V> include(String... columns) {
-        AssertUtil.notEmpty(columns, "distinct columns must be set");
+        Assert.notEmpty(columns, "distinct columns must be set");
         this.includeColumns.addAll(Arrays.stream(columns).collect(Collectors.toSet()));
         return this;
     }
@@ -89,17 +90,17 @@ public class DisposableEnhanceCurdBound<K extends Serializable, V> extends Abstr
 
     @Override
     public IEnhanceRepository<K, V> orderString(String orderByString) {
-        AssertUtil.hasLength(orderByString, "empty orderString");
-        AssertUtil.isTrue(orderTypes.isEmpty(), "can not use #orderString and #orderByColumn at the same time");
+        Assert.hasLength(orderByString, "empty orderString");
+        Assert.isTrue(orderTypes.isEmpty(), "can not use #orderString and #orderByColumn at the same time");
         this.orderString = orderByString;
         return this;
     }
 
     @Override
     public IEnhanceRepository<K, V> orderByColumn(String column, SortType sortType) {
-        AssertUtil.isTrue(StringUtil.isEmpty(orderString), "can not use #orderString and #orderByColumn at the same time");
-        AssertUtil.hasLength(column, "sort column required");
-        AssertUtil.notNull(sortType, "sort type required");
+        Assert.isTrue(StrUtil.isEmpty(orderString), "can not use #orderString and #orderByColumn at the same time");
+        Assert.hasLength(column, "sort column required");
+        Assert.notNull(sortType, "sort type required");
 
         orderTypes.add(new OrderParameter(column, sortType));
         return this;
@@ -132,7 +133,7 @@ public class DisposableEnhanceCurdBound<K extends Serializable, V> extends Abstr
 
     @Override
     public String getHavingString() {
-        return StringUtil.getDefault(havingString, "");
+        return StrUtil.emptyToDefault(havingString, XjpaConstant.EMPTY_STRING);
     }
 
     @Override

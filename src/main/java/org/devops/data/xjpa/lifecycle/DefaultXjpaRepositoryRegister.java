@@ -1,11 +1,11 @@
 package org.devops.data.xjpa.lifecycle;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryProxyBeanFactoryFactory;
 import org.devops.data.xjpa.repository.impl.proxy.JdkDelegateModeXjpaRepositoryBeanProxy;
 import org.devops.data.xjpa.repository.impl.proxy.XjpaRepositoryBeanProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.*;
 import org.springframework.core.env.Environment;
@@ -20,9 +20,9 @@ import java.util.Optional;
  * @date 2022/11/19
  * @description 管理注册
  */
-@Slf4j
 @SuppressWarnings("rawtypes")
-public class DefaultXjpaRepositoryRegister implements XjpaRepositoryRegister{
+public class DefaultXjpaRepositoryRegister implements XjpaRepositoryRegister {
+    protected static final Logger logger = LoggerFactory.getLogger(DefaultXjpaRepositoryRegister.class);
 
     /**
      * 已经注册的bean, type key
@@ -109,7 +109,7 @@ public class DefaultXjpaRepositoryRegister implements XjpaRepositoryRegister{
 
         beanFactory.registerBeanDefinition(generateBeanName, beanDefinition);
 
-        log.trace("register bean [{}], name [{}]", beanType.getName(), generateBeanName);
+        logger.trace("register bean [{}], name [{}]", beanType.getName(), generateBeanName);
 
         return generateBeanName;
     }

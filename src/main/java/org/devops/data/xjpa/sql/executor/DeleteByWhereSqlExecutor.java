@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.exception.XjpaNoWhereException;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.DeleteByWhereQueryRequest;
@@ -17,7 +16,6 @@ import java.sql.SQLException;
  * @date 2022/10/31
  * @description 使用where删除
  */
-@Slf4j
 public class DeleteByWhereSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
 
     public DeleteByWhereSqlExecutor(ExecuteSession executeSession, SqlLogger sqlLogger) {

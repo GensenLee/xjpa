@@ -1,10 +1,11 @@
 package org.devops.data.xjpa.sql.executor.session;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.datasource.RepositoryDataSource;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.repository.invocation.GlobalRepositoryInvocationHandler;
-import org.springframework.transaction.NoTransactionException;
+import org.devops.data.xjpa.sql.executor.ConfigurableMultipleValueInsertSqlExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.TransactionRequiredException;
 import javax.sql.DataSource;
@@ -17,8 +18,8 @@ import java.util.List;
  * @date 2022/11/7
  * @description 基于model context控制
  */
-@Slf4j
 public class DataSourceExecuteSession implements ExecuteSession {
+    protected static final Logger logger = LoggerFactory.getLogger(DataSourceExecuteSession.class);
 
     private final RepositoryDataSource datasource;
 
@@ -41,7 +42,7 @@ public class DataSourceExecuteSession implements ExecuteSession {
             localStatementList.add(preparedStatement);
             return preparedStatement;
         } catch (SQLException e) {
-            log.error("create PreparedStatement error, sql: {}", sql);
+            logger.error("create PreparedStatement error, sql: {}", sql);
             throw new XjpaExecuteException(e);
         }
     }
@@ -55,7 +56,7 @@ public class DataSourceExecuteSession implements ExecuteSession {
             localStatementList.add(preparedStatement);
             return preparedStatement;
         } catch (SQLException e) {
-            log.error("create statement error, sql: {}", sql, e);
+            logger.error("create statement error, sql: {}", sql, e);
             throw new XjpaExecuteException(e);
         }
     }
@@ -70,10 +71,10 @@ public class DataSourceExecuteSession implements ExecuteSession {
                 return;
             }
         } catch (SQLException e) {
-            log.error("requireTransactionEnabled error", e);
+            logger.error("requireTransactionEnabled error", e);
         }
         if (!GlobalRepositoryInvocationHandler.get().isTransactionHandled()) {
-            log.error("A write operation forces the start of a transaction");
+            logger.error("A write operation forces the start of a transaction");
             throw new TransactionRequiredException("require transaction enabled");
         }
     }
@@ -93,7 +94,7 @@ public class DataSourceExecuteSession implements ExecuteSession {
     public void dispose() {
 
         try {
-            log.trace("closing connection");
+            logger.trace("closing connection");
             for (PreparedStatement preparedStatement : localStatementList) {
                 if (!preparedStatement.isClosed()) {
                     preparedStatement.close();
@@ -101,7 +102,7 @@ public class DataSourceExecuteSession implements ExecuteSession {
             }
             datasource.close();
         } catch (Exception e) {
-            log.error("connection close error", e);
+            logger.error("connection close error", e);
         } finally {
             localStatementList.clear();
         }

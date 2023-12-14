@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.sql.executor.query;
 
-import lombok.Getter;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.table.EntityTable;
 import org.devops.data.xjpa.table.EntityTableField;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
  * @date 2022/10/31
  * @description 根据实体类更新
  */
-@Getter
 public class UpdateByEntityQueryRequest<K, V> extends AbstractQueryRequest<K, V> {
 
     final List<V> entityValues;
@@ -50,5 +48,9 @@ public class UpdateByEntityQueryRequest<K, V> extends AbstractQueryRequest<K, V>
         StorageTableFieldContainer storageTableFieldContainer = new StorageTableFieldContainer(tableFieldList);
         return new EntityTable<>(finalEntityTable.getTableName(), finalEntityTable.getEntityType(),
                 finalEntityTable.getKeyType(), storageTableFieldContainer);
+    }
+
+    public List<V> getEntityValues() {
+        return entityValues;
     }
 }

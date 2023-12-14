@@ -1,8 +1,9 @@
 package org.devops.data.xjpa.configuration.configsource;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.exception.XjpaInitException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,7 +12,9 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -19,8 +22,8 @@ import java.util.stream.Collectors;
  * @date 2022/11/26
  * @description 全路径扫描
  */
-@Slf4j
 public class ClasspathRepositoryBeanFactory implements RepositoryBeanFactory {
+    protected static final Logger logger = LoggerFactory.getLogger(ClasspathRepositoryBeanFactory.class);
 
 
     private final DefaultListableBeanFactory beanFactory;
@@ -51,12 +54,12 @@ public class ClasspathRepositoryBeanFactory implements RepositoryBeanFactory {
 
             Class<?> beanType = beanDefinition.getResolvableType().resolve();
             if (beanType == null) {
-                if (StringUtil.isNotEmpty(beanDefinition.getBeanClassName())) {
+                if (StrUtil.isNotEmpty(beanDefinition.getBeanClassName())) {
                     beanType = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(), null);
-                }else if (StringUtil.isNotEmpty(beanDefinition.getFactoryBeanName())){
+                }else if (StrUtil.isNotEmpty(beanDefinition.getFactoryBeanName())){
                     beanType = ClassUtils.resolveClassName(beanDefinition.getFactoryBeanName(), null);
                 }else {
-                    log.error("can not find bean class, beanName {}", componentBeanName);
+                    logger.error("can not find bean class, beanName {}", componentBeanName);
                     continue;
                 }
             }

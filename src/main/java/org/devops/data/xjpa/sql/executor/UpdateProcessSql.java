@@ -1,9 +1,5 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -16,9 +12,6 @@ import java.util.Map;
  * @date 2022/10/31
  * @description 更新sql
  */
-@Setter(AccessLevel.PACKAGE)
-@EqualsAndHashCode
-@Getter
 public class UpdateProcessSql implements ProcessSql{
 
     /**
@@ -139,5 +132,50 @@ public class UpdateProcessSql implements ProcessSql{
             }
             return processSql;
         }
+    }
+
+
+    void setFinalSql(String finalSql) {
+        this.finalSql = finalSql;
+    }
+
+    void setWhereString(String whereString) {
+        this.whereString = whereString;
+    }
+
+    void setWhereParameters(Map<Integer, Object> whereParameters) {
+        this.whereParameters = whereParameters;
+    }
+
+    void setSetValueString(String setValueString) {
+        this.setValueString = setValueString;
+    }
+
+    void setSetValueParameters(Map<Integer, Object> setValueParameters) {
+        this.setValueParameters = setValueParameters;
+    }
+
+    public String getFinalSql() {
+        return finalSql;
+    }
+
+    public Map<Integer, Object> getFinalSqlParameters() {
+        return finalSqlParameters;
+    }
+
+    public String getWhereString() {
+        return whereString;
+    }
+
+    public Map<Integer, Object> getWhereParameters() {
+        return whereParameters;
+    }
+
+    public String getSetValueString() {
+        return setValueString;
+    }
+
+    public Map<Integer, Object> getSetValueParameters() {
+        return setValueParameters;
     }
 }

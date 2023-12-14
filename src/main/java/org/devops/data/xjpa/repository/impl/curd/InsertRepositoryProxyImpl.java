@@ -1,11 +1,9 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import org.devops.core.utils.util.AssertUtil;
 import org.devops.data.xjpa.repository.IInsertRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.RepositoryContextBean;
 import org.devops.data.xjpa.sql.executor.AbstractSqlExecutor;
-import org.devops.data.xjpa.sql.executor.ConfigurableMultipleValueInsertSqlExecutor;
 import org.devops.data.xjpa.sql.executor.SingleValueInsertSqlExecutor;
 import org.devops.data.xjpa.sql.executor.command.DefaultQueryExecuteRequestCommandAcceptor;
 import org.devops.data.xjpa.sql.executor.command.QueryExecuteRequestCommandAcceptor;
@@ -15,13 +13,11 @@ import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.InsertQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.QueryRequestBuilder;
 import org.devops.data.xjpa.table.EntityTable;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author GENSEN
@@ -48,7 +44,7 @@ public class InsertRepositoryProxyImpl<K extends Serializable, V> extends Reposi
 
     @Override
     public int insert(Collection<V> entities) {
-        AssertUtil.notEmpty(entities, "empty insert list");
+        Assert.notEmpty(entities, "empty insert list");
 
 
         EntityTable<K, V> entityTable = getContext().getEntityTable();

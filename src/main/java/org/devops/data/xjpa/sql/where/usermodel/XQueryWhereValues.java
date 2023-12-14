@@ -1,9 +1,9 @@
 package org.devops.data.xjpa.sql.where.usermodel;
 
-import org.devops.core.utils.util.ListUtil;
-import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereNodes;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
+import org.devops.data.xjpa.sql.where.operate.Condition;
+import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -48,7 +48,7 @@ public class XQueryWhereValues implements Serializable, IQueryWhereNodes {
 
     @Override
     public boolean isEmpty() {
-        return ListUtil.isNull(values) || values.stream().allMatch(IQueryWhereObject::isEmpty);
+        return CollectionUtils.isEmpty(values) || values.stream().allMatch(IQueryWhereObject::isEmpty);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class XQueryWhereValues implements Serializable, IQueryWhereNodes {
 
     @Override
     public boolean contains(IQueryWhereObject whereObject) {
-        if (ListUtil.isNull(children())) {
+        if (CollectionUtils.isEmpty(children())) {
             return false;
         }
 

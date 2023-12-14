@@ -1,6 +1,6 @@
 package org.devops.data.xjpa.join;
 
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.sql.where.QueryWhereUtil;
 import org.devops.data.xjpa.sql.where.XQueryWhereExplorer;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereNode;
@@ -47,7 +47,7 @@ public class JoinTableQueryWhereExplorer extends XQueryWhereExplorer {
         Object value = node.getValue();
         String columnLabel = getTypeIfMatch(value);
 
-        if (StringUtil.isNotEmpty(columnLabel)) {
+        if (StrUtil.isNotEmpty(columnLabel)) {
             value = columnLabel;
         }
 
@@ -63,7 +63,7 @@ public class JoinTableQueryWhereExplorer extends XQueryWhereExplorer {
     protected String getColumnLabel(IQueryWhereNode node) {
         Object column = node.getColumn();
         String columnLabel = getTypeIfMatch(column);
-        if (StringUtil.isNotEmpty(columnLabel)) {
+        if (StrUtil.isNotEmpty(columnLabel)) {
             return columnLabel;
         }
         return super.getColumnLabel(node);

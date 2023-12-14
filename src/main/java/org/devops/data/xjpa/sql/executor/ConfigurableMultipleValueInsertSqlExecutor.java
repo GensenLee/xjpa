@@ -1,11 +1,10 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.constant.CommonConstant;
-import org.devops.core.utils.util.BeanUtil;
-import org.devops.core.utils.util.IntUtil;
-import org.devops.core.utils.util.ListUtil;
-import org.devops.core.utils.util.StringUtil;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.StrUtil;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
@@ -15,9 +14,10 @@ import org.devops.data.xjpa.sql.executor.session.ExecuteSession;
 import org.devops.data.xjpa.sql.logger.SqlLogger;
 import org.devops.data.xjpa.table.EntityTable;
 import org.devops.data.xjpa.table.EntityTableField;
-import org.devops.data.xjpa.table.TableFieldMetadata;
 import org.devops.data.xjpa.util.EntityInsertUtil;
 import org.devops.data.xjpa.util.PstParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.ResultSet;
@@ -37,8 +37,9 @@ import java.util.stream.Collectors;
  * @date 2022/10/31
  * @description 多值语句插入，速度优于 SingleValueInsertSqlExecutor，可配置单条sql value 最大长度
  */
-@Slf4j
 public class ConfigurableMultipleValueInsertSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
+
+    protected static final Logger logger = LoggerFactory.getLogger(ConfigurableMultipleValueInsertSqlExecutor.class);
 
     public static final String insertValueLengthLimitName = "devops.data.xjpa.insertValueLengthLimit";
 
@@ -77,7 +78,9 @@ public class ConfigurableMultipleValueInsertSqlExecutor<K, V> extends AbstractSq
 
         Consumer<ResultSet> keysConsumer = EntityInsertUtil.generatedKeysOrGetKeysConsumer(context);
 
-        List<List<V>> partitions = ListUtil.partition(entityValues, getInsertValueLengthLimit(insertQueryRequest.getContext()));
+        int insertValueLengthLimit = getInsertValueLengthLimit(insertQueryRequest.getContext());
+
+        List<List<V>> partitions = ListUtil.partition(entityValues, insertValueLengthLimit);
 
 
         // 这里需要使用队列维持 entityValues 列表顺序
@@ -116,11 +119,12 @@ public class ConfigurableMultipleValueInsertSqlExecutor<K, V> extends AbstractSq
         if (attribute == null) {
             return insertValueLengthLimit;
         }
-        if (IntUtil.toInt(attribute) <= 0) {
-            log.error("invalid property value [{}] for [{}]", attribute, insertValueLengthLimitName);
+        int anInt = NumberUtil.parseInt(String.valueOf(attribute));
+        if (anInt <= 0) {
+            logger.error("invalid property value [{}] for [{}]", attribute, insertValueLengthLimitName);
             return insertValueLengthLimit;
         } else {
-            insertValueLengthLimit = IntUtil.toInt(attribute);
+            insertValueLengthLimit = anInt;
         }
         return insertValueLengthLimit;
     }
@@ -131,7 +135,7 @@ public class ConfigurableMultipleValueInsertSqlExecutor<K, V> extends AbstractSq
      */
     private boolean getIgnoreGenerateKey(RepositoryContext<K, V> context) {
         Object attribute = context.getAttribute(ignoreGenerateKeyName);
-        if (StringUtil.isEmpty(attribute)) {
+        if (StrUtil.isEmpty((CharSequence) attribute)) {
             return ignoreGenerateKey;
         }
         return ignoreGenerateKey = Boolean.parseBoolean(String.valueOf(attribute));
@@ -200,11 +204,11 @@ public class ConfigurableMultipleValueInsertSqlExecutor<K, V> extends AbstractSq
             finalSqlStringBuilder.append("(")
                     .append(entityTableFieldList.stream()
                             .map(entityTableField -> "`" + entityTableField.getTableFieldMetadata().getField() + "`")
-                            .collect(Collectors.joining(CommonConstant.COMMA_MARK)))
+                            .collect(Collectors.joining(XjpaConstant.COMMA_MARK)))
                     .append(") values (")
                     .append(entityTableFieldList.stream()
                             .map(entityTableField -> "?")
-                            .collect(Collectors.joining(CommonConstant.COMMA_MARK)))
+                            .collect(Collectors.joining(XjpaConstant.COMMA_MARK)))
                     .append(");");
 
 
@@ -216,7 +220,7 @@ public class ConfigurableMultipleValueInsertSqlExecutor<K, V> extends AbstractSq
                     continue;
                 }
 
-                Object value = BeanUtil.getValue(entityValue, entityTableField.getJavaField().getName());
+                Object value = BeanUtil.getFieldValue(entityValue, entityTableField.getJavaField().getName());
 
                 entityInsertValues.put(index++, new PstParameter(value, entityTableField));
 //                // 批量插入时全部实体记录都通过同一条sql插入，所以要保持字段长度一致，null需要替换成默认值
@@ -245,7 +249,7 @@ public class ConfigurableMultipleValueInsertSqlExecutor<K, V> extends AbstractSq
      */
     private List<EntityTableField> filterNullFields(EntityTable<K, V> entityTable, V entity) {
         return entityTable.getEntityTableFieldList().stream()
-                .filter(entityTableField -> BeanUtil.getValue(entity, entityTableField.getJavaField().getName()) != null)
+                .filter(entityTableField -> BeanUtil.getFieldValue(entity, entityTableField.getJavaField().getName()) != null)
                 .collect(Collectors.toList());
     }
 

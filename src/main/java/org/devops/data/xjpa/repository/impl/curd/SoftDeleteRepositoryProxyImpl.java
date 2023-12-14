@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import org.devops.core.utils.util.AssertUtil;
 import org.devops.data.xjpa.repository.IDeleteRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.RepositoryContextBean;
@@ -11,7 +10,6 @@ import org.devops.data.xjpa.sql.executor.UpdateValueHandler;
 import org.devops.data.xjpa.sql.executor.command.DefaultQueryExecuteRequestCommandAcceptor;
 import org.devops.data.xjpa.sql.executor.command.QueryExecuteRequestCommandAcceptor;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
-import org.devops.data.xjpa.sql.executor.query.DeleteByIdQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.QueryRequestBuilder;
 import org.devops.data.xjpa.sql.executor.query.UpdateByWhereQueryRequest;
 import org.devops.data.xjpa.sql.where.handler.DefaultQueryWhereHandler;
@@ -23,11 +21,11 @@ import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereValue;
 import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereValues;
 import org.devops.data.xjpa.table.EntityTableField;
 import org.devops.data.xjpa.util.EntityUtil;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,14 +53,14 @@ public class SoftDeleteRepositoryProxyImpl<K extends Serializable, V> extends Re
 
     @Override
     public int deleteById(K key) {
-        AssertUtil.notNull(key, "delete key required");
+        Assert.notNull(key, "delete key required");
 
         return deleteByIds(Collections.singletonList(key));
     }
 
     @Override
     public int deleteByIds(Collection<K> keys) {
-        AssertUtil.notEmpty(keys, "delete keys required");
+        Assert.notEmpty(keys, "delete keys required");
 
         EntityTableField primaryKeyField = context.getEntityTable().getPrimaryKeyField();
 
@@ -100,7 +98,7 @@ public class SoftDeleteRepositoryProxyImpl<K extends Serializable, V> extends Re
 
     @Override
     public int delete() {
-        AssertUtil.isTrue(!context.localQueryWhere().isEmpty(), "delete where condition required");
+        Assert.isTrue(!context.localQueryWhere().isEmpty(), "delete where condition required");
 
         UpdateValueHandler updateValueHandler = SingleColumnUpdateValueHandler.builder()
                 .targetColumn(softDeleteConfig.getColumn())

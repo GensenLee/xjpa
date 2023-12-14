@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.repository.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.lifecycle.Closeable;
 import org.devops.data.xjpa.lifecycle.Disposable;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
@@ -12,7 +11,6 @@ import java.io.Serializable;
  * @date 2022/11/8
  * @description 线程隔离模式委托
  */
-@Slf4j
 public class ThreadLocalRepositoryDelegateHolder<K extends Serializable, V> implements RepositoryDelegateHolder<K, V> {
 
     private final RepositoryProxyBeanFactory<StandardJpaRepository<K, V>> modelRepositoryFactory;

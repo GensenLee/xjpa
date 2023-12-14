@@ -1,10 +1,8 @@
 package org.devops.data.xjpa.sql.executor;
 
-import lombok.Getter;
 import org.devops.data.xjpa.repository.UpdateOperator;
 
 
-@Getter
 public class UpdateColumn {
     /**
      * 目标更新列
@@ -22,5 +20,22 @@ public class UpdateColumn {
         this.updateOperator = updateOperator;
         this.operatorColumn = operatorColumn;
         this.value = value;
+    }
+
+
+    public String getTargetColumn() {
+        return targetColumn;
+    }
+
+    public UpdateOperator getUpdateOperator() {
+        return updateOperator;
+    }
+
+    public String getOperatorColumn() {
+        return operatorColumn;
+    }
+
+    public Object getValue() {
+        return value;
     }
 }

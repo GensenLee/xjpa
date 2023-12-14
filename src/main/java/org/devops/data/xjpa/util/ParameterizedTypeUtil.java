@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.util;
 
-import org.devops.core.utils.exception.CommonRuntimeException;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -32,7 +31,7 @@ public class ParameterizedTypeUtil {
                 .filter(t -> superType.isAssignableFrom((Class<?>) ((ParameterizedType) t).getRawType()))
                 .findFirst();
         if (!typeOptional.isPresent()) {
-            throw new CommonRuntimeException(superType + " register error, parameterizedType is not present");
+            throw new IllegalArgumentException(superType + " register error, parameterizedType is not present");
         }
 
         ParameterizedType superType = (ParameterizedType) typeOptional.get();

@@ -1,6 +1,8 @@
 package org.devops.data.xjpa.util;
 
-import org.devops.core.utils.util.BeanUtil;
+import cn.hutool.core.bean.BeanDesc;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.PropDesc;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Field;
@@ -29,7 +31,7 @@ public class EntityUtil {
         }
 
         return entities.stream()
-                .map(entity -> (K) BeanUtil.getValue(entity, keyField.getName()))
+                .map(entity -> (K) BeanUtil.getFieldValue(entity, keyField.getName()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
@@ -37,18 +39,19 @@ public class EntityUtil {
 
     /**
      * 获取实体类的属性
+     *
      * @param entityType
      * @return
      */
     public static List<Field> getFields(Class<?> entityType) {
-        List<Field> allField = BeanUtil.getAllField(entityType);
+        BeanDesc beanDesc = BeanUtil.getBeanDesc(entityType);
         Map<String, Field> result = new HashMap<>();
-        for (Field field : allField) {
-            if (Modifier.isStatic(field.getModifiers())) {
+        for (PropDesc propDesc : beanDesc.getProps()) {
+            if (Modifier.isStatic(propDesc.getField().getModifiers())) {
                 continue;
             }
-            if (!result.containsKey(field.getName()) || field.getDeclaringClass() == entityType) {
-                result.put(field.getName(), field);
+            if (!result.containsKey(propDesc.getFieldName()) || propDesc.getField().getDeclaringClass() == entityType) {
+                result.put(propDesc.getFieldName(), propDesc.getField());
             }
         }
         return Collections.unmodifiableList(new ArrayList<>(result.values()));

@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.configuration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.datasource.LazyCacheSingleDataSource;
 import org.devops.data.xjpa.datasource.RepositoryDataSource;
 import org.devops.data.xjpa.exception.XjpaInitException;
@@ -9,6 +8,8 @@ import org.devops.data.xjpa.table.EntityTable;
 import org.devops.data.xjpa.table.LazyLoadTableFieldContainer;
 import org.devops.data.xjpa.table.TableFieldContainer;
 import org.devops.data.xjpa.util.TableUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.env.Environment;
 
@@ -23,8 +24,10 @@ import java.util.Map;
  */
 
 @SuppressWarnings("rawtypes")
-@Slf4j
 public class EnvironmentRepositoriesConfigurationManager extends AbstractRepositoriesConfigurationManager {
+
+    protected static final Logger logger = LoggerFactory.getLogger(EnvironmentRepositoriesConfigurationManager.class);
+
 
     /**
      * repositoryType -> entityTable
@@ -60,7 +63,7 @@ public class EnvironmentRepositoriesConfigurationManager extends AbstractReposit
     private EntityTable getEntityTable(Class repositoryType) {
         EntityTable entityTable = entityTableCache.get(repositoryType);
         if (entityTable == null) {
-            log.error("can not find EntityTable in cache");
+            logger.error("can not find EntityTable in cache");
             throw new XjpaInitException("entity table init error");
         }
         return entityTable;

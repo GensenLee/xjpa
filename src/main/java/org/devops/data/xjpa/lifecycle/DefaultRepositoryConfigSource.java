@@ -1,6 +1,5 @@
 package org.devops.data.xjpa.lifecycle;
 
-import lombok.extern.slf4j.Slf4j;
 import org.devops.data.xjpa.configuration.*;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.env.Environment;
@@ -10,7 +9,6 @@ import org.springframework.core.env.Environment;
  * @date 2022/11/4
  * @description 默认配置源
  */
-@Slf4j
 public class DefaultRepositoryConfigSource implements RepositoryConfigSource {
 
     private DefaultListableBeanFactory registry;

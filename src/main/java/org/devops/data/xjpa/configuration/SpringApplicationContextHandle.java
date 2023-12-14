@@ -1,9 +1,9 @@
 package org.devops.data.xjpa.configuration;
 
-import org.devops.core.utils.util.AssertUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.Assert;
 
 /**
  * @author GENSEN
@@ -23,7 +23,7 @@ public class SpringApplicationContextHandle implements ApplicationContextAware {
 
 
     public static ApplicationContext getApplicationContext() {
-        AssertUtil.notNull(applicationContext, "application uninitialized");
+        Assert.notNull(applicationContext, "application uninitialized");
         return applicationContext;
     }
 }

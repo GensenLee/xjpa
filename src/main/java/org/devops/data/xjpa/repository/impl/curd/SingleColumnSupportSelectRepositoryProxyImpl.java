@@ -1,7 +1,5 @@
 package org.devops.data.xjpa.repository.impl.curd;
 
-import org.devops.core.utils.util.AssertUtil;
-import org.devops.data.xjpa.repository.ISingleColumnSupportSelectRepository;
 import org.devops.data.xjpa.repository.IStandardSelectRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.RepositoryContextBean;
@@ -12,6 +10,7 @@ import org.devops.data.xjpa.sql.executor.command.SingleColumnQueryExecuteRequest
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.query.QueryRequestBuilder;
 import org.devops.data.xjpa.sql.executor.query.SelectQueryRequest;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -90,23 +89,23 @@ public class SingleColumnSupportSelectRepositoryProxyImpl<K extends Serializable
 
     @Override
     public <T> List<T> listSingleColumn(Class<T> clazz) {
-        AssertUtil.notNull(clazz, "result type required");
+        Assert.notNull(clazz, "result type required");
         EnhanceCurdBound enhanceCurdBound = getContext().getSingleton(EnhanceCurdBound.class);
 
         Collection<String> includeColumns = enhanceCurdBound.getIncludeColumns();
         Collection<String> distinctColumns = enhanceCurdBound.getDistinctColumns();
 
-        AssertUtil.isTrue(CollectionUtils.isEmpty(distinctColumns) || CollectionUtils.isEmpty(includeColumns),
+        Assert.isTrue(CollectionUtils.isEmpty(distinctColumns) || CollectionUtils.isEmpty(includeColumns),
                 "can not use #distinct and #include at the same time");
 
-        AssertUtil.isTrue(!CollectionUtils.isEmpty(distinctColumns) || !CollectionUtils.isEmpty(includeColumns),
+        Assert.isTrue(!CollectionUtils.isEmpty(distinctColumns) || !CollectionUtils.isEmpty(includeColumns),
                 "please specify a column use #distinct or #include");
 
         boolean distinct = !CollectionUtils.isEmpty(distinctColumns);
         if (distinct) {
-            AssertUtil.isTrue(distinctColumns.size() == 1, "distinct column length must be 1");
+            Assert.isTrue(distinctColumns.size() == 1, "distinct column length must be 1");
         }else {
-            AssertUtil.isTrue(includeColumns.size() == 1, "include column length must be 1");
+            Assert.isTrue(includeColumns.size() == 1, "include column length must be 1");
         }
 
 

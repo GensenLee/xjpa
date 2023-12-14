@@ -1,9 +1,10 @@
 package org.devops.data.xjpa.configuration.configsource;
 
-import lombok.extern.slf4j.Slf4j;
+import cn.hutool.core.util.StrUtil;
 import org.devops.data.xjpa.annotation.XjpaDataSource;
 import org.devops.data.xjpa.exception.XjpaInitException;
-import org.devops.core.utils.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.cglib.proxy.Enhancer;
@@ -24,12 +25,12 @@ import java.util.stream.Collectors;
  * @date 2022/11/4
  * @description 注解方式数据源扫描 XjpaDataSource
  */
-@Slf4j
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
 // 该类会导致数据源配置丢失，得到一个空的数据源对象，没有url、username、password等。
 // 原因未明
 public class AnnotationXjpaDataSourceScanner implements XjpaDataSourceScanner {
+    protected static final Logger logger = LoggerFactory.getLogger(AnnotationXjpaDataSourceScanner.class);
 
 
     @Override
@@ -65,8 +66,8 @@ public class AnnotationXjpaDataSourceScanner implements XjpaDataSourceScanner {
         Map<String, XjpaDataSource> datasourceAnnotationMap = new HashMap<>();
         for (String dataSourceName : configDataSourceNameList) {
             BeanDefinition beanDefinition = beanFactory.getBeanDefinition(dataSourceName);
-            if (StringUtil.isEmpty(beanDefinition.getFactoryBeanName())) {
-                log.error("datasource bind error, beanDefinition.getFactoryBeanName() = {}", beanDefinition.getFactoryBeanName());
+            if (StrUtil.isEmpty(beanDefinition.getFactoryBeanName())) {
+                logger.error("datasource bind error, beanDefinition.getFactoryBeanName() = {}", beanDefinition.getFactoryBeanName());
                 throw new XjpaInitException("datasource bind error");
             }
             try {
@@ -85,7 +86,7 @@ public class AnnotationXjpaDataSourceScanner implements XjpaDataSourceScanner {
                         .findFirst()
                         .orElse(null);
                 if (datasourceDeclaredMethod == null) {
-                    log.error("datasource bind error, datasourceDeclaredMethod == null, factoryClass={}, beanDefinition.getFactoryMethodName()={}",
+                    logger.error("datasource bind error, datasourceDeclaredMethod == null, factoryClass={}, beanDefinition.getFactoryMethodName()={}",
                             factoryType, beanDefinition.getFactoryMethodName());
                     throw new XjpaInitException("datasource bind error");
                 }

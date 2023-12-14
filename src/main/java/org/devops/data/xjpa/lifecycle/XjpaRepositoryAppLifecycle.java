@@ -1,14 +1,15 @@
 package org.devops.data.xjpa.lifecycle;
 
-import lombok.extern.slf4j.Slf4j;
-import org.devops.core.utils.constant.CommonConstant;
 import org.devops.data.xjpa.configuration.RepositoriesConfigurationManager;
 import org.devops.data.xjpa.configuration.RepositoryGlobalConfig;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
+import org.devops.data.xjpa.constant.XjpaConstant;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.curd.StaticRepositoryProxyBeanFactoryFactory;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.*;
 import org.springframework.boot.logging.LogLevel;
@@ -27,8 +28,8 @@ import org.springframework.util.StopWatch;
  * @description 功能应用生命周期
  */
 @SuppressWarnings("rawtypes")
-@Slf4j
 public class XjpaRepositoryAppLifecycle implements Lifecycle, ImportBeanDefinitionRegistrar, Ordered {
+    protected static final Logger logger = LoggerFactory.getLogger(XjpaRepositoryAppLifecycle.class);
 
     private volatile boolean isRunning = false;
     private final RepositoryConfigSource configSource;
@@ -53,7 +54,7 @@ public class XjpaRepositoryAppLifecycle implements Lifecycle, ImportBeanDefiniti
         beanFactory = (DefaultListableBeanFactory) registry;
         ((DefaultRepositoryConfigSource) configSource).setRegistry(beanFactory);
         configSource.refresh();
-        StaticRepositoryProxyBeanFactoryFactory implProxyBeanFactoryFactory = new StaticRepositoryProxyBeanFactoryFactory(configSource.getConfigManager());
+        StaticRepositoryProxyBeanFactoryFactory implProxyBeanFactoryFactory = new StaticRepositoryProxyBeanFactoryFactory(configSource.getConfigManager(), beanFactory);
 
         register = new DefaultXjpaRepositoryRegister(environment, beanFactory, implProxyBeanFactoryFactory);
 
@@ -67,7 +68,7 @@ public class XjpaRepositoryAppLifecycle implements Lifecycle, ImportBeanDefiniti
         start();
         stopWatch.stop();
 
-        log.trace(stopWatch.shortSummary());
+        logger.trace(stopWatch.shortSummary());
 
     }
 
@@ -89,10 +90,10 @@ public class XjpaRepositoryAppLifecycle implements Lifecycle, ImportBeanDefiniti
         beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
 
         String generateBeanName = importBeanNameGenerator.generateBeanName(beanDefinition, beanDefinitionRegistry);
-        generateBeanName += (CommonConstant.POUND_MARK + bean.hashCode());
+        generateBeanName += (XjpaConstant.POUND_MARK + bean.hashCode());
         beanDefinitionRegistry.registerBeanDefinition(generateBeanName, beanDefinition);
 
-        log.trace("register xjpa [{}], name [{}]", beanType.getName(), generateBeanName);
+        logger.trace("register xjpa [{}], name [{}]", beanType.getName(), generateBeanName);
     }
 
 
@@ -102,7 +103,7 @@ public class XjpaRepositoryAppLifecycle implements Lifecycle, ImportBeanDefiniti
 
         scanBaseConfigPackage();
 
-        log.trace("xjpa running");
+        logger.trace("xjpa running");
     }
 
 
@@ -149,7 +150,7 @@ public class XjpaRepositoryAppLifecycle implements Lifecycle, ImportBeanDefiniti
                 continue;
             }
 
-            log.debug("scan package {}", basePackage);
+            logger.debug("scan package {}", basePackage);
 
             Set<Class<? extends StandardJpaRepository>> subTypesOfModelRepository = ReflectionsUtil.getSubTypesOfStandardJpaRepository(basePackage);
             RepositoriesConfigurationManager repositoriesConfigurationManager = configSource.getConfigManager();
@@ -173,7 +174,7 @@ public class XjpaRepositoryAppLifecycle implements Lifecycle, ImportBeanDefiniti
                 register.register(repositoryDefinition);
             }
 
-            log.debug("total register of package {}: {}", basePackage, subTypesOfModelRepository.size());
+            logger.debug("total register of package {}: {}", basePackage, subTypesOfModelRepository.size());
         }
 
     }*/
@@ -215,14 +216,14 @@ public class XjpaRepositoryAppLifecycle implements Lifecycle, ImportBeanDefiniti
 
     @Override
     public synchronized void stop() {
-        log.trace("xjpa stopping");
+        logger.trace("xjpa stopping");
         for (Object proxy : register.registeredRepositories()) {
             if (proxy instanceof RepositoryContext) {
                 ((RepositoryContext) proxy).close();
             }
         }
         isRunning = false;
-        log.trace("xjpa stopped");
+        logger.trace("xjpa stopped");
     }
 
     @Override
