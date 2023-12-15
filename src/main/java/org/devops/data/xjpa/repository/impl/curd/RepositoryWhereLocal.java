@@ -47,7 +47,11 @@ public class RepositoryWhereLocal<K, V> implements IRepositoryWhereAttach {
 
     @Override
     public RepositoryWhereLocal<K, V> where(String column, Object value) {
-        return where(column, value, WhereOperator.EQ, Condition.AND);
+        if (value instanceof Iterable || value.getClass().isArray()) {
+            return where(column, value, WhereOperator.IN, Condition.AND);
+        }else {
+            return where(column, value, WhereOperator.EQ, Condition.AND);
+        }
     }
 
     @Override
