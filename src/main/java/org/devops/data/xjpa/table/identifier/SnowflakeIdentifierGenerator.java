@@ -43,7 +43,7 @@ public class SnowflakeIdentifierGenerator implements IdentifierGenerator<String>
 
         String localIP = NetUtil.getLocalhostStr();
         this.workerId = Ipv4Util.ipv4ToLong(localIP) % 31;
-        this.datacenterId = Math.abs(new BigInteger(getNameId(key) + RandomUtil.randomString(4)).longValue() % 31);
+        this.datacenterId = Math.abs(new BigInteger(String.valueOf(getNameId(key) + RandomUtil.randomLong(4))).longValue() % 31);
         this.snowflakeIdGenerator = new SnowflakeIdGenerator(workerId, datacenterId);
     }
 
