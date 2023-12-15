@@ -80,14 +80,14 @@ public class SoftDeleteConfig {
      * @return 已删除的标记值
      */
     private String deletedValue(RepositoryGlobalConfig globalConfig) {
-        return StrUtil.emptyToDefault(StrUtil.toString(globalConfig.getProperty(RepositoryGlobalConfig.SOFT_DELETE_DELETED_VALUE)), "1");
+        return StrUtil.emptyToDefault(globalConfig.getProperty(RepositoryGlobalConfig.SOFT_DELETE_DELETED_VALUE), "1");
     }
 
     /**
      * @return 未删除的标记值
      */
     private String notDeleteValue(RepositoryGlobalConfig globalConfig) {
-        return StrUtil.emptyToDefault(StrUtil.toString(globalConfig.getProperty(RepositoryGlobalConfig.SOFT_DELETE_NOT_DELETE_VALUE)), "0");
+        return StrUtil.emptyToDefault(globalConfig.getProperty(RepositoryGlobalConfig.SOFT_DELETE_NOT_DELETE_VALUE), "0");
     }
 
 
