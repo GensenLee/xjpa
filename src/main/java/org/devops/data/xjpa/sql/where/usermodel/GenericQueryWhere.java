@@ -4,8 +4,8 @@ import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObjectVisitor;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
+import org.springframework.util.Assert;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -73,6 +73,60 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
             return this;
         }
         return addToValue(value);
+    }
+
+    @Override
+    public IQueryWhereAcceptor<Column> andBetween(Column column, Object start, Object end) {
+        Assert.notNull(start, "between start value required");
+        Assert.notNull(end, "between end value required");
+
+        return and(column, new Object[]{start, end}, WhereOperator.BETWEEN);
+    }
+
+    @Override
+    public IQueryWhereAcceptor<Column> andNotBetween(Column column, Object start, Object end) {
+        Assert.notNull(start, "between start value required");
+        Assert.notNull(end, "between end value required");
+
+        return and(column, new Object[]{start, end}, WhereOperator.NOT_BETWEEN);
+    }
+
+    @Override
+    public IQueryWhereAcceptor<Column> andNotNull(Column column) {
+        return and(column, null, WhereOperator.IS_NOT_NULL);
+    }
+
+    @Override
+    public IQueryWhereAcceptor<Column> andIsNull(Column column) {
+        return and(column, null, WhereOperator.IS_NULL);
+    }
+
+    @Override
+    public IQueryWhereAcceptor<Column> orBetween(Column column, Object start, Object end) {
+        Assert.notNull(start, "between start value required");
+        Assert.notNull(end, "between end value required");
+
+        return or(column, new Object[]{start, end}, WhereOperator.BETWEEN);
+    }
+
+
+
+    @Override
+    public IQueryWhereAcceptor<Column> orNotBetween(Column column, Object start, Object end) {
+        Assert.notNull(start, "between start value required");
+        Assert.notNull(end, "between end value required");
+
+        return or(column, new Object[]{start, end}, WhereOperator.NOT_BETWEEN);
+    }
+
+    @Override
+    public IQueryWhereAcceptor<Column> orNotNull(Column column) {
+        return or(column, null, WhereOperator.IS_NOT_NULL);
+    }
+
+    @Override
+    public IQueryWhereAcceptor<Column> orIsNull(Column column) {
+        return or(column, null, WhereOperator.IS_NULL);
     }
 
     @Override
