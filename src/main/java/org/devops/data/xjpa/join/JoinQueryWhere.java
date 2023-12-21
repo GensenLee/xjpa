@@ -5,6 +5,7 @@ import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.devops.data.xjpa.sql.where.usermodel.GenericQueryWhere;
+import org.devops.data.xjpa.sql.where.usermodel.IQueryWhereAcceptor;
 
 import java.io.IOException;
 
@@ -38,13 +39,9 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
 
     @Override
     public JoinQueryWhere put(IQueryWhereObject value) {
-//        throw new UnsupportedOperationException("put IQueryWhereObject");
         return (JoinQueryWhere) super.put(value);
     }
 
-//    public JoinQueryWhere put(JoinQueryWhere value) {
-//        return (JoinQueryWhere) super.put(value);
-//    }
 
     @Override
     public JoinQueryWhere andEqual(TableColumn column, Object value) {
@@ -64,6 +61,46 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
     @Override
     public JoinQueryWhere and(TableColumn column, Object value, WhereOperator operator) {
         return (JoinQueryWhere) super.and(column, value, operator);
+    }
+
+    @Override
+    public JoinQueryWhere andBetween(TableColumn column, Object start, Object end) {
+        return (JoinQueryWhere) super.andBetween(column, start, end);
+    }
+
+    @Override
+    public JoinQueryWhere andNotBetween(TableColumn column, Object start, Object end) {
+        return (JoinQueryWhere) super.andNotBetween(column, start, end);
+    }
+
+    @Override
+    public JoinQueryWhere andNotNull(TableColumn column) {
+        return (JoinQueryWhere) super.andNotNull(column);
+    }
+
+    @Override
+    public JoinQueryWhere andIsNull(TableColumn column) {
+        return (JoinQueryWhere) super.andIsNull(column);
+    }
+
+    @Override
+    public JoinQueryWhere orBetween(TableColumn column, Object start, Object end) {
+        return (JoinQueryWhere) super.orBetween(column, start, end);
+    }
+
+    @Override
+    public JoinQueryWhere orNotBetween(TableColumn column, Object start, Object end) {
+        return (JoinQueryWhere) super.orNotBetween(column, start, end);
+    }
+
+    @Override
+    public JoinQueryWhere orNotNull(TableColumn column) {
+        return (JoinQueryWhere) super.orNotNull(column);
+    }
+
+    @Override
+    public JoinQueryWhere orIsNull(TableColumn column) {
+        return (JoinQueryWhere) super.orIsNull(column);
     }
 
     @Override

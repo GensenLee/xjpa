@@ -73,6 +73,46 @@ public class QueryWhere extends GenericQueryWhere<String> {
     }
 
     @Override
+    public QueryWhere andBetween(String column, Object start, Object end) {
+        return (QueryWhere) super.andBetween(column, start, end);
+    }
+
+    @Override
+    public QueryWhere andNotBetween(String column, Object start, Object end) {
+        return (QueryWhere) super.andNotBetween(column, start, end);
+    }
+
+    @Override
+    public QueryWhere andNotNull(String column) {
+        return (QueryWhere) super.andNotNull(column);
+    }
+
+    @Override
+    public QueryWhere andIsNull(String column) {
+        return (QueryWhere) super.andIsNull(column);
+    }
+
+    @Override
+    public QueryWhere orBetween(String column, Object start, Object end) {
+        return (QueryWhere) super.orBetween(column, start, end);
+    }
+
+    @Override
+    public QueryWhere orNotBetween(String column, Object start, Object end) {
+        return (QueryWhere) super.orNotBetween(column, start, end);
+    }
+
+    @Override
+    public QueryWhere orNotNull(String column) {
+        return (QueryWhere) super.orNotNull(column);
+    }
+
+    @Override
+    public QueryWhere orIsNull(String column) {
+        return (QueryWhere) super.orIsNull(column);
+    }
+
+    @Override
     public QueryWhere equal(String column, Object value, Condition condition) {
         return (QueryWhere) super.equal(column, value, condition);
     }
