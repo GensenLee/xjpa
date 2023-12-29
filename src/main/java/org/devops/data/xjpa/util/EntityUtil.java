@@ -33,7 +33,7 @@ public class EntityUtil {
         return entities.stream()
                 .map(entity -> (K) BeanUtil.getFieldValue(entity, keyField.getName()))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
 
