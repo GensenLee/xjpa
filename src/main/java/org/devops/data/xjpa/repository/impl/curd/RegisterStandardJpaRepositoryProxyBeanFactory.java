@@ -51,9 +51,6 @@ public class RegisterStandardJpaRepositoryProxyBeanFactory extends AbstractRepos
     }
 
 
-    public SqlLogger getSqlLogger() {
-        return sqlLogger;
-    }
 
     /**
      * @param repositoryType

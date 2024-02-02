@@ -2,6 +2,8 @@ package org.devops.data.xjpa.sql.executor.query;
 
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,14 +13,14 @@ import java.util.List;
  */
 public class InsertQueryRequest<K, V> extends AbstractQueryRequest<K, V> {
 
-    final List<V> entityValues;
+    final Collection<V> entityValues;
 
-    public InsertQueryRequest(RepositoryContext<K, V> context, List<V> entityValues) {
+    public InsertQueryRequest(RepositoryContext<K, V> context, Collection<V> entityValues) {
         super(context);
         this.entityValues = entityValues;
     }
 
     public List<V> getEntityValues() {
-        return entityValues;
+        return new ArrayList<>(entityValues);
     }
 }
