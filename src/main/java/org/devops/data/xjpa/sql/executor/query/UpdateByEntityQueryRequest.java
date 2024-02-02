@@ -7,6 +7,8 @@ import org.devops.data.xjpa.table.StorageTableFieldContainer;
 import org.devops.data.xjpa.table.TableFieldMetadata;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,9 +20,9 @@ import java.util.stream.Collectors;
  */
 public class UpdateByEntityQueryRequest<K, V> extends AbstractQueryRequest<K, V> {
 
-    final List<V> entityValues;
+    final Collection<V> entityValues;
 
-    public UpdateByEntityQueryRequest(RepositoryContext<K, V> context, List<V> entityValues) {
+    public UpdateByEntityQueryRequest(RepositoryContext<K, V> context, Collection<V> entityValues) {
         super(context);
         this.entityValues = entityValues;
     }
@@ -51,6 +53,6 @@ public class UpdateByEntityQueryRequest<K, V> extends AbstractQueryRequest<K, V>
     }
 
     public List<V> getEntityValues() {
-        return entityValues;
+        return new ArrayList<>(entityValues);
     }
 }
