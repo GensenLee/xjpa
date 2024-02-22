@@ -47,4 +47,10 @@ public class DefaultUpdateRequest implements UpdateRequest {
         updateColumnList.add(new UpdateColumn(targetColumn, operatorColumn, updateOperator, value));
         return this;
     }
+
+    @Override
+    public UpdateRequest setNull(String targetColumn) {
+        updateColumnList.add(new UpdateColumn(targetColumn, null, UpdateOperator.SET_NULL, null));
+        return this;
+    }
 }

@@ -56,6 +56,8 @@ public class MultipleColumnUpdateValueHandler implements UpdateValueHandler {
             case ADD:case SUB:case MCL:case DIV:
                 String optColumn = StrUtil.isNotEmpty(updateColumn.getOperatorColumn()) ? updateColumn.getOperatorColumn() : targetColumn;
                 return String.format("`%s` = (`%s` %s ?)", targetColumn, optColumn, updateColumn.getUpdateOperator().getOperator());
+            case SET_NULL:
+                return String.format("`%s` = NULL", targetColumn);
             default:
                 return UpdateValueHandler.super.defineSetPhrase(targetColumn);
         }

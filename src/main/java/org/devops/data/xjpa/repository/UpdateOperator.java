@@ -26,7 +26,12 @@ public enum UpdateOperator {
     /**
      * 除
      */
-    DIV("/");
+    DIV("/"),
+
+    /**
+     * 设为NULL
+     */
+    SET_NULL("NULL");
 
     private final String operator;
 

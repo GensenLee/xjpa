@@ -74,7 +74,7 @@ public class UpdateByWhereSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
         UpdateProcessSql.ProcessSqlBuilder processSqlBuilder = UpdateProcessSql.builder();
 
         Map<Integer, Object> setValues = new HashMap<>();
-        String setValueColumnString = concatSetValueColumns(updateValueHandler, setValues);
+        String setValueColumnString = concatSetValueColumns(updateValueHandler, setValues, entityTable);
         processSqlBuilder.withSetValueString(setValueColumnString)
                 .withSetValueParameters(setValues);
 
@@ -103,31 +103,30 @@ public class UpdateByWhereSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
     /**
      * @param updateValueHandler
      * @param setValues
+     * @param entityTable
      * @return
      */
-    private String concatSetValueColumns(UpdateValueHandler updateValueHandler, Map<Integer, Object> setValues) {
-
-        List<String> setColumnList = new ArrayList<>();
+    private String concatSetValueColumns(UpdateValueHandler updateValueHandler, Map<Integer, Object> setValues, EntityTable<K, V> entityTable) {
 
         Map<Integer, Object> updateValues = updateValueHandler.updateValues();
 
         List<String> columnList = updateValueHandler.updateColumnList();
+
+        List<String> setStringList = new ArrayList<>();
+
         for (int i = 0; i < columnList.size(); i++) {
             String column = columnList.get(i);
             Object value = updateValues.get(i + 1);
             if (value != null) {
-                setColumnList.add(column);
                 setValues.put(i + 1, value);
+                setStringList.add(updateValueHandler.defineSetPhrase(column));
+            }else {
+                setStringList.add(updateValueHandler.defineSetPhrase(column));
             }
         }
 
-        if (setColumnList.isEmpty()) {
-            return null;
-        }
 
-        return setColumnList.stream()
-                .map(updateValueHandler::defineSetPhrase)
-                .collect(Collectors.joining(XjpaConstant.COMMA_MARK));
+        return String.join(XjpaConstant.COMMA_MARK, setStringList);
     }
 
 }
