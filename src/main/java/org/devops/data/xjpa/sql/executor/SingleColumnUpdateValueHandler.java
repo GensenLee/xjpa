@@ -53,6 +53,8 @@ public class SingleColumnUpdateValueHandler implements UpdateValueHandler {
             case ADD:case SUB:case MCL:case DIV:
                 String optColumn = StrUtil.isNotEmpty(operatorColumn) ? operatorColumn : targetColumn;
                 return String.format("`%s` = (`%s` %s ?)", targetColumn, optColumn, updateOperator.getOperator());
+            case SET_NULL:
+                return String.format("`%s` = NULL", targetColumn);
             default:
                 return UpdateValueHandler.super.defineSetPhrase(targetColumn);
         }

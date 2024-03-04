@@ -29,6 +29,8 @@ public interface UpdateRequest {
         return add(targetColumn, UpdateOperator.EQ, value);
     }
 
+    UpdateRequest setNull(String targetColumn);
+
     /**
      * @return 构造器
      */
