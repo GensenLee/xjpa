@@ -1,5 +1,6 @@
 package org.devops.data.xjpa.sql.where.subquery;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -8,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2023/1/15
  * @description 内嵌子查询
  */
-public interface InlineSubQuery {
+public interface InlineSubQuery extends Serializable {
 
     /**
      * @param explicit 是否打印条件值

@@ -4,6 +4,8 @@ import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 
+import java.io.Serializable;
+
 /**
  * @author GENSEN
  * @date 2022/9/7
@@ -18,13 +20,13 @@ public interface IQueryWhereAcceptor<Column> {
          */
     IQueryWhereAcceptor<Column> put(IQueryWhereObject value);
 
-    IQueryWhereAcceptor<Column> andEqual(Column column, Object value);
+    <T extends Serializable> IQueryWhereAcceptor<Column> andEqual(Column column, T value);
 
-    IQueryWhereAcceptor<Column> andIn(Column column, Object value);
+    <T extends Iterable> IQueryWhereAcceptor<Column> andIn(Column column, T value);
 
-    IQueryWhereAcceptor<Column> andBetween(Column column, Object start, Object end);
+    <T extends Serializable> IQueryWhereAcceptor<Column> andBetween(Column column, T start, T end);
 
-    IQueryWhereAcceptor<Column> andNotBetween(Column column, Object start, Object end);
+    <T extends Serializable> IQueryWhereAcceptor<Column> andNotBetween(Column column, T start, T end);
 
     IQueryWhereAcceptor<Column> andNotNull(Column column);
 
@@ -34,13 +36,13 @@ public interface IQueryWhereAcceptor<Column> {
 
     IQueryWhereAcceptor<Column> and(Column column, Object value, WhereOperator operator);
 
-    IQueryWhereAcceptor<Column> orEqual(Column column, Object value);
+    <T extends Serializable> IQueryWhereAcceptor<Column> orEqual(Column column, T value);
 
-    IQueryWhereAcceptor<Column> orIn(Column column, Object value);
+    <T extends Iterable> IQueryWhereAcceptor<Column> orIn(Column column, T value);
 
-    IQueryWhereAcceptor<Column> orBetween(Column column, Object start, Object end);
+    <T extends Serializable> IQueryWhereAcceptor<Column> orBetween(Column column, T start, T end);
 
-    IQueryWhereAcceptor<Column> orNotBetween(Column column, Object start, Object end);
+    <T extends Serializable> IQueryWhereAcceptor<Column> orNotBetween(Column column, T start, T end);
 
     IQueryWhereAcceptor<Column> orNotNull(Column column);
 
@@ -50,7 +52,7 @@ public interface IQueryWhereAcceptor<Column> {
 
     IQueryWhereAcceptor<Column> or(Column column, Object value, WhereOperator operator);
 
-    IQueryWhereAcceptor<Column> equal(Column column, Object value, Condition condition);
+    <T extends Serializable> IQueryWhereAcceptor<Column> equal(Column column, T value, Condition condition);
 
     IQueryWhereAcceptor<Column> add(Column column, Object value, WhereOperator operator, Condition condition);
 }

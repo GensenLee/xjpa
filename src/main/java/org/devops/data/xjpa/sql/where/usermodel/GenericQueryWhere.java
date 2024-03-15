@@ -6,6 +6,7 @@ import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.springframework.util.Assert;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +30,7 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
     public GenericQueryWhere() {
     }
 
-    public GenericQueryWhere(Column column, Object value) {
+    public <T extends Serializable>  GenericQueryWhere(Column column, T value) {
         this(column, value, WhereOperator.EQ);
     }
 
@@ -76,7 +77,7 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
     }
 
     @Override
-    public IQueryWhereAcceptor<Column> andBetween(Column column, Object start, Object end) {
+    public <T extends Serializable> IQueryWhereAcceptor<Column> andBetween(Column column, T start, T end) {
         Assert.notNull(start, "between start value required");
         Assert.notNull(end, "between end value required");
 
@@ -84,7 +85,7 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
     }
 
     @Override
-    public IQueryWhereAcceptor<Column> andNotBetween(Column column, Object start, Object end) {
+    public <T extends Serializable> IQueryWhereAcceptor<Column> andNotBetween(Column column, T start, T end) {
         Assert.notNull(start, "between start value required");
         Assert.notNull(end, "between end value required");
 
@@ -102,7 +103,7 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
     }
 
     @Override
-    public IQueryWhereAcceptor<Column> orBetween(Column column, Object start, Object end) {
+    public <T extends Serializable> IQueryWhereAcceptor<Column> orBetween(Column column, T start, T end) {
         Assert.notNull(start, "between start value required");
         Assert.notNull(end, "between end value required");
 
@@ -112,7 +113,7 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
 
 
     @Override
-    public IQueryWhereAcceptor<Column> orNotBetween(Column column, Object start, Object end) {
+    public <T extends Serializable> IQueryWhereAcceptor<Column> orNotBetween(Column column, T start, T end) {
         Assert.notNull(start, "between start value required");
         Assert.notNull(end, "between end value required");
 
@@ -130,12 +131,12 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
     }
 
     @Override
-    public GenericQueryWhere<Column> andEqual(Column column, Object value) {
+    public <T extends Serializable> GenericQueryWhere<Column> andEqual(Column column, T value) {
         return add(column, value, WhereOperator.EQ, Condition.AND);
     }
 
     @Override
-    public GenericQueryWhere<Column> andIn(Column column, Object value) {
+    public <T extends Iterable> GenericQueryWhere<Column> andIn(Column column, T value) {
         return and(column, value, WhereOperator.IN);
     }
 
@@ -155,12 +156,12 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
     }
 
     @Override
-    public GenericQueryWhere<Column> orEqual(Column column, Object value) {
+    public <T extends Serializable> GenericQueryWhere<Column> orEqual(Column column, T value) {
         return add(column, value, WhereOperator.EQ, Condition.OR);
     }
 
     @Override
-    public GenericQueryWhere<Column> orIn(Column column, Object value) {
+    public <T extends Iterable> GenericQueryWhere<Column> orIn(Column column, T value) {
         return or(column, value, WhereOperator.IN);
     }
 
@@ -180,7 +181,7 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
     }
 
     @Override
-    public GenericQueryWhere<Column> equal(Column column, Object value, Condition condition) {
+    public <T extends Serializable> GenericQueryWhere<Column> equal(Column column, T value, Condition condition) {
         return add(column, value, WhereOperator.EQ, condition);
     }
 
@@ -197,7 +198,7 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
         return put(value);
     }
 
-    public GenericQueryWhere<Column> add(boolean valid, Column column, Object value) {
+    public <T extends Serializable> GenericQueryWhere<Column> add(boolean valid, Column column, T value) {
         if (!valid) {
             return this;
         }
@@ -218,7 +219,7 @@ public abstract class GenericQueryWhere<Column> implements QueryWhereModel<Colum
         return and(column, value, operator);
     }
 
-    public GenericQueryWhere<Column> add(boolean valid, Column column, Object value, Condition condition) {
+    public <T extends Serializable> GenericQueryWhere<Column> add(boolean valid, Column column, T value, Condition condition) {
         if (!valid) {
             return this;
         }

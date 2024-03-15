@@ -9,6 +9,7 @@ import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -171,7 +172,7 @@ public abstract class AbstractJoinModel implements JoinModel {
     }
 
     @Override
-    public JoinModel where(TableColumn column, Object value, WhereOperator operator, Condition condition) {
+    public <T extends Serializable> JoinModel where(TableColumn column, T value, WhereOperator operator, Condition condition) {
         rootWhere.add(column, value, operator, condition);
         return this;
     }

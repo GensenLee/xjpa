@@ -5,6 +5,8 @@ import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 
+import java.io.Serializable;
+
 public class QueryWhere extends GenericQueryWhere<String> {
 
     public QueryWhere() {
@@ -15,15 +17,15 @@ public class QueryWhere extends GenericQueryWhere<String> {
         super(whereObject);
     }
 
-    public QueryWhere(String column, Object value) {
+    public <T extends Serializable> QueryWhere(String column, T value) {
         super(column, value);
     }
 
-    public QueryWhere(String column, Object value, WhereOperator operator) {
+    public <T extends Serializable> QueryWhere(String column, T value, WhereOperator operator) {
         super(column, value, operator);
     }
 
-    public QueryWhere(String column, Object value, WhereOperator operator, Condition condition) {
+    public <T extends Serializable> QueryWhere(String column, T value, WhereOperator operator, Condition condition) {
         super(column, value, operator, condition);
     }
 
@@ -33,12 +35,12 @@ public class QueryWhere extends GenericQueryWhere<String> {
     }
 
     @Override
-    public QueryWhere andEqual(String column, Object value) {
+    public <T extends Serializable> QueryWhere andEqual(String column, T value) {
         return (QueryWhere) super.andEqual(column, value);
     }
 
     @Override
-    public QueryWhere andIn(String column, Object value) {
+    public <T extends Iterable> QueryWhere andIn(String column, T value) {
         return (QueryWhere) super.andIn(column, value);
     }
 
@@ -53,12 +55,12 @@ public class QueryWhere extends GenericQueryWhere<String> {
     }
 
     @Override
-    public QueryWhere orEqual(String column, Object value) {
+    public <T extends Serializable> QueryWhere orEqual(String column, T value) {
         return (QueryWhere) super.orEqual(column, value);
     }
 
     @Override
-    public QueryWhere orIn(String column, Object value) {
+    public <T extends Iterable> QueryWhere orIn(String column, T value) {
         return (QueryWhere) super.orIn(column, value);
     }
 
@@ -73,12 +75,12 @@ public class QueryWhere extends GenericQueryWhere<String> {
     }
 
     @Override
-    public QueryWhere andBetween(String column, Object start, Object end) {
+    public <T extends Serializable> QueryWhere andBetween(String column, T start, T end) {
         return (QueryWhere) super.andBetween(column, start, end);
     }
 
     @Override
-    public QueryWhere andNotBetween(String column, Object start, Object end) {
+    public <T extends Serializable> QueryWhere andNotBetween(String column, T start, T end) {
         return (QueryWhere) super.andNotBetween(column, start, end);
     }
 
@@ -93,12 +95,12 @@ public class QueryWhere extends GenericQueryWhere<String> {
     }
 
     @Override
-    public QueryWhere orBetween(String column, Object start, Object end) {
+    public <T extends Serializable> QueryWhere orBetween(String column, T start, T end) {
         return (QueryWhere) super.orBetween(column, start, end);
     }
 
     @Override
-    public QueryWhere orNotBetween(String column, Object start, Object end) {
+    public <T extends Serializable> QueryWhere orNotBetween(String column, T start, T end) {
         return (QueryWhere) super.orNotBetween(column, start, end);
     }
 
@@ -113,7 +115,7 @@ public class QueryWhere extends GenericQueryWhere<String> {
     }
 
     @Override
-    public QueryWhere equal(String column, Object value, Condition condition) {
+    public <T extends Serializable> QueryWhere equal(String column, T value, Condition condition) {
         return (QueryWhere) super.equal(column, value, condition);
     }
 
@@ -128,7 +130,7 @@ public class QueryWhere extends GenericQueryWhere<String> {
     }
 
     @Override
-    public QueryWhere add(boolean valid, String column, Object value) {
+    public <T extends Serializable> QueryWhere add(boolean valid, String column, T value) {
         return (QueryWhere) super.add(valid, column, value);
     }
 
@@ -143,7 +145,7 @@ public class QueryWhere extends GenericQueryWhere<String> {
     }
 
     @Override
-    public QueryWhere add(boolean valid, String column, Object value, Condition condition) {
+    public <T extends Serializable> QueryWhere add(boolean valid, String column, T value, Condition condition) {
         return (QueryWhere) super.add(valid, column, value, condition);
     }
 

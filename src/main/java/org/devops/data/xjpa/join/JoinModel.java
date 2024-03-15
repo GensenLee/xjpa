@@ -5,6 +5,7 @@ import org.devops.data.xjpa.sql.executor.SortType;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -61,13 +62,13 @@ public interface JoinModel extends IEnhanceRepository {
      * @param condition
      * @return
      */
-    JoinModel where(TableColumn column, Object value, WhereOperator operator, Condition condition);
+    <T extends Serializable> JoinModel where(TableColumn column, T value, WhereOperator operator, Condition condition);
 
-    default JoinModel where(TableColumn column, Object value, WhereOperator operator){
+    default <T extends Serializable>  JoinModel where(TableColumn column, T value, WhereOperator operator){
         return where(column, value, operator, Condition.AND);
     }
 
-    default JoinModel where(TableColumn column, Object value){
+    default <T extends Serializable> JoinModel where(TableColumn column, T value){
         return where(column, value, WhereOperator.EQ, Condition.AND);
     }
 
