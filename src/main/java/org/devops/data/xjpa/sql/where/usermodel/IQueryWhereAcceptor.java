@@ -3,6 +3,7 @@ package org.devops.data.xjpa.sql.where.usermodel;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
+import org.devops.data.xjpa.sql.where.subquery.InlineSubQuery;
 
 import java.io.Serializable;
 
@@ -23,6 +24,8 @@ public interface IQueryWhereAcceptor<Column> {
     <T extends Serializable> IQueryWhereAcceptor<Column> andEqual(Column column, T value);
 
     <T extends Iterable> IQueryWhereAcceptor<Column> andIn(Column column, T value);
+
+    IQueryWhereAcceptor<Column> andIn(Column column, InlineSubQuery value);
 
     <T extends Serializable> IQueryWhereAcceptor<Column> andBetween(Column column, T start, T end);
 

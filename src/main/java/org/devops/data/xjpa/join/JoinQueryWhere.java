@@ -4,6 +4,7 @@ import org.devops.data.xjpa.sql.where.XQueryWhereExplorer;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
+import org.devops.data.xjpa.sql.where.subquery.InlineSubQuery;
 import org.devops.data.xjpa.sql.where.usermodel.GenericQueryWhere;
 import org.devops.data.xjpa.sql.where.usermodel.IQueryWhereAcceptor;
 
@@ -53,6 +54,12 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
     public <T extends Iterable> JoinQueryWhere andIn(TableColumn column, T value) {
         return (JoinQueryWhere) super.andIn(column, value);
     }
+
+    @Override
+    public JoinQueryWhere andIn(TableColumn column, InlineSubQuery value) {
+        return (JoinQueryWhere) super.and(column, value, WhereOperator.IN);
+    }
+
 
     @Override
     public JoinQueryWhere and(TableColumn column, WhereOperator operator) {

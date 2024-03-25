@@ -62,9 +62,9 @@ public interface JoinModel extends IEnhanceRepository {
      * @param condition
      * @return
      */
-    <T extends Serializable> JoinModel where(TableColumn column, T value, WhereOperator operator, Condition condition);
+     JoinModel where(TableColumn column, Object value, WhereOperator operator, Condition condition);
 
-    default <T extends Serializable>  JoinModel where(TableColumn column, T value, WhereOperator operator){
+    default JoinModel where(TableColumn column, Object value, WhereOperator operator){
         return where(column, value, operator, Condition.AND);
     }
 

@@ -4,6 +4,7 @@ import org.devops.data.xjpa.sql.where.XQueryWhereExplorer;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
+import org.devops.data.xjpa.sql.where.subquery.InlineSubQuery;
 
 import java.io.Serializable;
 
@@ -42,6 +43,11 @@ public class QueryWhere extends GenericQueryWhere<String> {
     @Override
     public <T extends Iterable> QueryWhere andIn(String column, T value) {
         return (QueryWhere) super.andIn(column, value);
+    }
+
+    @Override
+    public QueryWhere andIn(String column, InlineSubQuery value) {
+        return (QueryWhere) super.and(column, value, WhereOperator.IN);
     }
 
     @Override

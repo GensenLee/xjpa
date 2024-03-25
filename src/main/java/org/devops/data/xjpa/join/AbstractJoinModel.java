@@ -172,7 +172,7 @@ public abstract class AbstractJoinModel implements JoinModel {
     }
 
     @Override
-    public <T extends Serializable> JoinModel where(TableColumn column, T value, WhereOperator operator, Condition condition) {
+    public JoinModel where(TableColumn column, Object value, WhereOperator operator, Condition condition) {
         rootWhere.add(column, value, operator, condition);
         return this;
     }
