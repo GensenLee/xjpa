@@ -20,10 +20,10 @@ public interface QueryWhereModel<Column> extends Serializable, IQueryWhereObject
     QueryWhereModel<Column> put(IQueryWhereObject value);
 
     @Override
-    QueryWhereModel<Column> andEqual(Column column, Object value);
+    <T extends Serializable> QueryWhereModel<Column> andEqual(Column column, T value);
 
     @Override
-    QueryWhereModel<Column> andIn(Column column, Object value);
+    <T extends Iterable> QueryWhereModel<Column> andIn(Column column, T value);
 
     @Override
     QueryWhereModel<Column> and(Column column, WhereOperator operator);
@@ -32,10 +32,10 @@ public interface QueryWhereModel<Column> extends Serializable, IQueryWhereObject
     QueryWhereModel<Column> and(Column column, Object value, WhereOperator operator);
 
     @Override
-    QueryWhereModel<Column> orEqual(Column column, Object value);
+    <T extends Serializable> QueryWhereModel<Column> orEqual(Column column, T value);
 
     @Override
-    QueryWhereModel<Column> orIn(Column column, Object value);
+    <T extends Iterable> QueryWhereModel<Column> orIn(Column column, T value);
 
     @Override
     QueryWhereModel<Column> or(Column column, WhereOperator operator);
@@ -44,7 +44,7 @@ public interface QueryWhereModel<Column> extends Serializable, IQueryWhereObject
     QueryWhereModel<Column> or(Column column, Object value, WhereOperator operator);
 
     @Override
-    QueryWhereModel<Column> equal(Column column, Object value, Condition condition);
+    <T extends Serializable> QueryWhereModel<Column> equal(Column column, T value, Condition condition);
 
     @Override
     QueryWhereModel<Column> add(Column column, Object value, WhereOperator operator, Condition condition);
