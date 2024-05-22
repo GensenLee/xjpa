@@ -9,6 +9,7 @@ import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**

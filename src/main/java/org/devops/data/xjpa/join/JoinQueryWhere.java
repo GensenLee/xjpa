@@ -4,10 +4,12 @@ import org.devops.data.xjpa.sql.where.XQueryWhereExplorer;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
 import org.devops.data.xjpa.sql.where.operate.Condition;
 import org.devops.data.xjpa.sql.where.operate.WhereOperator;
+import org.devops.data.xjpa.sql.where.subquery.InlineSubQuery;
 import org.devops.data.xjpa.sql.where.usermodel.GenericQueryWhere;
 import org.devops.data.xjpa.sql.where.usermodel.IQueryWhereAcceptor;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * @author GENSEN
@@ -24,15 +26,15 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
         super();
     }
 
-    public JoinQueryWhere(TableColumn column, Object value) {
+    public <T extends Serializable> JoinQueryWhere(TableColumn column, T value) {
         super(column, value);
     }
 
-    public JoinQueryWhere(TableColumn column, Object value, WhereOperator operator) {
+    public <T extends Serializable> JoinQueryWhere(TableColumn column, T value, WhereOperator operator) {
         super(column, value, operator);
     }
 
-    public JoinQueryWhere(TableColumn column, Object value, WhereOperator operator, Condition condition) {
+    public <T extends Serializable> JoinQueryWhere(TableColumn column, T value, WhereOperator operator, Condition condition) {
         super(column, value, operator, condition);
     }
 
@@ -44,14 +46,20 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
 
 
     @Override
-    public JoinQueryWhere andEqual(TableColumn column, Object value) {
+    public <T extends Serializable> JoinQueryWhere andEqual(TableColumn column, T value) {
         return (JoinQueryWhere) super.andEqual(column, value);
     }
 
     @Override
-    public JoinQueryWhere andIn(TableColumn column, Object value) {
+    public <T extends Iterable> JoinQueryWhere andIn(TableColumn column, T value) {
         return (JoinQueryWhere) super.andIn(column, value);
     }
+
+    @Override
+    public JoinQueryWhere andIn(TableColumn column, InlineSubQuery value) {
+        return (JoinQueryWhere) super.and(column, value, WhereOperator.IN);
+    }
+
 
     @Override
     public JoinQueryWhere and(TableColumn column, WhereOperator operator) {
@@ -64,12 +72,12 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
     }
 
     @Override
-    public JoinQueryWhere andBetween(TableColumn column, Object start, Object end) {
+    public <T extends Serializable> JoinQueryWhere andBetween(TableColumn column, T start, T end) {
         return (JoinQueryWhere) super.andBetween(column, start, end);
     }
 
     @Override
-    public JoinQueryWhere andNotBetween(TableColumn column, Object start, Object end) {
+    public <T extends Serializable> JoinQueryWhere andNotBetween(TableColumn column, T start, T end) {
         return (JoinQueryWhere) super.andNotBetween(column, start, end);
     }
 
@@ -84,12 +92,12 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
     }
 
     @Override
-    public JoinQueryWhere orBetween(TableColumn column, Object start, Object end) {
+    public <T extends Serializable> JoinQueryWhere orBetween(TableColumn column, T start, T end) {
         return (JoinQueryWhere) super.orBetween(column, start, end);
     }
 
     @Override
-    public JoinQueryWhere orNotBetween(TableColumn column, Object start, Object end) {
+    public <T extends Serializable> JoinQueryWhere orNotBetween(TableColumn column, T start, T end) {
         return (JoinQueryWhere) super.orNotBetween(column, start, end);
     }
 
@@ -104,12 +112,12 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
     }
 
     @Override
-    public JoinQueryWhere orEqual(TableColumn column, Object value) {
+    public <T extends Serializable> JoinQueryWhere orEqual(TableColumn column, T value) {
         return (JoinQueryWhere) super.orEqual(column, value);
     }
 
     @Override
-    public JoinQueryWhere orIn(TableColumn column, Object value) {
+    public <T extends Iterable> JoinQueryWhere orIn(TableColumn column, T value) {
         return (JoinQueryWhere) super.orIn(column, value);
     }
 
@@ -124,7 +132,7 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
     }
 
     @Override
-    public JoinQueryWhere equal(TableColumn column, Object value, Condition condition) {
+    public <T extends Serializable> JoinQueryWhere equal(TableColumn column, T value, Condition condition) {
         return (JoinQueryWhere) super.equal(column, value, condition);
     }
 
@@ -139,7 +147,7 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
     }
 
     @Override
-    public JoinQueryWhere add(boolean valid, TableColumn column, Object value) {
+    public <T extends Serializable> JoinQueryWhere add(boolean valid, TableColumn column, T value) {
         return (JoinQueryWhere) super.add(valid, column, value);
     }
 
@@ -154,7 +162,7 @@ public class JoinQueryWhere extends GenericQueryWhere<TableColumn> {
     }
 
     @Override
-    public JoinQueryWhere add(boolean valid, TableColumn column, Object value, Condition condition) {
+    public <T extends Serializable> JoinQueryWhere add(boolean valid, TableColumn column, T value, Condition condition) {
         return (JoinQueryWhere) super.add(valid, column, value, condition);
     }
 
