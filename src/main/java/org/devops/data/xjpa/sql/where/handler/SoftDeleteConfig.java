@@ -53,8 +53,8 @@ public class SoftDeleteConfig {
     private boolean enabled(RepositoryGlobalConfig globalConfig, RepositoryProperties properties) {
         TableSetting tableSetting = AnnotationUtils.findAnnotation(properties.getEntityTable().getEntityType(), TableSetting.class);
 
-        if (tableSetting != null && tableSetting.disableSoftDelete()) {
-            return false;
+        if (tableSetting != null && tableSetting.logicDelete()) {
+            return true;
         }
 
         String enabled = StrUtil.toString(globalConfig.getProperty(RepositoryGlobalConfig.SOFT_DELETE_ENABLED));

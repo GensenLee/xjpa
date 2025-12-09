@@ -1,7 +1,5 @@
 package org.devops.data.xjpa.annotation;
 
-import org.springframework.core.annotation.AliasFor;
-
 import java.lang.annotation.*;
 
 /**
@@ -22,13 +20,8 @@ public @interface TableSetting {
     String ddlPath() default "";
 
     /**
-     * @return 是否强制关闭该表的
+     * @return 是否开启逻辑删除
      */
-    boolean disableSoftDelete() default false;
-
-    @Deprecated
-    @AliasFor("disableSoftDelete")
-    boolean forceCloseSoftDelete() default false;
-
+    boolean logicDelete() default true;
 
 }

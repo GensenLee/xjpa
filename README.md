@@ -9,9 +9,9 @@
 pom引入相应的模块
 ```xml
 <dependency>
-  <groupId>com.devops.data</groupId>
+  <groupId>com.devops</groupId>
   <artifactId>devops-data-xjpa</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
