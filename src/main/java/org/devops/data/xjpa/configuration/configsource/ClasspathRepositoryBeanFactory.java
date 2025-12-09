@@ -98,6 +98,14 @@ public class ClasspathRepositoryBeanFactory implements RepositoryBeanFactory {
         if (beanNamesForType.length == 0) {
             throw new XjpaInitException("DataSource not found");
         }
+
+        for (String datasourceName : beanNamesForType) {
+            BeanDefinition beanDefinition = beanFactory.getBeanDefinition(datasourceName);
+            if (beanDefinition.isPrimary()) {
+                return datasourceName;
+            }
+        }
+
         return beanNamesForType[0];
     }
 }

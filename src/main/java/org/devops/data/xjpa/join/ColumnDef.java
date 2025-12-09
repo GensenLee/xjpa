@@ -65,4 +65,13 @@ public abstract class ColumnDef {
         return new AliasSumJoinTableColumn(JoinTable.RIGHT, column, alias);
     }
 
+    /**
+     * 自定义语句段，lt.id 为左表id，rt.id 为右表id
+     * @param str
+     * @return
+     */
+    public static TableColumn plain(String str) {
+        return new PlainTableColumn(str);
+    }
+
 }

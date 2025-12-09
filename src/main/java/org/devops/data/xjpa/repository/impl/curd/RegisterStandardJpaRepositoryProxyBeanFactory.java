@@ -20,6 +20,7 @@ import org.springframework.core.env.Environment;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author GENSEN
@@ -47,7 +48,7 @@ public class RegisterStandardJpaRepositoryProxyBeanFactory extends AbstractRepos
         this.beanFactory = ((EnvironmentRepositoriesConfigurationManager) repositoriesConfigurationManager).getBeanFactory();
         this.environment = ((EnvironmentRepositoriesConfigurationManager) repositoriesConfigurationManager).getEnvironment();
         this.implProxyBeanFactoryFactory = implProxyBeanFactoryFactory;
-        this.registeredRepositories = new HashMap<>();
+        this.registeredRepositories = new ConcurrentHashMap<>();
     }
 
 

@@ -26,6 +26,9 @@ public interface UpdateRequest {
     }
 
     default UpdateRequest add(String targetColumn, Object value) {
+        if (value == null) {
+            return setNull(targetColumn);
+        }
         return add(targetColumn, UpdateOperator.EQ, value);
     }
 

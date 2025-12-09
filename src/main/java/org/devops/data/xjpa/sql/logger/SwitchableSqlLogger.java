@@ -40,19 +40,19 @@ public class SwitchableSqlLogger extends DefaultSqlLogger implements SwitchableL
     }
 
     @Override
-    public void logAffect(int affect) {
+    public void logAffect(int affect, long start, long end) {
         if (closeStatus.get()) {
             return;
         }
-        super.logAffect(affect);
+        super.logAffect(affect, start, end);
     }
 
     @Override
-    public void logResult(ResultSet resultSet) {
+    public void logResult(ResultSet resultSet, long start, long end) {
         if (closeStatus.get()) {
             return;
         }
-        super.logResult(resultSet);
+        super.logResult(resultSet, start, end);
     }
 
     @Override

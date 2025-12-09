@@ -1,14 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.devops.data</groupId>
+    <groupId>org.devops</groupId>
     <artifactId>devops-data-xjpa</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.3.12.RELEASE</version>
+        <relativePath/>
     </parent>
 
     <properties>
@@ -75,62 +76,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <encoding>utf-8</encoding>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <meminitial>128m</meminitial>
-                    <maxmem>512m</maxmem>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>deploy</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <distributionManagement>
-
-        <repository>
-            <id>releases</id>
-            <name>生产库-release</name>
-            <url>http://192.168.3.111:8081/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshot</id>
-            <name>非生产库-snapshot</name>
-            <url>http://192.168.3.111:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
-
-    </distributionManagement>
 
 
 </project>

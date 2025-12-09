@@ -1,11 +1,14 @@
 package org.devops.data.xjpa.sql.where.handler;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import org.devops.data.xjpa.annotation.TableSetting;
 import org.devops.data.xjpa.configuration.RepositoryGlobalConfig;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.table.TableFieldMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.util.List;
@@ -15,8 +18,12 @@ import java.util.List;
  * @date 2022/11/19
  * @description 逻辑删除
  */
+
 @SuppressWarnings({"unchecked"})
 public class SoftDeleteConfig {
+
+    protected static final Logger logger = LoggerFactory.getLogger(SoftDeleteConfig.class);
+
 
     private final boolean enabled;
 
@@ -67,13 +74,24 @@ public class SoftDeleteConfig {
         List<TableFieldMetadata> tableFieldMetadataList = properties.getEntityTable().tableFields();
         if (tableFieldMetadataList.stream()
                 .noneMatch(tableFieldMetadata -> tableFieldMetadata.getField().equals(column))) {
+            String tableName = properties.getEntityTable().getTableName();
+            logTableView(tableFieldMetadataList, tableName);
             throw new XjpaExecuteException(String.format("table [%s] soft delete column [%s] does not exist, config key : %s",
-                    properties.getEntityTable().getTableName(),
+                    tableName,
                     column, RepositoryGlobalConfig.SOFT_DELETE_COLUMN));
         }
 
 //        return (column.startsWith("`") ? "" : "`") + column + (column.endsWith("`") ? "" : "`");
         return column;
+    }
+
+    private void logTableView(List<TableFieldMetadata> tableFieldMetadataList, String tableName) {
+        int index = 0;
+        logger.warn("Table View[{}] start", tableName);
+        for (TableFieldMetadata tableFieldMetadata : tableFieldMetadataList) {
+            logger.warn("Field{} >>> [{}]", ++index, JSONUtil.toJsonStr(tableFieldMetadata));
+        }
+        logger.warn("Table View[{}] end", tableName);
     }
 
     /**

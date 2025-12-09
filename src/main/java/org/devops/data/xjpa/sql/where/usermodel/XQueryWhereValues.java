@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class XQueryWhereValues implements Serializable, IQueryWhereNodes {
 
-    private final List<IQueryWhereObject> values;
-    private Condition condition;
+    protected final List<IQueryWhereObject> values;
+    protected Condition condition;
 
 
     public XQueryWhereValues(List<IQueryWhereObject> values, Condition condition) {

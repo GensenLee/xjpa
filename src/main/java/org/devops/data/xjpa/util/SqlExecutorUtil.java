@@ -1,5 +1,6 @@
 package org.devops.data.xjpa.util;
 
+import cn.hutool.core.date.StopWatch;
 import org.devops.data.xjpa.exception.XjpaExecuteException;
 import org.devops.data.xjpa.repository.StandardJpaRepository;
 import org.devops.data.xjpa.repository.impl.DefaultRepositoryController;
@@ -9,13 +10,14 @@ import org.devops.data.xjpa.sql.executor.AbstractSqlExecutor;
 import org.devops.data.xjpa.sql.executor.result.reader.Result;
 import org.devops.data.xjpa.sql.executor.query.AbstractQueryRequest;
 import org.devops.data.xjpa.sql.executor.session.ExecuteSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.BiFunction;
 
 /**
  * @author GENSEN
@@ -24,6 +26,7 @@ import java.util.function.BiFunction;
  */
 public class SqlExecutorUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(SqlExecutorUtil.class);
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static Result execute(AbstractSqlExecutor sqlExecutor, AbstractQueryRequest queryRequest) throws SQLException {
@@ -45,10 +48,15 @@ public class SqlExecutorUtil {
         RepositoryContext context = controller.getContext();
 
         ExecuteSession executeSession = context.localSessionManager();
-        try {
-            PreparedStatement preparedStatement = executeSession.readStatement(sql);
-            ResultSet resultSet = preparedStatement.executeQuery();
 
+        StopWatch stopWatch = new StopWatch("SqlExecutorUtil#query");
+        stopWatch.start("executeSession.readStatement(sql)");
+        try (PreparedStatement preparedStatement = executeSession.readStatement(sql)){
+            stopWatch.stop();
+            stopWatch.start("preparedStatement.executeQuery()");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            stopWatch.stop();
+            stopWatch.start("read resultSet");
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
             List<Map<String, Object>> result = new ArrayList<>();
@@ -66,11 +74,14 @@ public class SqlExecutorUtil {
                 }
                 result.add(row);
             }
+            resultSet.close();
+            stopWatch.stop();
             return result;
         } catch (SQLException e) {
             throw new XjpaExecuteException(e);
         } finally {
             context.dispose();
+            logger.trace("query time use\n" + stopWatch.prettyPrint());
         }
     }
 

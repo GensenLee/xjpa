@@ -2,7 +2,9 @@ package org.devops.data.xjpa.sql.where.handler;
 
 import org.devops.data.xjpa.repository.impl.RepositoryContext;
 import org.devops.data.xjpa.repository.impl.enhance.EnhanceCurdBound;
+import org.devops.data.xjpa.sql.where.objects.IQueryWhereNodes;
 import org.devops.data.xjpa.sql.where.objects.IQueryWhereObject;
+import org.devops.data.xjpa.sql.where.usermodel.SoftDeleteWhereValue;
 import org.devops.data.xjpa.sql.where.usermodel.XQueryWhereValue;
 import org.devops.data.xjpa.sql.where.QueryWhereUtil;
 
@@ -41,7 +43,7 @@ public class SoftDeleteQueryWhereHandler implements IQueryWhereHandler {
 
         // 逻辑删除
         SoftDeleteConfig softDeleteConfig = context.getSingleton(SoftDeleteConfig.class);
-        XQueryWhereValue notDeleteWhere = new XQueryWhereValue(softDeleteConfig.getColumn(), softDeleteConfig.getNotDeleteValue());
+        XQueryWhereValue notDeleteWhere = new SoftDeleteWhereValue(softDeleteConfig.getColumn(), softDeleteConfig.getNotDeleteValue());
         if (combine.isEmpty()) {
             return notDeleteWhere;
         }
@@ -56,6 +58,13 @@ public class SoftDeleteQueryWhereHandler implements IQueryWhereHandler {
 
     @Override
     public boolean isEmpty() {
+//        if (whereValue instanceof IQueryWhereNodes) {
+//            return ((IQueryWhereNodes) whereValue).children().stream()
+//                    .filter(v -> !(v instanceof SoftDeleteWhereValue))
+//                    .allMatch(IQueryWhereObject::isEmpty);
+//        } else if (whereValue instanceof SoftDeleteWhereValue) {
+//            return true;
+//        }
         return whereValue.isEmpty();
     }
 

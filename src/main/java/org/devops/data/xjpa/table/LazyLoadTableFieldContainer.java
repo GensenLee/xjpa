@@ -1,5 +1,6 @@
 package org.devops.data.xjpa.table;
 
+import cn.hutool.json.JSONUtil;
 import org.devops.data.xjpa.configuration.RepositoriesConfigurationManager;
 import org.devops.data.xjpa.configuration.RepositoryProperties;
 import org.devops.data.xjpa.exception.XjpaInitException;
@@ -29,7 +30,7 @@ public class LazyLoadTableFieldContainer implements TableFieldContainer {
     protected static final Logger logger = LoggerFactory.getLogger(LazyLoadTableFieldContainer.class);
 
 
-    private volatile boolean loaded;
+    private boolean loaded;
 
     private final List<TableFieldMetadata> tableFieldMetadataList;
 
@@ -73,12 +74,10 @@ public class LazyLoadTableFieldContainer implements TableFieldContainer {
 
             stopWatch.stop();
             logger.trace("load table={} : {}", TableUtil.getTableNameByRepositoryType(repositoryType), stopWatch.shortSummary());
+            loaded = true;
         } finally {
             reentrantLock.unlock();
         }
-
-        loaded = true;
-
     }
 
     /**
@@ -97,6 +96,7 @@ public class LazyLoadTableFieldContainer implements TableFieldContainer {
             PreparedStatement preparedStatement = connection.prepareStatement(String.format("show full columns from `%s`", tableName));
             ResultSet resultSet = preparedStatement.executeQuery();
             List<TableField> result = new ArrayList<>();
+            logger.trace("table {} load start", tableName);
             while (resultSet.next()) {
                 TableField tableField = new TableField();
                 for (Field field : fieldList) {
@@ -104,7 +104,9 @@ public class LazyLoadTableFieldContainer implements TableFieldContainer {
                     field.set(tableField, resultSet.getString(field.getName()));
                 }
                 result.add(tableField);
+                logger.trace("field {} [{}]", tableField.getField(), JSONUtil.toJsonStr(tableField));
             }
+            logger.trace("table {} load end", tableName);
             return result;
         } catch (Exception e) {
             ObjectProvider<TableInitErrorHandler> beanProvider = beanFactory.getBeanProvider(TableInitErrorHandler.class);

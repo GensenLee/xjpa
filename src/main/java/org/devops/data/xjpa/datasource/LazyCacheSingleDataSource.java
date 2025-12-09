@@ -88,8 +88,9 @@ public class LazyCacheSingleDataSource implements RepositoryDataSource {
 
         try {
             RepositoryInvocation invocation = GlobalRepositoryInvocationHandler.get();
-            if (invocation != null && !invocation.isTransactionHandled()) {
-                DataSourceUtils.doReleaseConnection(connection, dataSource);
+            if ((invocation != null && !invocation.isTransactionHandled()) ||
+                    !DataSourceUtils.isConnectionTransactional(connection, getDataSource())) {
+                DataSourceUtils.doReleaseConnection(connection, getDataSource());
             }
         } catch (SQLException e) {
             throw new XjpaExecuteException(e);

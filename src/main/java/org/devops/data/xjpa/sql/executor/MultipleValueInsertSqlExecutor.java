@@ -59,8 +59,10 @@ public class MultipleValueInsertSqlExecutor<K, V> extends AbstractSqlExecutor<K,
         sqlLogger.logSql(processSql.getStatementSql(), processSql.getStatementParameters());
         PreparedStatement preparedStatement = executeSession.updateStatement(processSql.getStatementSql());
         PreparedStatementUtil.setParameters(preparedStatement, processSql.getStatementParameters());
+        long start = System.currentTimeMillis();
         int affectRow = preparedStatement.executeUpdate();
-        sqlLogger.logAffect(affectRow);
+        long end = System.currentTimeMillis();
+        sqlLogger.logAffect(affectRow, start, end);
         return affectRow;
     }
 

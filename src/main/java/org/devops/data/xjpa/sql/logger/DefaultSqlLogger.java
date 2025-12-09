@@ -58,15 +58,15 @@ public class DefaultSqlLogger implements SqlLogger{
     }
 
     @Override
-    public void logAffect(int affect) {
-        logger.info("affect row {}", affect);
+    public void logAffect(int affect, long start, long end) {
+        logger.info("affect {} rows in {} ms", affect, end - start);
     }
 
     @Override
-    public void logResult(final ResultSet resultSet) {
+    public void logResult(final ResultSet resultSet, long start, long end) {
         try {
             resultSet.last();
-            logger.info("total row {}", resultSet.getRow());
+            logger.info("fetch {} rows in {} ms", resultSet.getRow(), end - start);
         } catch (SQLException e) {
             logger.error("logResult total error", e);
         }

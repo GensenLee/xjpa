@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author GENSEN
@@ -34,7 +35,7 @@ public class RepositoryInvocationHandler<K extends Serializable, V> implements I
 
     private final StandardJpaRepository<K, V> standardJpaRepositoryProxy;
 
-    private final Map<Method, MethodHandle> methodHandleCache = new HashMap<>();
+    private final Map<Method, MethodHandle> methodHandleCache = new ConcurrentHashMap<>();
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

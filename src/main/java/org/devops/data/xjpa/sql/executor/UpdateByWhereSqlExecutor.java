@@ -33,7 +33,8 @@ public class UpdateByWhereSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
     public Result execute(AbstractQueryRequest<K, V> query) throws SQLException {
         UpdateByWhereQueryRequest<K, V> updateModelQueryRequest = (UpdateByWhereQueryRequest<K, V>) query;
         if (query.emptyWhere()) {
-            throw new XjpaNoWhereException("update where required");
+            logger.error("请传入更新条件，禁止全表更新");
+            throw new XjpaNoWhereException("update criteria required");
         }
 
 //        executeSession.requireTransactionEnabled();

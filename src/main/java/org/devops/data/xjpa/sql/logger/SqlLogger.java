@@ -24,11 +24,11 @@ public interface SqlLogger {
     /**
      * @param affect
      */
-    void logAffect(int affect);
+    void logAffect(int affect, long start, long end);
 
     /**
      * @param resultSet
      */
-    void logResult(ResultSet resultSet);
+    void logResult(ResultSet resultSet, long start, long end);
 
 }

@@ -132,9 +132,11 @@ public abstract class AbstractSqlExecutor<K, V> implements ISqlExecutor<K, V> {
             preparedStatement.addBatch();
         }
         sqlLogger.logSql(preparedSql, valuesList);
+        long start = System.currentTimeMillis();
         int[] executeBatchResult = preparedStatement.executeBatch();
+        long end = System.currentTimeMillis();
         int batchUpdatedRow = Arrays.stream(executeBatchResult).reduce(0, Integer::sum);
-        sqlLogger.logAffect(batchUpdatedRow);
+        sqlLogger.logAffect(batchUpdatedRow, start, end);
         if (generatedKeysConsumer != null) {
             generatedKeysConsumer.accept(preparedStatement.getGeneratedKeys());
         }
@@ -152,8 +154,10 @@ public abstract class AbstractSqlExecutor<K, V> implements ISqlExecutor<K, V> {
         PreparedStatement preparedStatement = executeSession.updateStatement(preparedSql);
         PreparedStatementUtil.setParameters(preparedStatement, values);
         sqlLogger.logSql(preparedSql, values);
+        long start = System.currentTimeMillis();
         int updatedRow = preparedStatement.executeUpdate();
-        sqlLogger.logAffect(updatedRow);
+        long end = System.currentTimeMillis();
+        sqlLogger.logAffect(updatedRow, start, end);
         return updatedRow;
     }
 
@@ -168,8 +172,10 @@ public abstract class AbstractSqlExecutor<K, V> implements ISqlExecutor<K, V> {
         PreparedStatement preparedStatement = executeSession.updateStatement(preparedSql);
         PreparedStatementUtil.setParameters(preparedStatement, values);
         sqlLogger.logSql(preparedSql, values);
+        long start = System.currentTimeMillis();
         int updatedRow = preparedStatement.executeUpdate();
-        sqlLogger.logAffect(updatedRow);
+        long end = System.currentTimeMillis();
+        sqlLogger.logAffect(updatedRow, start, end);
         if (generatedKeysConsumer != null) {
             generatedKeysConsumer.accept(preparedStatement.getGeneratedKeys());
         }

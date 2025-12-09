@@ -29,9 +29,16 @@ public class ThreadLocalRepositoryDelegateHolder<K extends Serializable, V> impl
     @Override
     public StandardJpaRepository<K, V> getDelegate(Object parent) {
         StandardJpaRepository<K, V> standardJpaRepository = repositoryThreadLocal.get();
+        // 这里存在并发问题
+        // 如果多个接口并发,多个接口都涉及到同一张表的初始化,就会初始化了两次,会导致后续逻辑异常
+        // 已出现过的异常: 逻辑删除问题,报错表不存在逻辑删除字段,因为并发导致线程1 load 完成并标记 loaded 而方法为返回,
+        // 但是线程2已经得到 loaded 并读到空的加载结果
         if (standardJpaRepository == null) {
-            if (repositoryThreadLocal.get() == null) {
-                repositoryThreadLocal.set(doCreate(parent));
+            synchronized(repositoryThreadLocal) {
+                standardJpaRepository = repositoryThreadLocal.get();
+                if (standardJpaRepository == null) {
+                    repositoryThreadLocal.set(doCreate(parent));
+                }
             }
             standardJpaRepository = repositoryThreadLocal.get();
         }

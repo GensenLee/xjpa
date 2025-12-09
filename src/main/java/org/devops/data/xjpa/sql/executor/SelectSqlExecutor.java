@@ -57,10 +57,12 @@ public class SelectSqlExecutor<K, V> extends AbstractSqlExecutor<K, V> {
         PreparedStatement preparedStatement = executeSession.readStatement(processSql.getFinalSql());
         sqlLogger.logSql(processSql.getFinalSql(), processSql.getFinalSqlParameters());
         PreparedStatementUtil.setParameters(preparedStatement, processSql.getFinalSqlParameters());
+        long start = System.currentTimeMillis();
         preparedStatement.execute();
+        long end = System.currentTimeMillis();
         ResultSet resultSet = preparedStatement.getResultSet();
         Result result = Result.Builder.build(resultSet);
-        sqlLogger.logResult(resultSet);
+        sqlLogger.logResult(resultSet, start, end);
         return result;
     }
 
