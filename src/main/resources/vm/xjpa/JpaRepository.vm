@@ -1,0 +1,11 @@
+package ${table.getPackages()};
+
+import com.glee.xjpa.repository.StandardJpaRepository;
+import org.springframework.stereotype.Repository;
+#foreach($v in $table.getImportList())
+${v}
+#end
+
+@Repository
+public interface $table.getClassName()Repository extends StandardJpaRepository<$table.getPrikey().getJtype(), $table.getClassName()>{
+}

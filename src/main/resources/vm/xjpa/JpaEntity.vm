@@ -1,0 +1,94 @@
+package ${table.getPackages()};
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import java.io.Serializable;
+
+#if($ext.swaggerEnabled)
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#end
+
+import com.glee.xjpa.annotation.TableSetting;
+#if($jvm.version > 8)
+import jakarta.persistence.*;
+#else
+import jakarta.persistence.*;
+#end
+
+
+#foreach($v in $table.getImportList())
+${v}
+#end
+
+/**
+*  ${table.getComment()}
+*/
+@TableSetting(ddl = "${table.getDdl()}")
+@Table(name="${table.getName()}")
+@Entity
+@Data
+@EqualsAndHashCode(callSuper=false)
+#if($ext.swaggerEnabled)
+@ApiModel(description="${table.getComment()}")
+#end
+public class $table.getClassName() implements Serializable {
+
+private static final long serialVersionUID = 1L;
+
+#foreach($v in $table.getItems())
+    /**
+    * $v.comment
+    */
+    public static final String $v.getBigJavaName() = "${v.name}";
+#end
+
+#foreach($v in $table.getItems())
+    #if($v.priKey)
+
+    /**
+    * $v.comment
+    */
+    @Column(name = "${v.name}")
+    @Id
+    #if(!$v.autoIncrement && $table.getPrikey().getJtype().equalsIgnoreCase("String"))
+@GeneratedValue(generator = "SnowflakeTo36")
+    #else
+@GeneratedValue
+    #end
+    #if($ext.swaggerEnabled)
+@ApiModelProperty("${v.comment}")
+    #end
+private $v.jtype $v.getJavaName();
+    #else
+
+    /**
+    * $v.comment
+    */
+    @Column(name = "${v.name}")
+    #if($ext.swaggerEnabled)
+    @ApiModelProperty("${v.comment}")
+    #end
+private $v.jtype $v.getJavaName();
+    #end
+#end
+
+#if($table.hasDict())##
+/** 字典 **/
+public static class Dict {
+    #foreach($item in $table.listDict())##
+    /** $item.comment */
+    public interface $item.name {
+        #foreach($field in $item.fields)##
+        /** $field.comment */
+            #if ($field.type.equalsIgnoreCase(
+                "String")) String $field.field = "$field.value";#else byte $field.field = $field.value; #end##
+
+        #end##
+    }
+
+    #end##
+}
+#end##
+
+}

@@ -1,0 +1,75 @@
+package com.glee.xjpa.sql.where.handler;
+
+import com.glee.xjpa.sql.where.QueryWhereUtil;
+import com.glee.xjpa.repository.impl.RepositoryContext;
+import com.glee.xjpa.repository.impl.enhance.EnhanceCurdBound;
+import com.glee.xjpa.sql.where.objects.IQueryWhereObject;
+import com.glee.xjpa.sql.where.usermodel.SoftDeleteWhereValue;
+import com.glee.xjpa.sql.where.usermodel.XQueryWhereValue;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * @author GENSEN
+ * @date 2022/11/19
+ * @description 逻辑删除控制
+ */
+@SuppressWarnings("rawtypes")
+public class SoftDeleteQueryWhereHandler implements IQueryWhereHandler {
+
+    private final RepositoryContext context;
+
+    private final IQueryWhereObject whereValue;
+    public SoftDeleteQueryWhereHandler(RepositoryContext context) {
+        this.context = context;
+        this.whereValue = recombine(context);
+    }
+
+    /**
+     * @param context
+     * @return
+     */
+    private IQueryWhereObject recombine(RepositoryContext context) {
+
+        IQueryWhereObject combine = context.localQueryWhere().combine(context);
+
+        EnhanceCurdBound enhanceCurdBound = context.getSingleton(EnhanceCurdBound.class);
+        // 本次忽略逻辑删除条件
+        if (enhanceCurdBound.isIgnoreSoftDelete()) {
+            return combine;
+        }
+
+        // 逻辑删除
+        SoftDeleteConfig softDeleteConfig = context.getSingleton(SoftDeleteConfig.class);
+        XQueryWhereValue notDeleteWhere = new SoftDeleteWhereValue(softDeleteConfig.getColumn(), softDeleteConfig.getNotDeleteValue());
+        if (combine.isEmpty()) {
+            return notDeleteWhere;
+        }
+
+        return QueryWhereUtil.attach(combine, notDeleteWhere);
+    }
+
+    @Override
+    public String toWhereString() {
+        return QueryWhereUtil.toWhereString(whereValue);
+    }
+
+    @Override
+    public boolean isEmpty() {
+//        if (whereValue instanceof IQueryWhereNodes) {
+//            return ((IQueryWhereNodes) whereValue).children().stream()
+//                    .filter(v -> !(v instanceof SoftDeleteWhereValue))
+//                    .allMatch(IQueryWhereObject::isEmpty);
+//        } else if (whereValue instanceof SoftDeleteWhereValue) {
+//            return true;
+//        }
+        return whereValue.isEmpty();
+    }
+
+    @Override
+    public Map<Integer, Object> whereValues() {
+        final AtomicInteger index = new AtomicInteger(1);
+        return whereValue.indexValues(index);
+    }
+}

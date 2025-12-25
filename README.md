@@ -1,225 +1,332 @@
-# devops-data-xjpa
-## xjpa实现
+# xjpa
 
 ## JPA要求每一个实体Entity,必须有且只有一个主键
 
 ## 开始使用
+
 ### 模块引入
 
-pom引入相应的模块
+### pom引入相应的模块
+
 ```xml
+
 <dependency>
-  <groupId>com.devops</groupId>
-  <artifactId>devops-data-xjpa</artifactId>
-  <version>1.0.0</version>
+    <groupId>com.glee</groupId>
+    <artifactId>xjpa</artifactId>
+    <version>1.1.0</version>
 </dependency>
 ```
 
-配置数据源
+### Entity类与Repository类生成
+#### 借助XjpaAutoCoder和VMCreator工具类一键生成，生成方式参照如下逻辑
 ```java
-public class Config{
+public class XjpaTestAutocode {
+
+    private static final String url = "jdbc:mysql://localhost:3306/xjpa?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true";
+
+    private static final String username = "root";
+
+    private static final String password = "12345678";
+
+    public static String projectDir = "";
+
+    public static final String suffix = "\\src\\main\\java";
+
+
+
+    static {
+        projectDir = MethodHandles.lookup().lookupClass().getClassLoader().getResource("").getPath().split("/target/")[0] + "/";
+        projectDir = projectDir.replaceFirst("^/", "").replace("/", File.separator);
+    }
+
+    public static final List<ProjectInfo> projectList = new ArrayList<ProjectInfo>() {{
+        add(new ProjectInfo(projectDir + suffix,
+                "com.demo.dao.entity",
+                "vm/xjpa/JpaEntity.vm",
+                "",
+                null,
+                true)); // model
+
+        add(new ProjectInfo(projectDir + suffix,
+                "com.demo.dao.repository",
+                "vm/xjpa/JpaRepository.vm",
+                "Repository",
+                new HashSet<String>() {{
+                    add("com.demo.dao.entity.${className}");
+                }})); // repository
+    }};
+
+
+    public static void main(String[] args) {
+        try {
+            String tableName = ".*";
+
+            List<TableProperty> liTable = XjpaAutoCoder.initTable(url, username, password, tableName, null, null);
+            for (TableProperty table : liTable) {
+
+                Map<String, CreatorFile> modelToFile = XjpaAutoCoder.createBaseJavaFile(table, projectList);
+                for (String key : modelToFile.keySet()) {
+                    System.out.println(key + " *** " + modelToFile.get(key).toString());
+                }
+                VMCreator.create(table, modelToFile);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+#### 以上逻辑将在com.demo.dao.entity包中生成实体类，在com.demo.dao.repository包中生成repository类
+
+### 配置数据源
+
+#### bean配置方式，将包命名和数据源名称绑定
+
+```java
+public class Config {
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.druid")
+    public DataSource druidDataSource() {
+        DruidDataSource druidDataSource = new DruidDataSource();
+        return druidDataSource;
+    }
+
+
+    @Bean
+    public XjpaRepositoryBeanConfig defaultRepositoryBeanConfig() {
+        DefaultXjpaRepositoryBeanConfig defaultRepositoryBeanConfig = new DefaultXjpaRepositoryBeanConfig();
+        defaultRepositoryBeanConfig
+                .bind("druidDataSource", TestUserRepository.class.getPackage().getName());
+        return defaultRepositoryBeanConfig;
+    }
+}
+
+```
+
+#### 注解配置方式，使用@XjpaDataSource注解，配置的forPackages的com.demo.repository包将会使用druidDataSource作为连接数据源
+
+```java
+public class Config {
+
+    @XjpaDataSource(forPackages = "com.demo.repository")
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.druid")
+    public DataSource druidDataSource() {
+        DruidDataSource druidDataSource = new DruidDataSource();
+        return druidDataSource;
+    }
+
+}
+
+```
+#### 如果repository所属的包未配置数据源，将向父级包查找数据源，直至找到可用数据源
+
+### xjpa使用方式
+
+#### 以下为部分用法示例
+```java
+@SpringBootTest
+public class XjpaSelectRepositoryTest {
+
+    @Autowired
+    private UsersRepository usersRepository;
+
+    @Autowired
+    private OrdersRepository ordersRepository;
+
+    @Autowired
+    private ProductsRepository productsRepository;
+
+    @Test
+    public void testSelectWithoutCondition() {
+        List<Users> usersList = usersRepository.list();
+        // 输出SQL：select * from `users`
+    }
+
+    @Test
+    public void testSelectWithEqualCondition01() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqual(Users.FIRST_NAME, "John");
+
+        List<Users> usersList = usersRepository.list(queryWhere);
+        // 输出SQL：select * from `users` where (`first_name` = 'John')
+    }
+
+
+    @Test
+    public void testSelectWithEqualCondition02() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqual(Users.STATUS, "active");
+
+        List<Users> usersList = usersRepository.list(queryWhere);
+        // 输出SQL：select * from `users` where (`status` = 'active')
+    }
+
+    @Test
+    public void testSelectWithEqualCondition03() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqual(Products.PRICE, 999.99);
+
+        List<Products> productsList = productsRepository.list(queryWhere);
+        // 输出SQL：select * from `products` where (`price` = 999.99)
+    }
+
+    @Test
+    public void testSelectWithEqualCondition04() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqual(Products.PRICE, 999.99);
+
+        List<Products> productsList = productsRepository.list(queryWhere);
+        // 输出SQL：select * from `products` where (`price` = 999.99)
+    }
+
+    @Test
+    public void testSelectWithGreaterThanCondition01() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andGreaterThan(Products.PRICE, 999.99);
+
+        List<Products> productsList = productsRepository.list(queryWhere);
+        // 输出SQL：select * from `products` where (`price` > 999.99)
+    }
+
+    @Test
+    public void testSelectWithGreaterThanCondition02() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqualOrGreaterThan(Products.PRICE, 999.99);
+
+        List<Products> productsList = productsRepository.list(queryWhere);
+        // 输出SQL：select * from `products` where (`price` >= 999.99)
+    }
+
+    @Test
+    public void testSelectWithGreaterThanCondition03() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqualOrGreaterThan(Products.PRICE, 999.99);
+        queryWhere.orGreaterThan(Products.PRICE, 99.99);
+
+        List<Products> productsList = productsRepository.list(queryWhere);
+        // 输出SQL：select * from `products` where ((`price` >= 999.99 or `price` > 99.99))
+    }
+
+    @Test
+    public void testSelectWithLessThanCondition01() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqualOrLessThan(Products.PRICE, 999.99);
+
+        List<Products> productsList = productsRepository.list(queryWhere);
+        // 输出SQL：select * from `products` where (`price` <= 999.99)
+    }
+
+
+    @Test
+    public void testSelectWithLessThanAndGreaterThanCondition01() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andGreaterThan(Products.PRICE, 999.99);
+        queryWhere.andLessThan(Products.PRICE, 99.99);
+
+        List<Products> productsList = productsRepository.list(queryWhere);
+        // 输出SQL：select * from `products` where ((`price` > 999.99 and `price` < 99.99))
+    }
+
+
+
+    @Test
+    public void testSelectWithLessThanAndGreaterThanCondition02() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andLessThan(Products.PRICE, 999.99);
+        queryWhere.andGreaterThan(Products.PRICE, 99.99);
+
+        List<Products> productsList = productsRepository.list(queryWhere);
+        //输出SQL：select * from `products` where ((`price` < 999.99 and `price` > 99.99))
+    }
+
+
+    @Test
+    public void testSelectWithCondition03() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqual(Users.STATUS, "active");
+
+        QueryWhere subWhere = new QueryWhere();
+        subWhere.andEqual(Users.LAST_NAME, "Doe");
+        subWhere.orEqual(Users.LAST_NAME, "Wilson");
+
+        queryWhere.put(subWhere);
+
+        List<Users> usersList = usersRepository.list(queryWhere);
+        // 输出SQL：select * from `users` where ((`status` = 'active' and (`last_name` = 'Doe' or `last_name` = 'Wilson')))
+    }
+
+    /**
+     * 子查询条件
+     */
+    @Test
+    public void testSelectWithSubSelectWhere() {
+        QueryWhere queryWhere = new QueryWhere();
+        queryWhere.andEqualOrGreaterThan(Orders.TOTAL_AMOUNT, 399.99);
+        InlineSubQuery subQuery = SubQuery.selectOneColumn(Users.class, Users.ID, new QueryWhere(Users.STATUS, "active", WhereOperator.NEQ));
+        queryWhere.andIn(Orders.USER_ID, subQuery);
+
+        List<Orders> ordersList = ordersRepository.list(queryWhere);
+        // 输出SQL：select * from `orders` where ((`total_amount` >= 399.99 and `user_id` in  (select `id` from `users` where `status` <> 'active')))
+    }
+
+    /**
+     * 连表查询
+     */
+    @Test
+    public void testSelectWithJoin() {
+
+        List<Map<String, Object>> mapList = ordersRepository
+                .leftJoin(Users.class)
+                .on(ColumnDef.ofLeft(Orders.USER_ID), ColumnDef.ofRight(Users.ID))
+                .include(ColumnDef.ofRight(Users.FIRST_NAME), ColumnDef.ofLeft(Orders.TOTAL_AMOUNT))
+                .list();
+        // 输出SQL；select rt.`first_name`,lt.`total_amount` from orders as lt left join users as rt on (lt.`user_id` = rt.`id`)
+
+        List<Map<String, Object>> mapList2 = ordersRepository
+                .leftJoin(Users.class)
+                .on(ColumnDef.ofLeft(Orders.USER_ID), ColumnDef.ofRight(Users.ID))
+                .include(ColumnDef.ofRight(Users.FIRST_NAME), ColumnDef.countLeft(Orders.ID, "orderCount"), ColumnDef.sumLeft(Orders.TOTAL_AMOUNT, "orderAmount"))
+                .groupByColumns(ColumnDef.ofRight(Users.ID))
+                .list();
+
+        // 输出SQL： select rt.`first_name`,count(lt.`id`) as orderCount,sum(lt.`total_amount`) as orderAmount from orders as lt left join users as rt on (lt.`user_id` = rt.`id`) group by rt.`id`
+    }
     
-   @Bean
-   @ConfigurationProperties(prefix = "spring.datasource.druid")
-   public DataSource druidDataSource() {
-      DruidDataSource druidDataSource = new DruidDataSource();
-      return druidDataSource;
-   }
+    @Test
+    public void testInsert01() {
+        Users users = new Users();
+        users.setFirstName("xxxx");
+        users.setLastName("xxxx");
+        usersRepository.insert(users);
+    }
+
+    @Test
+    public void testInsert02() {
+        Users users1 = new Users();
+        users1.setFirstName("1");
+        users1.setLastName("xxxx");
+        Users users2 = new Users();
+        users2.setFirstName("2");
+        users2.setLastName("xxxx");
+        usersRepository.insert(Arrays.asList(users1, users2));
+    }
+
+    @Test
+    public void testUpdate01() {
+        Users users = new Users();
+        users.setId(1);
+        users.setFirstName("xxxx");
+        users.setLastName("xxxx");
+        usersRepository.update(users);
+    }
 
 
-   @Bean
-   public XjpaRepositoryBeanConfig defaultRepositoryBeanConfig() {
-      DefaultXjpaRepositoryBeanConfig defaultRepositoryBeanConfig = new DefaultXjpaRepositoryBeanConfig();
-      defaultRepositoryBeanConfig
-              .bind("druidDataSource", TestUserRepository.class.getPackage().getName());
-      return defaultRepositoryBeanConfig;
-   }
+    @Test
+    public void testDelete01() {
+        usersRepository.deleteById(1);
+    }
 }
-
-```
-
-```java
-import javax.persistence.GeneratedValue;
-
-@Entity
-@Table(name = "test_user")
-@Data
-@EqualsAndHashCode(callSuper = false)
-public class TestUser extends BaseBean {
-
-   @Column(name = "id", columnDefinition = "bigint(20)")
-   @Id
-   // 如果不使用数据库自增主键， generator 可以指定为 org.devops.data.xjpa.table.identifier.IdentifierGeneratorType 枚举中的值
-   // 默认为值 SnowflakeTo36
-   @GeneratedValue(generator = "SnowflakeTo32")
-   private Long id;
-
-   @Column(name = "name", columnDefinition = "varchar(100)")
-   private String name;
-
-}
-
-
-```
-
-## 相关文档API
-假设有一张表 user
-
-|字段名|类型|是否主键|
-|:----|:--|:--|
-|id|bigint(20)|Y|
-|user_name|varchar(20)|N|
-|status|int(11)|N|
-```java
-
-@Entity
-@Table(name = "user")
-public class User {
-
-   public final static String ID = "id";
-   public final static String USER_NAME = "user_name";
-   public final static String STATUS = "status";
-
-   @Column(name = "id", columnDefinition = "bigint(20)")
-   @Id
-   private Long id;
-   @Column(name = "user_name", columnDefinition = "varchar(20)")
-   private String userName;
-   @Column(name = "status", columnDefinition = "int(11)")
-   private Integer status;
-}
-```
-### 初始化model类
-```java
-@Repository
-public interface UserRepository extends StandardJpaRepository<Long,User>{
-}
-```
-
-private UserRepository userRepository;
-
-1. 增
-
-单个插入，返回主键ID
-```java
-User user = new User();
-userRepository.insert(user);
-```
-批量插入，返回主键ID
- ```java
-User user = new User();
-List<User> list = new ArrayList<User>();
-list.add(user);
-userRepository.insert(list);
-```
-2. 删（没有删除条件的时候会报错，为了防止全表删除）
-
-单个删,根据主键删除
-```java
-// 方法1
-userRepository.deleteById(1);
-// 方法2
-userRepository
-  .where(User.ID,1)
-  .delete();
-```
-批量删,根据主键删除
-```java
-// 方法1
-userRepository.deleteByIds(new ArrayList<Long>(){{add(1);}});
-// 方法2
-userRepository
-  .where(User.ID,new ArrayList<Long>(){{add(1);}},WhereOperator.IN)
-  .delete();
-```
-3. 改
-
-改单个,根据主键改
-```java
-User user = new User();
-// 方法1
-userRepository.update(user);
-// 方法2
-userRepository
-  .where(User.ID,1)
-  .update(User.NAME, "updated");
-// 只更改其中某些字段
-userRepository
-  .include(User.STATUS,User.USER_NAME)
-  .update(user);
-```
- 批量改,根据主键改
- ```java
-User user = new User();
-List<User> list = new ArrayList<User>();
-list.add(user);
-userRepository.update(list);
-    ```
-4. 查
-
-使用where条件
-```java
-//单个
-userRepository
-  .where(User.ID,1)
-  .get();
-//列表
-userRepository
-  .where(User.ID,1)
-  .list();
-//获取数量
-userRepository
-  .where(User.ID,1)
-  .count();
-//带其他条件
-userRepository
-  .where(User.ID,1)
-  .orderByColumn(User.ID,"DESC")
-  .orderByColumn(User.STATUS,"ASC")
-  .limit(0,20)
-  .list();
-```
-使用QueryWhere
-```java
-QueryWhere mw = new QueryWhere();
-mw.add(User.ID,1);
-//单个
-userRepository
-  .where(mw)
-  .get();
-//列表
-userRepository
-  .where(mw)
-  .list();
-//获取数量
-userRepository
-  .where(mw)
-  .count();
-//带其他条件
-userRepository
-  .where(mw)
-  .orderByColumn(User.ID,"DESC")
-  .orderByColumn(User.STATUS,"ASC")
-  .limit(0,20)
-  .list();
-```
-其他复杂情况
-```java
-//其他条件
-userRepository
-  .where(User.ID,1,WhereOperator.xx)
-  .get();
-//or 条件
-userRepository
-  .where(User.ID,1)
-  .where(User.status,1,Condition.OR)
-  .get();
-//自定义语句(能不用,就不要用)
-userRepository
-  .where("(select * from user)",WhereOperator.PLAIN)
-  .get();
-//返回一个其他class
-userRepository
-  .where(User.ID,1,WhereOperator.xx)
-  .get(XXXX.class);
 ```
