@@ -60,17 +60,10 @@ public class DisposeFacadeCreatedHandle implements FacadeCreatedHandle {
                     logContext(e);
                 } catch (Exception ignored) {}
 
-                logger.error("xjpa inner exception", e);
+                logger.error("xjpa exception", e);
                 throw e;
             } finally {
-                if (method.isAnnotationPresent(DisposeAfterReturn.class)) {
-//                Object actual = o;
-//                if (o instanceof Facade) {
-//                    actual = ((Facade) o).getActual();
-//                }
-//                if (actual instanceof RepositoryContext) {
-//                    ((RepositoryContext<?, ?>) actual).dispose();
-//                }
+                if (result != o && !"dispose".equals(method.getName())){
                     logger.trace("dispose start");
                     if (o instanceof Disposable) {
                         ((Disposable) o).dispose();
@@ -78,10 +71,6 @@ public class DisposeFacadeCreatedHandle implements FacadeCreatedHandle {
                     logger.trace("dispose end");
                 }
             }
-            if (method.isAnnotationPresent(ReturnThis.class)) {
-                return o;
-            }
-
 
             return result;
 

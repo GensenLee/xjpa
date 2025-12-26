@@ -2,6 +2,7 @@ package com.glee.xjpa.repository;
 
 
 import com.glee.xjpa.annotation.SkipRepositoryScan;
+import com.glee.xjpa.sql.where.XQueryWhereExplorer;
 import com.glee.xjpa.sql.where.objects.IQueryWhereObject;
 import com.glee.xjpa.sql.where.operate.Condition;
 import com.glee.xjpa.sql.where.operate.WhereOperator;
@@ -38,6 +39,15 @@ public interface StandardJpaRepository<K extends Serializable, V> extends IEnhan
 
     @Override
     StandardJpaRepository<K, V> having(String havingString);
+
+    default StandardJpaRepository<K, V> having(IQueryWhereObject where){
+        if (where == null || where.isEmpty()) {
+            return this;
+        }
+        XQueryWhereExplorer explorer = new XQueryWhereExplorer(true);
+        where.accept(explorer);
+        return having(explorer.getWhereString());
+    }
 
     @Override
     StandardJpaRepository<K, V> orderString(String orderByString);

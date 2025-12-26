@@ -120,6 +120,8 @@ public interface JoinModel extends IEnhanceRepository {
     @Override
     JoinModel having(String havingString);
 
+    JoinModel having(JoinQueryWhere havingWhere);
+
     @Override
     JoinModel distinct(String... columns);
 

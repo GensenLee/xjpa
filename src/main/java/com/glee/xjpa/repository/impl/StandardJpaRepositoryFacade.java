@@ -1,8 +1,5 @@
 package com.glee.xjpa.repository.impl;
 
-import com.glee.xjpa.sql.where.objects.IQueryWhereObject;
-import com.glee.xjpa.sql.where.operate.Condition;
-import com.glee.xjpa.sql.where.operate.WhereOperator;
 import com.glee.xjpa.annotation.SkipRepositoryScan;
 import com.glee.xjpa.join.JoinModel;
 import com.glee.xjpa.lifecycle.Closeable;
@@ -11,6 +8,9 @@ import com.glee.xjpa.repository.StandardJpaRepository;
 import com.glee.xjpa.repository.UpdateOperator;
 import com.glee.xjpa.repository.UpdateRequest;
 import com.glee.xjpa.sql.executor.SortType;
+import com.glee.xjpa.sql.where.objects.IQueryWhereObject;
+import com.glee.xjpa.sql.where.operate.Condition;
+import com.glee.xjpa.sql.where.operate.WhereOperator;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -47,182 +47,182 @@ public class StandardJpaRepositoryFacade<K extends Serializable, V> implements F
 
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> descByColumn(String column) {
-        return local().descByColumn(column);
+        local().descByColumn(column);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> ascByColumn(String column) {
-        return local().ascByColumn(column);
+        local().ascByColumn(column);
+        return this;
     }
 
     @Override
-    @DisposeAfterReturn
     public boolean isExists() {
         return local().isExists();
     }
 
     @Override
-    @DisposeAfterReturn
     public boolean isExistsById(K key) {
         return local().isExistsById(key);
     }
 
     @Override
-    @DisposeAfterReturn
     public long count() {
         return local().count();
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> include(String... columns) {
-        return local().include(columns);
+        local().include(columns);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> exclude(String... columns) {
-        return local().exclude(columns);
+        local().exclude(columns);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> limit(int size) {
-        return local().limit(size);
+        local().limit(size);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> limit(int start, int size) {
-        return local().limit(start, size);
+        local().limit(start, size);
+        return this;
     }
 
     @Override
     public StandardJpaRepository<K, V> limit(boolean isPage, int start, int size) {
-        return isPage ? limit(start, size) : this;
+        if (isPage) {
+            limit(start, size);
+        }
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> distinct(String... columns) {
-        return local().distinct(columns);
+        local().distinct(columns);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> ignoreSoftDelete() {
-        return local().ignoreSoftDelete();
+        local().ignoreSoftDelete();
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> groupByColumns(String... columns) {
-        return local().groupByColumns(columns);
+        local().groupByColumns(columns);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> having(String havingString) {
-        return local().having(havingString);
+        local().having(havingString);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> orderString(String orderByString) {
-        return local().orderString(orderByString);
+        local().orderString(orderByString);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> orderByColumn(String column, SortType sortType) {
-        return local().orderByColumn(column, sortType);
+        local().orderByColumn(column, sortType);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(boolean valid, IQueryWhereObject whereValue) {
-        return local().where(valid, whereValue);
+        local().where(valid, whereValue);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(IQueryWhereObject whereValue) {
-        return local().where(whereValue);
+        local().where(whereValue);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(String column, Object value) {
-        return local().where(column, value);
+        local().where(column, value);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(boolean valid, String column, Object value) {
-        return local().where(valid, column, value);
+        local().where(valid, column, value);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(String column, WhereOperator operator) {
-        return local().where(column, operator);
+        local().where(column, operator);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(boolean valid, String column, WhereOperator operator) {
-        return local().where(valid, column, operator);
+        local().where(valid, column, operator);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(String column, Object value, WhereOperator operator) {
-        return local().where(column, value, operator);
+        local().where(column, value, operator);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(boolean valid, String column, Object value, WhereOperator operator) {
-        return local().where(valid, column, value, operator);
+        local().where(valid, column, value, operator);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(String column, WhereOperator operator, Condition condition) {
-        return local().where(column, operator, condition);
+        local().where(column, operator, condition);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(boolean valid, String column, WhereOperator operator, Condition condition) {
-        return local().where(valid, column, operator, condition);
+        local().where(valid, column, operator, condition);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(String column, Object value, Condition condition) {
-        return local().where(column, value, condition);
+        local().where(column, value, condition);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(boolean valid, String column, Object value, Condition condition) {
-        return local().where(valid, column, value, condition);
+        local().where(valid, column, value, condition);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(String column, Object value, WhereOperator operator, Condition condition) {
-        return local().where(column, value, operator, condition);
+        local().where(column, value, operator, condition);
+        return this;
     }
 
     @Override
-    @ReturnThis
     public StandardJpaRepository<K, V> where(boolean valid, String column, Object value, WhereOperator operator, Condition condition) {
-        return local().where(valid, column, operator, condition);
+        local().where(valid, column, operator, condition);
+        return this;
     }
 
     @Override
@@ -231,157 +231,131 @@ public class StandardJpaRepositoryFacade<K extends Serializable, V> implements F
     }
 
     @Override
-    @DisposeAfterReturn
     public int deleteById(K key) {
         return local().deleteById(key);
     }
 
     @Override
-    @DisposeAfterReturn
     public int deleteByIds(Collection<K> keys) {
         return local().deleteByIds(keys);
     }
 
     @Override
-    @DisposeAfterReturn
     public int delete(Collection<V> entities) {
         return local().delete(entities);
     }
 
     @Override
-    @DisposeAfterReturn
     public int delete() {
         return local().delete();
     }
 
     @Override
-    @DisposeAfterReturn
     public int insert(V entities) {
         return local().insert(entities);
     }
 
     @Override
-    @DisposeAfterReturn
     public int insert(Collection<V> entity) {
         return local().insert(entity);
     }
 
     @Override
-    @DisposeAfterReturn
     public List<V> list() {
         return local().list();
     }
 
     @Override
-    @DisposeAfterReturn
     public List<V> listByIds(Collection<K> keys) {
         return local().listByIds(keys);
     }
 
     @Override
-    @DisposeAfterReturn
     public V get() {
         return local().get();
     }
 
     @Override
-    @DisposeAfterReturn
     public V getById(K key) {
         return local().getById(key);
     }
 
     @Override
-    @DisposeAfterReturn
     public <T> T get(Class<T> resultType) {
         return local().get(resultType);
     }
 
     @Override
-    @DisposeAfterReturn
     public <T> List<T> list(Class<T> resultType) {
         return local().list(resultType);
     }
 
     @Override
-    @DisposeAfterReturn
     public <T> List<T> listSingleColumn(Class<T> clazz) {
         return local().listSingleColumn(clazz);
     }
 
     @Override
-    @DisposeAfterReturn
     public <T> T getSingleColumn(Class<T> clazz) {
         return local().getSingleColumn(clazz);
     }
 
     @Override
-    @DisposeAfterReturn
     public int update(String column, String operateColumn, Object operateValue, UpdateOperator updateOperator) {
         return local().update(column,operateColumn, operateValue, updateOperator);
     }
 
     @Override
-    @DisposeAfterReturn
     public int update(UpdateRequest updateRequest) {
         return local().update(updateRequest);
     }
 
     @Override
-    @DisposeAfterReturn
     public int update(V entity) {
         return local().update(entity);
     }
 
     @Override
-    @DisposeAfterReturn
     public int update(Collection<V> entities) {
         return local().update(entities);
     }
 
     @Override
-    @DisposeAfterReturn
     public int add(String column, Object operateValue) {
         return local().add(column, operateValue);
     }
 
     @Override
-    @DisposeAfterReturn
     public int add(String column, String operateColumn, Object operateValue) {
         return local().add(column, operateColumn, operateValue);
     }
 
     @Override
-    @DisposeAfterReturn
     public int subtract(String column, Object operateValue) {
         return local().subtract(column, operateValue);
     }
 
     @Override
-    @DisposeAfterReturn
     public int subtract(String column, String operateColumn, Object operateValue) {
         return local().subtract(column, operateColumn, operateValue);
     }
 
     @Override
-    @DisposeAfterReturn
     public int multiply(String column, Object operateValue) {
         return local().multiply(column, operateValue);
     }
 
     @Override
-    @DisposeAfterReturn
     public int multiply(String column, String operateColumn, Object operateValue) {
         return local().multiply(column, operateColumn, operateValue);
     }
 
     @Override
-    @DisposeAfterReturn
     public int divide(String column, Object operateValue) {
         return local().divide(column, operateValue);
     }
 
     @Override
-    @DisposeAfterReturn
     public int divide(String column, String operateColumn, Object operateValue) {
         return local().divide(column, operateColumn, operateValue);
     }

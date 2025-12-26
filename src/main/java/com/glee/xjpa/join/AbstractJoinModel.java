@@ -84,6 +84,16 @@ public abstract class AbstractJoinModel implements JoinModel {
     }
 
     @Override
+    public JoinModel having(JoinQueryWhere havingWhere) {
+        if (havingWhere == null) {
+            return this;
+        }
+        JoinTableQueryWhereExplorer explorer = new JoinTableQueryWhereExplorer(this);
+        havingWhere.accept(explorer);
+        return having(explorer.getWhereString());
+    }
+
+    @Override
     public JoinModel distinct(String... columns) {
         enhanceCurdBound.distinct(columns);
         return this;
