@@ -1,7 +1,7 @@
 package com.glee.xjpa.table.identifier;
 
 
-import com.glee.xjpa.constant.XjpaConstant;
+import com.glee.xjpa.constant.XJpaConstant;
 
 import java.util.UUID;
 
@@ -13,6 +13,6 @@ import java.util.UUID;
 public class UuidIdentifierGenerator implements IdentifierGenerator<String> {
     @Override
     public String next() {
-        return UUID.randomUUID().toString().replaceAll(XjpaConstant.CROSS_MARK, XjpaConstant.EMPTY_STRING);
+        return UUID.randomUUID().toString().replaceAll(XJpaConstant.CROSS_MARK, XJpaConstant.EMPTY_STRING);
     }
 }

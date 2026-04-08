@@ -1,8 +1,8 @@
 package com.glee.xjpa.util;
 
 
-import com.glee.xjpa.exception.XjpaException;
-import com.glee.xjpa.repository.StandardJpaRepository;
+import com.glee.xjpa.exception.XJpaException;
+import com.glee.xjpa.io.StandardXJpaRepository;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -32,7 +32,7 @@ public class ParameterizedTypeUtil {
         Class type = getDefaultImplementType(beanType);
 
         if (type == null) {
-            throw new XjpaException("%s 未继承 %s 接口".formatted(beanType, StandardJpaRepository.class));
+            throw new XJpaException("%s 未继承 %s 接口".formatted(beanType, StandardXJpaRepository.class));
         }
 
         // 获取泛型参数
@@ -54,7 +54,7 @@ public class ParameterizedTypeUtil {
         }
 
         if (genericInterfaces[0] instanceof ParameterizedType parameterizedType) {
-            return parameterizedType.getRawType().equals(StandardJpaRepository.class);
+            return parameterizedType.getRawType().equals(StandardXJpaRepository.class);
         }
         return false;
     }

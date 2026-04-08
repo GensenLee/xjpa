@@ -29,6 +29,7 @@
 
 ### Entity类与Repository类生成
 借助XjpaAutoCoder和VMCreator工具类一键生成，生成方式参照如下逻辑
+
 ```java
 public class XjpaTestAutocode {
 
@@ -43,7 +44,6 @@ public class XjpaTestAutocode {
     public static final String suffix = "\\src\\main\\java";
 
 
-
     static {
         projectDir = MethodHandles.lookup().lookupClass().getClassLoader().getResource("").getPath().split("/target/")[0] + "/";
         projectDir = projectDir.replaceFirst("^/", "").replace("/", File.separator);
@@ -52,14 +52,14 @@ public class XjpaTestAutocode {
     public static final List<ProjectInfo> projectList = new ArrayList<ProjectInfo>() {{
         add(new ProjectInfo(projectDir + suffix,
                 "com.demo.dao.entity",
-                "vm/xjpa/JpaEntity.vm",
+                "vm/xjpa/XJpaEntity.vm",
                 "",
                 null,
                 true)); // model
 
         add(new ProjectInfo(projectDir + suffix,
                 "com.demo.dao.repository",
-                "vm/xjpa/JpaRepository.vm",
+                "vm/xjpa/XJpaRepository.vm",
                 "Repository",
                 new HashSet<String>() {{
                     add("com.demo.dao.entity.${className}");
@@ -115,21 +115,6 @@ public class Config {
 
 ```
 
-注解配置方式，使用@XjpaDataSource注解，配置的forPackages的com.demo.repository包将会使用druidDataSource作为连接数据源
-
-```java
-public class Config {
-
-    @XjpaDataSource(forPackages = "com.demo.repository")
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.druid")
-    public DataSource druidDataSource() {
-        DruidDataSource druidDataSource = new DruidDataSource();
-        return druidDataSource;
-    }
-
-}
-```
 如果repository所属的包未配置数据源，将向父级包查找数据源，直至找到可用数据源。
 
 #### 多数据源配置
@@ -169,30 +154,6 @@ public class Config {
 
 ```
 
-注解配置方式时，如以下配置：
-com.demo.repository.user包下的所有Repository的操作都将通过数据源druidDataSource1执行。
-com.demo.repository.order包下的所有Repository的操作都将通过数据源druidDataSource2执行。
-```java
-public class Config {
-
-    @XjpaDataSource(forPackages = "com.demo.repository.user")
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.druid1")
-    public DataSource druidDataSource1() {
-        DruidDataSource druidDataSource = new DruidDataSource();
-        return druidDataSource;
-    }
-
-    @XjpaDataSource(forPackages = "com.demo.repository.order")
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.druid2")
-    public DataSource druidDataSource2() {
-        DruidDataSource druidDataSource = new DruidDataSource();
-        return druidDataSource;
-    }
-
-}
-```
 
 ### xjpa使用方式
 

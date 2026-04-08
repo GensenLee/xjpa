@@ -1,6 +1,5 @@
 package com.glee.xjpa.sql.logger;
 
-import cn.hutool.core.util.NumberUtil;
 import com.glee.xjpa.util.PstParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultSqlLogger implements SqlLogger{
 
-    protected static final Logger logger = LoggerFactory.getLogger("org.devops.data.SQL");
+    protected static final Logger log = LoggerFactory.getLogger("XJpa.SQL");
 
     @Override
     public void logSql(String sql, Map<Integer, Object> parameters) {
@@ -30,7 +29,7 @@ public class DefaultSqlLogger implements SqlLogger{
                 sql = sql.replaceFirst("\\?", "'" + Matcher.quoteReplacement(valueToLongString(value)) + "'");
             }
         }
-        logger.info(sql);
+        log.info(sql);
     }
 
     protected String valueToLongString(Object value) {
@@ -45,35 +44,37 @@ public class DefaultSqlLogger implements SqlLogger{
 
     @Override
     public void logSql(String sql) {
-        logger.info(sql);
+        log.info(sql);
     }
 
     @Override
     public void logSql(String sql, List<Map<Integer, Object>> parameters) {
-        logger.info(sql);
+        log.info(sql);
         int index = 1;
         for (Map<Integer, Object> parameter : parameters) {
 
             List<Object> values = parameter.values().stream()
-                    .map(val -> valueToLongString(val instanceof PstParameter ? ((PstParameter) val).getValue() : val))
+                    .map(val -> valueToLongString(val instanceof PstParameter ? ((PstParameter) val).value() : val))
                     .collect(Collectors.toList());
 
-            logger.info("batch[{}] execute parameters [{}]", index++, values);
+            log.info("batch[{}] execute parameters [{}]", index++, values);
         }
     }
 
     @Override
     public void logAffect(int affect, long start, long end) {
-        logger.info("affect {} rows in {} ms", affect, end - start);
+        log.info("affect {} rows in {} ms", affect, end - start);
     }
 
     @Override
     public void logResult(final ResultSet resultSet, long start, long end) {
         try {
             resultSet.last();
-            logger.info("fetch {} rows in {} ms", resultSet.getRow(), end - start);
+            log.info("fetch {} rows in {} ms", resultSet.getRow(), end - start);
+            resultSet.first();
         } catch (SQLException e) {
-            logger.error("logResult total error", e);
+            log.error("logResult total error", e);
+        } finally {
         }
     }
 }

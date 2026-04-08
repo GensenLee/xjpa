@@ -2,8 +2,8 @@ package com.glee.xjpa.sql.where;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import com.glee.xjpa.constant.XjpaConstant;
-import com.glee.xjpa.exception.XjpaExecuteException;
+import com.glee.xjpa.constant.XJpaConstant;
+import com.glee.xjpa.exception.XJpaExecuteException;
 import com.glee.xjpa.sql.where.objects.IQueryWhereNodes;
 import com.glee.xjpa.sql.where.objects.IQueryWhereObject;
 import com.glee.xjpa.sql.where.operate.WhereOperator;
@@ -123,7 +123,7 @@ public class QueryWhereUtil {
 
     private static void errorBetween() {
         logger.error("between operate require 2 parameters, supported pattern: String('1,3'),Array([1,3]),Collection([1,3])");
-        throw new XjpaExecuteException("between operate require 2 parameters");
+        throw new XJpaExecuteException("between operate require 2 parameters");
     }
 
 
@@ -142,7 +142,7 @@ public class QueryWhereUtil {
                 result.add(Array.get(rawValue, i));
             }
         } else if (rawValue instanceof String) {
-            result.addAll(Arrays.asList(((String) rawValue).split(XjpaConstant.COMMA_MARK)));
+            result.addAll(Arrays.asList(((String) rawValue).split(XJpaConstant.COMMA_MARK)));
         } else {
             result.add(rawValue);
         }
@@ -156,10 +156,10 @@ public class QueryWhereUtil {
     private static Object[] formatBetweenValues(final Object rawValue) {
         Object[] result = new Object[2];
         if (rawValue instanceof String) {
-            if (StrUtil.isEmpty((CharSequence) rawValue) || !((String) rawValue).contains(XjpaConstant.COMMA_MARK)) {
+            if (StrUtil.isEmpty((CharSequence) rawValue) || !((String) rawValue).contains(XJpaConstant.COMMA_MARK)) {
                 errorBetween();
             }
-            String[] split = ((String) rawValue).split(XjpaConstant.COMMA_MARK);
+            String[] split = ((String) rawValue).split(XJpaConstant.COMMA_MARK);
             result[0] = split[0];
             result[1] = split[1];
         } else if (rawValue instanceof Collection) {

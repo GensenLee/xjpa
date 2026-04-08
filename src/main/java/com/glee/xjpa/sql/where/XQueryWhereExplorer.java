@@ -90,7 +90,7 @@ public class XQueryWhereExplorer implements IQueryWhereObjectVisitor {
     }
 
     protected String getColumnLabel(IQueryWhereNode node) {
-        return "`" + node.getColumn() + "`";
+        return node.getColumn().toString();
     }
 
 }

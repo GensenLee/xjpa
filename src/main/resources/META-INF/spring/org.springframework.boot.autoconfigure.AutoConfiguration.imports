@@ -1,1 +1,1 @@
-com.glee.xjpa.configuration.XjpaAutoConfiguration
+com.glee.xjpa.configuration.XJpaBootstrapperConfiguration

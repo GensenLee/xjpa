@@ -1,10 +1,9 @@
 package com.glee.xjpa.util;
 
 import com.mysql.cj.MysqlType;
-import com.glee.xjpa.exception.XjpaExecuteException;
+import com.glee.xjpa.exception.XJpaExecuteException;
 import org.springframework.util.CollectionUtils;
 
-import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -26,11 +25,11 @@ public class PreparedStatementUtil {
 
         try {
             Object setVal = value;
-            int jdbcType = JDBCType.VARCHAR.getVendorTypeNumber();
-            if (value instanceof PstParameter) {
+            int jdbcType = 12; // jdbcType.varchar=12
+            if (value instanceof PstParameter pst) {
                 // 2022-12-12 借助 PstParameter 接收空值，因为设置空值需要提供jdbcType参数
-                setVal = ((PstParameter) value).getValue();
-                String fullMysqlTypeName = ((PstParameter) value).getEntityTableField().getTableFieldMetadata().getType();
+                setVal = pst.value();
+                String fullMysqlTypeName = pst.entityTableField().tableFieldMetadata().getType();
                 jdbcType = MysqlType.getByName(fullMysqlTypeName).getJdbcType();
             }
 
@@ -41,7 +40,7 @@ public class PreparedStatementUtil {
             }
 
         } catch (SQLException e) {
-            throw new XjpaExecuteException(e);
+            throw new XJpaExecuteException(e);
         }
 
     }

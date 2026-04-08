@@ -1,6 +1,6 @@
 package com.glee.xjpa.sql.where;
 
-import com.glee.xjpa.constant.XjpaConstant;
+import com.glee.xjpa.constant.XJpaConstant;
 import com.glee.xjpa.sql.where.objects.IQueryWhereNode;
 import com.glee.xjpa.sql.where.objects.IQueryWhereNodes;
 
@@ -36,6 +36,6 @@ public class AliasTableQueryWhereExplorer extends XQueryWhereExplorer {
     }
     @Override
     protected String getColumnLabel(IQueryWhereNode node) {
-        return tableAlias + XjpaConstant.CHAR_POINT + super.getColumnLabel(node);
+        return tableAlias + XJpaConstant.CHAR_POINT + super.getColumnLabel(node);
     }
 }

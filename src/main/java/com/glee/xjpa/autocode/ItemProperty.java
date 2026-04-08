@@ -1,6 +1,8 @@
 package com.glee.xjpa.autocode;
 
 
+import com.glee.xjpa.util.NameUtil;
+
 /**
  */
 public class ItemProperty {
@@ -84,9 +86,9 @@ public class ItemProperty {
 	public String getJavaName(){
 		if(name != null && name.trim().length()!=0){
 			if(name.contains("_")) {
-				return NameFormat.toLUCase(name.toLowerCase()).replaceAll("_", "");
+				return NameUtil.toLUCase(name.toLowerCase()).replaceAll("_", "");
 			} else {
-				return NameFormat.toLUCase(name).replaceAll("_", "");
+				return NameUtil.toLUCase(name).replaceAll("_", "");
 			}
 		}
 		return "";
@@ -94,7 +96,7 @@ public class ItemProperty {
 	
 	public String getBigJavaName(){
 		if(name != null && name.trim().length()!=0){
-			return NameFormat.toUUCaseStr(name).replace("_$", "").toUpperCase();
+			return NameUtil.toUUCase(name).replace("_$", "").toUpperCase();
 		}
 		return "";
 	}
@@ -112,9 +114,9 @@ public class ItemProperty {
 		}
 		if(tmpName.trim().length()!=0){
 			if(tmpName.contains("_")) {
-				return NameFormat.toUUCase(tmpName.toLowerCase()).replaceAll("_", "");
+				return NameUtil.toUUCase(tmpName.toLowerCase()).replaceAll("_", "");
 			} else {
-				return NameFormat.toUUCase(tmpName).replaceAll("_", "");
+				return NameUtil.toUUCase(tmpName).replaceAll("_", "");
 			}
 		}
 		return "";
@@ -123,9 +125,9 @@ public class ItemProperty {
 	public String getFirstBigName() {
 		if(name != null && name.trim().length()!=0){
 			if(name.contains("_")) {
-				firstBigName = NameFormat.toUfirst(name.toLowerCase()) ;
+				firstBigName = NameUtil.toUfirst(name.toLowerCase()) ;
 			} else {
-				firstBigName = NameFormat.toUfirst(name) ;
+				firstBigName = NameUtil.toUfirst(name) ;
 			}
 			
 		}

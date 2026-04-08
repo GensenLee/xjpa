@@ -1,0 +1,11 @@
+package ${table.getPackages()};
+
+import com.glee.xjpa.io.StandardXJpaRepository;
+import com.glee.xjpa.annotation.XJpaRepository;
+#foreach($v in $table.getImportList())
+${v}
+#end
+
+@XJpaRepository
+public interface $table.getClassName()Repository extends StandardXJpaRepository<$table.getPrikey().getJtype(), $table.getClassName()>{
+}

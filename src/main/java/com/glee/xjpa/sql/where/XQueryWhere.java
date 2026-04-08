@@ -1,6 +1,5 @@
 package com.glee.xjpa.sql.where;
 
-import com.glee.xjpa.repository.impl.RepositoryContext;
 import com.glee.xjpa.sql.where.objects.IQueryWhereObject;
 
 /**
@@ -13,7 +12,7 @@ public interface XQueryWhere {
     void add(IQueryWhereObject whereObject);
 
     @SuppressWarnings("rawtypes")
-    IQueryWhereObject combine(RepositoryContext context);
+    IQueryWhereObject combine();
 
     boolean isEmpty();
 

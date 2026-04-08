@@ -1,6 +1,7 @@
 package com.glee.xjpa.autocode;
 
 import cn.hutool.core.util.StrUtil;
+import com.glee.xjpa.util.NameUtil;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -199,20 +200,15 @@ public class TableProperty {
 
 	public String getClassName() {
 		if(name != null && name.trim().length()!=0){
-			className = NameFormat.toUUCase(name.toLowerCase());
+			className = NameUtil.toHHCase(name.toLowerCase());
 		}
 		return className;
 	}
 	public String getClassNameFirstLower(){
 		if(name != null && name.trim().length()!=0){
-			className = NameFormat.toUUCase(name.toLowerCase());
+			className = NameUtil.toUUCase(name.toLowerCase());
 		}
-		return NameFormat.toLCase(className);
-	}
-
-	public String getStrikethroughMode() {
-		String str = NameFormat.toUUCaseStr(className);
-		return str.replaceAll("_", "-");
+		return NameUtil.toLCase(className);
 	}
 
 	public void setClassName(String className) {

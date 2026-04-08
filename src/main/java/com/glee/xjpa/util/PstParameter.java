@@ -7,26 +7,9 @@ import com.glee.xjpa.table.EntityTableField;
  * @date 2022/12/12
  * @description PreparedStatement参数
  */
-public class PstParameter {
-
-    private final Object value;
-
-    private final EntityTableField entityTableField;
-
-    public PstParameter(Object value, EntityTableField entityTableField) {
-        this.value = value;
-        this.entityTableField = entityTableField;
-    }
+public record PstParameter(Object value, EntityTableField entityTableField) {
 
     public boolean isNull() {
         return value == null;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public EntityTableField getEntityTableField() {
-        return entityTableField;
     }
 }
