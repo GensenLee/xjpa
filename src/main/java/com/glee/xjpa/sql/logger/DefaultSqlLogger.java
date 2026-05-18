@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @date 2022/11/2
  * @description 默认
  */
-public class DefaultSqlLogger implements SqlLogger{
+public class DefaultSqlLogger implements SqlLogger {
 
     protected static final Logger log = LoggerFactory.getLogger("XJpa.SQL");
 

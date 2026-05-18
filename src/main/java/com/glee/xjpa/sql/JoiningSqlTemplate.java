@@ -6,8 +6,8 @@ import com.glee.xjpa.io.QueryPage;
 import com.glee.xjpa.io.groupby.JoiningGroupBy;
 import com.glee.xjpa.io.having.JoiningGroupByHave;
 import com.glee.xjpa.io.include.JoiningIncludeBy;
-import com.glee.xjpa.io.join.AbstractJoinOn;
 import com.glee.xjpa.io.join.JoinPoint;
+import com.glee.xjpa.io.join.JoinSpec;
 import com.glee.xjpa.io.join.XJpaJoiningRepository;
 import com.glee.xjpa.io.orderby.JoiningOrderBy;
 import com.glee.xjpa.sql.where.QueryWhereUtil;
@@ -222,17 +222,17 @@ public class JoiningSqlTemplate {
     public static String buildJoinClause(XJpaJoiningRepository repository) {
         StringBuilder sql = new StringBuilder();
         List<JoinPoint> joinPointOrder = repository.getJoinPointOrder();
-        Map<JoinPoint, AbstractJoinOn> joinOnMap = repository.getJoinOnMap();
+        Map<JoinPoint, JoinSpec> joinSpecMap = repository.getJoinSpecMap();
 
         for (int i = 1; i < joinPointOrder.size(); i++) {
             JoinPoint joinPoint = joinPointOrder.get(i);
-            AbstractJoinOn joinOn = joinOnMap.get(joinPoint);
+            JoinSpec joinSpec = joinSpecMap.get(joinPoint);
 
-            if (joinOn == null) {
+            if (joinSpec == null) {
                 continue;
             }
 
-            JoinType joinType = joinOn.getJoinType();
+            JoinType joinType = joinSpec.getJoinType();
             String joinTypeStr;
             if (joinType == JoinType.LEFT) {
                 joinTypeStr = "left join";
@@ -248,18 +248,18 @@ public class JoiningSqlTemplate {
             sql.append(joinPoint.getTableName()).append(" as ").append(joinPoint.getTableAlias());
 
             sql.append(" on (");
-            var joiningOnColumns = joinOn.getJoiningOnColumns();
+            var joiningOnColumns = joinSpec.getJoiningOnColumns();
             if (joiningOnColumns != null && !joiningOnColumns.isEmpty()) {
                 boolean first = true;
                 for (var pair : joiningOnColumns) {
                     if (!first) {
                         sql.append(" and ");
                     }
-                    String leftColumn = pair.getKey();
-                    String rightColumn = pair.getValue();
-                    sql.append(joinPointOrder.get(0).getTableAlias()).append(".`").append(rightColumn).append("`");
+                    String sourceColumn = pair.getKey();
+                    String targetColumn = pair.getValue();
+                    sql.append(joinPointOrder.get(i - 1).getTableAlias()).append(".`").append(sourceColumn).append("`");
                     sql.append(" = ");
-                    sql.append(joinPoint.getTableAlias()).append(".`").append(leftColumn).append("`");
+                    sql.append(joinPoint.getTableAlias()).append(".`").append(targetColumn).append("`");
                     first = false;
                 }
             }

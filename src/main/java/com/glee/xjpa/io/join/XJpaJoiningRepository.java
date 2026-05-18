@@ -8,6 +8,7 @@ import com.glee.xjpa.io.StandardXJpaRepository;
 import com.glee.xjpa.io.column.TableColumn;
 import com.glee.xjpa.sql.JoiningSqlTemplate;
 import com.glee.xjpa.sql.executor.JoiningSqlExecutor;
+import com.glee.xjpa.sql.logger.DefaultSqlLogger;
 import com.glee.xjpa.sql.logger.SqlLogger;
 
 import java.util.*;
@@ -26,7 +27,7 @@ public class XJpaJoiningRepository implements JoiningRepository, JoiningContext 
 
     private final List<JoinPoint> joinPointOrder;
 
-    private final Map<JoinPoint, AbstractJoinOn> joinOnMap;
+    private final Map<JoinPoint, JoinSpec> joinSpecMap;
 
     private final DataSourceManager dataSourceManager;
 
@@ -34,16 +35,8 @@ public class XJpaJoiningRepository implements JoiningRepository, JoiningContext 
 
     private final Class<?> repositoryClass;
 
-    public XJpaJoiningRepository(InitJoinPoint initJoinPoint) {
-        this.initJoinPoint = initJoinPoint;
-        this.dataSourceManager = null;
-        this.sqlLogger = null;
-        this.repositoryClass = null;
-        this.joiningTableIndexMap = new HashMap<>();
-        this.joinPointOrder = new ArrayList<>();
-        this.joinOnMap = new HashMap<>();
-        joinPointRegister(initJoinPoint);
-        joinPointOrder.add(initJoinPoint);
+    public XJpaJoiningRepository(InitJoinPoint initJoinPoint, DataSourceManager dataSourceManager) {
+        this(initJoinPoint, dataSourceManager, new DefaultSqlLogger());
     }
 
     public XJpaJoiningRepository(InitJoinPoint initJoinPoint, DataSourceManager dataSourceManager, SqlLogger sqlLogger) {
@@ -53,7 +46,7 @@ public class XJpaJoiningRepository implements JoiningRepository, JoiningContext 
         this.repositoryClass = initJoinPoint.getDrivenRepository().getClass();
         this.joiningTableIndexMap = new HashMap<>();
         this.joinPointOrder = new ArrayList<>();
-        this.joinOnMap = new HashMap<>();
+        this.joinSpecMap = new HashMap<>();
         joinPointRegister(initJoinPoint);
         joinPointOrder.add(initJoinPoint);
     }
@@ -61,9 +54,39 @@ public class XJpaJoiningRepository implements JoiningRepository, JoiningContext 
     @Override
     public JoinPoint join(AbstractJoinOn joinOn) {
         XJpaJoinPoint joinPoint = new XJpaJoinPoint(this, joinOn.getJoinEntity(), joinOn.isSoftDeleteEnabled());
-        joinOnMap.put(joinPoint, joinOn);
+        
+        JoinSpec joinSpec = new JoinSpec(
+                joinOn.getJoinEntity(),
+                joinOn.getJoinType(),
+                joinOn.getJoiningOnColumns(),
+                joinOn.isSoftDeleteEnabled()
+        );
+        joinSpecMap.put(joinPoint, joinSpec);
         joinPointOrder.add(joinPoint);
         return joinPoint;
+    }
+
+    @Override
+    public JoinPoint join(JoinSpec joinSpec) {
+        XJpaJoinPoint joinPoint = new XJpaJoinPoint(this, joinSpec.getRightTableEntityType(), joinSpec.isSoftDeleteEnabled());
+        joinSpecMap.put(joinPoint, joinSpec);
+        joinPointOrder.add(joinPoint);
+        return joinPoint;
+    }
+
+    @Override
+    public JoinPoint leftJoin(Class rightTableEntityType, String sourceColumn, String targetColumn) {
+        return join(JoinSpec.leftJoin(rightTableEntityType, sourceColumn, targetColumn));
+    }
+
+    @Override
+    public JoinPoint rightJoin(Class rightTableEntityType, String sourceColumn, String targetColumn) {
+        return join(JoinSpec.rightJoin(rightTableEntityType, sourceColumn, targetColumn));
+    }
+
+    @Override
+    public JoinPoint innerJoin(Class rightTableEntityType, String sourceColumn, String targetColumn) {
+        return join(JoinSpec.innerJoin(rightTableEntityType, sourceColumn, targetColumn));
     }
 
     @Override
@@ -170,8 +193,8 @@ public class XJpaJoiningRepository implements JoiningRepository, JoiningContext 
         return joinPointOrder;
     }
 
-    public Map<JoinPoint, AbstractJoinOn> getJoinOnMap() {
-        return joinOnMap;
+    public Map<JoinPoint, JoinSpec> getJoinSpecMap() {
+        return joinSpecMap;
     }
 
 }
