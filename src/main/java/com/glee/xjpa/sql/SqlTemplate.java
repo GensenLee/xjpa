@@ -11,70 +11,76 @@ import com.glee.xjpa.sql.where.objects.IQueryWhereObject;
 /**
  * @author GENSEN
  * @date 2026/3/24
- * @description
+ * @description SQL 模板工具类
  */
 public class SqlTemplate {
 
-    private final StringBuilder sqlBuilder;
-
-    public SqlTemplate(String prefix) {
-        this.sqlBuilder = new StringBuilder(prefix);
-    }
-
-    public void setDistinct(boolean distinct) {
+    /**
+     * 构建查询 SQL
+     */
+    public static String buildSelectSql(boolean distinct, IncludeBy includeBy, String tableName, 
+                                        IQueryWhereObject where, GroupBy groupBy, 
+                                        GroupByHaving having, OrderBy orderBy, QueryPage page) {
+        StringBuilder sqlBuilder = new StringBuilder("select");
+        
         if (distinct) {
             sqlBuilder.append(" distinct");
         }
-    }
-
-    public void setIncludeBy(IncludeBy includeBy) {
+        
         if (includeBy == null) {
             sqlBuilder.append(" *");
         } else {
             sqlBuilder.append(" ").append(includeBy.toSqlClause());
         }
-    }
-
-    public void setFromTable(String tableName) {
+        
         sqlBuilder.append(" from ").append(tableName);
-    }
-
-    public void setWhere(IQueryWhereObject where) {
-        if (where == null || where.isEmpty()) {
-            return;
+        
+        if (where != null && !where.isEmpty()) {
+            sqlBuilder.append(" where ").append(QueryWhereUtil.toWhereString(where));
         }
-        sqlBuilder.append(" where ").append(QueryWhereUtil.toWhereString(where));
-    }
-
-    public void setGroupBy(GroupBy groupBy) {
-        if (groupBy == null) {
-            return;
+        
+        if (groupBy != null) {
+            sqlBuilder.append(" group by ").append(groupBy.toSqlClause());
         }
-        sqlBuilder.append(" group by ").append(groupBy.toSqlClause());
-    }
-
-    public void setHaving(GroupByHaving groupByHaving) {
-        if (groupByHaving == null) {
-            return;
+        
+        if (having != null) {
+            sqlBuilder.append(" having ").append(having.toSqlClause());
         }
-        sqlBuilder.append(" having ").append(groupByHaving.toSqlClause());
-    }
-
-    public void setOrderBy(OrderBy orderBy) {
-        if (orderBy == null) {
-            return;
+        
+        if (orderBy != null) {
+            sqlBuilder.append(" order by ").append(orderBy.toSqlClause());
         }
-        sqlBuilder.append(" order by ").append(orderBy.toSqlClause());
-    }
-
-    public void setPage(QueryPage page) {
+        
         if (page != null) {
             sqlBuilder.append(" limit ").append(page.start()).append(",").append(page.size());
         }
+        
+        return sqlBuilder.toString();
     }
 
+    /**
+     * 构建 Count SQL
+     */
+    public static String buildCountSql(String tableName, IQueryWhereObject where) {
+        StringBuilder sqlBuilder = new StringBuilder("select count(*) from ").append(tableName);
+        
+        if (where != null && !where.isEmpty()) {
+            sqlBuilder.append(" where ").append(QueryWhereUtil.toWhereString(where));
+        }
+        
+        return sqlBuilder.toString();
+    }
 
-    public String getSqlString() {
+    /**
+     * 构建 Delete SQL
+     */
+    public static String buildDeleteSql(String tableName, IQueryWhereObject where) {
+        StringBuilder sqlBuilder = new StringBuilder("delete from ").append(tableName);
+        
+        if (where != null && !where.isEmpty()) {
+            sqlBuilder.append(" where ").append(QueryWhereUtil.toWhereString(where));
+        }
+        
         return sqlBuilder.toString();
     }
 

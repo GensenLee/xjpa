@@ -7,7 +7,7 @@ import com.glee.xjpa.datasource.DataSourceManager;
 import com.glee.xjpa.exception.XJpaException;
 import com.glee.xjpa.exception.XJpaExecuteException;
 import com.glee.xjpa.io.QueryRequest;
-import com.glee.xjpa.io.update.UpdateSqlTemplate;
+import com.glee.xjpa.sql.UpdateSqlTemplate;
 import com.glee.xjpa.sql.logger.SqlLogger;
 import com.glee.xjpa.table.EntityTableField;
 import com.glee.xjpa.table.TableProperties;
@@ -144,8 +144,7 @@ public class UpdateSqlExecutor<K extends Serializable, E> {
 
 
         // 构建update sql
-        UpdateSqlTemplate updateSqlTemplate = new UpdateSqlTemplate(tableProperties);
-        String sqlTemplate = updateSqlTemplate.toUpdateTemplate(updateFieldList);
+        String sqlTemplate = UpdateSqlTemplate.buildUpdateSql(tableProperties, updateFieldList);
 
         // 构建参数列表
         List<Map<Integer, Object>> parameters = new ArrayList<>();
@@ -211,8 +210,7 @@ public class UpdateSqlExecutor<K extends Serializable, E> {
         }
         parameters.put(++index, keyValue);
 
-        UpdateSqlTemplate updateSqlTemplate = new UpdateSqlTemplate(tableProperties);
-        String sqlTemplate = updateSqlTemplate.toUpdateTemplate(updateFieldList);
+        String sqlTemplate = UpdateSqlTemplate.buildUpdateSql(tableProperties, updateFieldList);
         Connection connection = dataSourceManager.getConnection(tableProperties.getRepositoryType());
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlTemplate)) {
             parameters.forEach((idx, val) -> PreparedStatementUtil.setParameter(preparedStatement, val, idx));

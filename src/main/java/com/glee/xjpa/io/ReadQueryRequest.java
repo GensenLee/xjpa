@@ -26,14 +26,16 @@ public class ReadQueryRequest implements QueryRequest {
 
     @Override
     public String getSqlTemplate() {
-        SqlTemplate sqlTemplate = new SqlTemplate("select ");
-        sqlTemplate.setDistinct(query.isDistinct());
-        sqlTemplate.setIncludeBy(query.getIncludeBy());
-        sqlTemplate.setFromTable(tableProperties.getMetadata().getTableName());
-        sqlTemplate.setWhere(query.getWhere());
-        sqlTemplate.setOrderBy(query.getOrderBy());
-        sqlTemplate.setPage(query.getQueryPage());
-        return sqlTemplate.getSqlString();
+        return SqlTemplate.buildSelectSql(
+                query.isDistinct(),
+                query.getIncludeBy(),
+                tableProperties.getMetadata().getTableName(),
+                query.getWhere(),
+                null,
+                null,
+                query.getOrderBy(),
+                query.getQueryPage()
+        );
     }
 
     @Override

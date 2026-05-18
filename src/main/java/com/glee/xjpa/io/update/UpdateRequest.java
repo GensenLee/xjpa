@@ -1,6 +1,7 @@
 package com.glee.xjpa.io.update;
 
 import com.glee.xjpa.io.QueryRequest;
+import com.glee.xjpa.sql.UpdateSqlTemplate;
 import com.glee.xjpa.sql.where.usermodel.QueryWhere;
 import com.glee.xjpa.table.TableProperties;
 
@@ -30,8 +31,7 @@ public class UpdateRequest implements QueryRequest {
 
     @Override
     public String getSqlTemplate() {
-        UpdateSqlTemplate updateSqlTemplate = new UpdateSqlTemplate(tableProperties);
-        return updateSqlTemplate.toUpdateTemplate(updateSets, where);
+        return UpdateSqlTemplate.buildUpdateSql(tableProperties, updateSets, where);
     }
 
     @Override

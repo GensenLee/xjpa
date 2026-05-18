@@ -12,19 +12,14 @@ import java.util.stream.Collectors;
 /**
  * @author GENSEN
  * @date 2026/3/27
- * @description 插入sql语句
+ * @description 插入 SQL 模板工具类
  */
 public class InsertSqlTemplate {
 
-
-    private final TableProperties<?, ?> tableProperties;
-
-
-    public InsertSqlTemplate(TableProperties<?, ?> tableProperties) {
-        this.tableProperties = tableProperties;
-    }
-
-    public String getInsertTemplate() {
+    /**
+     * 构建插入 SQL
+     */
+    public static String buildInsertSql(TableProperties<?, ?> tableProperties) {
         XJpaTableMetadata<?, ?> metadata = tableProperties.getMetadata();
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("insert into ")

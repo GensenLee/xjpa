@@ -65,14 +65,13 @@ public class Query implements XQuery<String> {
 
     @Override
     public String toString() {
-        SqlTemplate sqlTemplate = new SqlTemplate("");
-        sqlTemplate.setDistinct(distinct);
-        sqlTemplate.setIncludeBy(includeBy);
-        sqlTemplate.setFromTable("?");
-        sqlTemplate.setWhere(where);
-        sqlTemplate.setOrderBy(orderBy);
-        sqlTemplate.setPage(queryPage);
-        return sqlTemplate.getSqlString();
+        return "Query{" +
+                "where=" + where +
+                ", queryPage=" + queryPage +
+                ", distinct=" + distinct +
+                ", includeBy=" + includeBy +
+                ", orderBy=" + orderBy +
+                '}';
     }
 
     QueryWhereModel<String> getWhere() {

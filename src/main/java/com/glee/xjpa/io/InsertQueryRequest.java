@@ -26,12 +26,11 @@ public class InsertQueryRequest {
     public InsertQueryRequest(List<?> entityList, TableProperties<?, ?> tableProperties) {
         this.entityList = entityList;
         this.tableProperties = tableProperties;
-        this.insertTemplate = new InsertSqlTemplate(tableProperties).getInsertTemplate();
+        this.insertTemplate = InsertSqlTemplate.buildInsertSql(tableProperties);
     }
 
     public String getSqlTemplate() {
-        InsertSqlTemplate sqlTemplate = new InsertSqlTemplate(tableProperties);
-        return sqlTemplate.getInsertTemplate();
+        return InsertSqlTemplate.buildInsertSql(tableProperties);
     }
 
     public List<Map<Integer, PstParameter>> getParameters() {

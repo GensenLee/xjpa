@@ -4,7 +4,6 @@ import com.glee.xjpa.datasource.DataSourceManager;
 import com.glee.xjpa.exception.XJpaException;
 import com.glee.xjpa.io.JoiningGroupByQuery;
 import com.glee.xjpa.io.JoiningQuery;
-import com.glee.xjpa.io.StandardXJpaRepository;
 import com.glee.xjpa.io.column.TableColumn;
 import com.glee.xjpa.sql.JoiningSqlTemplate;
 import com.glee.xjpa.sql.executor.JoiningSqlExecutor;
@@ -16,7 +15,7 @@ import java.util.*;
 /**
  * @author GENSEN
  * @date 2026/1/8
- * @description
+ * @description 连表查询仓库实现
  */
 @SuppressWarnings("rawtypes")
 public class XJpaJoiningRepository implements JoiningRepository, JoiningContext {
@@ -49,21 +48,6 @@ public class XJpaJoiningRepository implements JoiningRepository, JoiningContext 
         this.joinSpecMap = new HashMap<>();
         joinPointRegister(initJoinPoint);
         joinPointOrder.add(initJoinPoint);
-    }
-
-    @Override
-    public JoinPoint join(AbstractJoinOn joinOn) {
-        XJpaJoinPoint joinPoint = new XJpaJoinPoint(this, joinOn.getJoinEntity(), joinOn.isSoftDeleteEnabled());
-        
-        JoinSpec joinSpec = new JoinSpec(
-                joinOn.getJoinEntity(),
-                joinOn.getJoinType(),
-                joinOn.getJoiningOnColumns(),
-                joinOn.isSoftDeleteEnabled()
-        );
-        joinSpecMap.put(joinPoint, joinSpec);
-        joinPointOrder.add(joinPoint);
-        return joinPoint;
     }
 
     @Override

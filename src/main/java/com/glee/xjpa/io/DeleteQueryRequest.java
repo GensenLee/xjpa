@@ -26,10 +26,7 @@ public class DeleteQueryRequest implements QueryRequest {
 
     @Override
     public String getSqlTemplate() {
-        SqlTemplate sqlTemplate = new SqlTemplate("delete");
-        sqlTemplate.setFromTable(tableProperties.getMetadata().getTableName());
-        sqlTemplate.setWhere(query.getWhere());
-        return sqlTemplate.getSqlString();
+        return SqlTemplate.buildDeleteSql(tableProperties.getMetadata().getTableName(), query.getWhere());
     }
 
     @Override

@@ -26,16 +26,16 @@ public class GroupingReadQueryRequest implements QueryRequest {
 
     @Override
     public String getSqlTemplate() {
-        SqlTemplate sqlTemplate = new SqlTemplate("select ");
-        sqlTemplate.setDistinct(query.isDistinct());
-        sqlTemplate.setIncludeBy(query.getIncluding());
-        sqlTemplate.setFromTable(tableProperties.getMetadata().getTableName());
-        sqlTemplate.setWhere(query.getWhere());
-        sqlTemplate.setGroupBy(query.getGroupBy());
-        sqlTemplate.setHaving(query.getHaving());
-        sqlTemplate.setOrderBy(query.getOrderBy());
-        sqlTemplate.setPage(query.getQueryPage());
-        return sqlTemplate.getSqlString();
+        return SqlTemplate.buildSelectSql(
+                query.isDistinct(),
+                query.getIncluding(),
+                tableProperties.getMetadata().getTableName(),
+                query.getWhere(),
+                query.getGroupBy(),
+                query.getHaving(),
+                query.getOrderBy(),
+                query.getQueryPage()
+        );
     }
 
     @Override
