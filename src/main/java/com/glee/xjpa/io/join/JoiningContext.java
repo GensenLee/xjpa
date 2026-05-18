@@ -11,4 +11,6 @@ public interface JoiningContext {
 
     String getTableAlias(JoinPoint joinPoint);
 
+    int getJoiningOrder(JoinPoint joinPoint);
+
 }

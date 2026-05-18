@@ -1,8 +1,8 @@
 package com.glee.xjpa.io.join;
 
 import com.glee.xjpa.io.JoiningQuery;
+import com.glee.xjpa.io.column.TableColumn;
 
-import javax.swing.table.TableColumn;
 import java.util.List;
 import java.util.Map;
 

@@ -73,27 +73,27 @@ public class JoiningGroupByQuery implements XJoiningGroupByQuery<TableColumn> {
         return delegate.getWhere();
     }
 
-    QueryPage getQueryPage() {
+    public QueryPage getQueryPage() {
         return delegate.getQueryPage();
     }
 
-    boolean isDistinct() {
+    public boolean isDistinct() {
         return delegate.isDistinct();
     }
 
-    JoiningIncludeBy getIncluding() {
+    public JoiningIncludeBy getIncluding() {
         return delegate.getIncluding();
     }
 
-    JoiningOrderBy getOrderBy() {
+    public JoiningOrderBy getOrderBy() {
         return delegate.getOrderBy();
     }
 
-    JoiningGroupBy getJoiningGroupBy() {
+    public JoiningGroupBy getJoiningGroupBy() {
         return joiningGroupBy;
     }
 
-    JoiningGroupByHave getGroupByHave() {
+    public JoiningGroupByHave getGroupByHave() {
         return groupByHave;
     }
 }

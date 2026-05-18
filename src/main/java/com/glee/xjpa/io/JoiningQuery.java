@@ -64,19 +64,19 @@ public class JoiningQuery implements XJoiningQuery<TableColumn> {
         return where;
     }
 
-    QueryPage getQueryPage() {
+    public QueryPage getQueryPage() {
         return queryPage;
     }
 
-    boolean isDistinct() {
+    public boolean isDistinct() {
         return distinct;
     }
 
-    JoiningIncludeBy getIncluding() {
+    public JoiningIncludeBy getIncluding() {
         return including;
     }
 
-    JoiningOrderBy getOrderBy() {
+    public JoiningOrderBy getOrderBy() {
         return orderBy;
     }
 }

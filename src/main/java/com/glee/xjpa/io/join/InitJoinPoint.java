@@ -1,7 +1,12 @@
 package com.glee.xjpa.io.join;
 
 import com.glee.xjpa.io.StandardXJpaRepository;
+import com.glee.xjpa.io.column.JoinPointTableColumn;
 import com.glee.xjpa.io.column.TableColumn;
+import com.glee.xjpa.table.XJpaTableMetadata;
+import com.glee.xjpa.util.TableUtil;
+
+import java.lang.reflect.Type;
 
 
 /**
@@ -12,49 +17,69 @@ import com.glee.xjpa.io.column.TableColumn;
 @SuppressWarnings("rawtypes")
 public class InitJoinPoint implements JoinPoint {
 
-    /**
-     * 驱动表
-     */
     private final StandardXJpaRepository drivenRepository;
+
+    private final XJpaTableMetadata metadata;
 
     private final boolean softDeleteEnabled;
 
     public InitJoinPoint(StandardXJpaRepository drivenRepository) {
         this.drivenRepository = drivenRepository;
+        this.metadata = null;
         this.softDeleteEnabled = false;
     }
 
     public InitJoinPoint(StandardXJpaRepository drivenRepository, boolean softDeleteEnabled) {
         this.drivenRepository = drivenRepository;
+        this.metadata = null;
+        this.softDeleteEnabled = softDeleteEnabled;
+    }
+
+    InitJoinPoint(StandardXJpaRepository drivenRepository, XJpaTableMetadata metadata, boolean softDeleteEnabled) {
+        this.drivenRepository = drivenRepository;
+        this.metadata = metadata;
         this.softDeleteEnabled = softDeleteEnabled;
     }
 
     @Override
     public Class getEntityType() {
-        return null;
+        Type type = TableUtil.getTableEntityType(drivenRepository.getClass());
+        if (type instanceof Class) {
+            return (Class) type;
+        }
+        throw new IllegalStateException("Entity type is not a Class: " + type);
     }
 
     @Override
     public String getTableName() {
-        return null;
+        return TableUtil.getTableNameByEntityType(getEntityType());
     }
 
     @Override
     public String getTableAlias() {
-        return null;
+        return "t1";
     }
 
     @Override
     public TableColumn columnDef(String columnName) {
-        return null;
+        return new JoinPointTableColumn(this, columnName);
+    }
+
+    @Override
+    public boolean isSoftDeleteEnabled() {
+        return softDeleteEnabled;
+    }
+
+    @Override
+    public int getJoiningOrder() {
+        return 1;
     }
 
     StandardXJpaRepository getDrivenRepository() {
         return drivenRepository;
     }
 
-    @Override
-    public boolean isSoftDeleteEnabled() {
-        return softDeleteEnabled;
+    XJpaTableMetadata getMetadata() {
+        return metadata;
     }
 }

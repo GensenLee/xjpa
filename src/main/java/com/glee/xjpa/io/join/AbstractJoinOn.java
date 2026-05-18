@@ -41,14 +41,14 @@ public class AbstractJoinOn implements JoinOn {
         return rightTableEntityType;
     }
 
-    JoinType getJoinType() {
+    public JoinType getJoinType() {
         return joinType;
     }
 
     /**
      * @return 连接字段 <当前表字段名，被连接表字段>
      */
-    Set<Pair<String, String>> getJoiningOnColumns() {
+    public Set<Pair<String, String>> getJoiningOnColumns() {
         return joiningOnColumns;
     }
 

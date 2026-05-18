@@ -1,7 +1,10 @@
 package com.glee.xjpa.io.join;
 
+import com.glee.xjpa.io.column.JoinPointTableColumn;
 import com.glee.xjpa.io.column.TableColumn;
 import com.glee.xjpa.table.XJpaTableMetadata;
+import com.glee.xjpa.util.TableUtil;
+
 
 /**
  * @author GENSEN
@@ -9,29 +12,44 @@ import com.glee.xjpa.table.XJpaTableMetadata;
  * @description
  */
 @SuppressWarnings("rawtypes")
-public class XJpaJoinPoint implements JoinPoint{
+public class XJpaJoinPoint implements JoinPoint {
 
     private final JoiningContext joiningContext;
 
-    private final XJpaTableMetadata XJpaTableMetadata;
+    private final XJpaTableMetadata xJpaTableMetadata;
 
     private final boolean softDeleteEnabled;
 
-    public XJpaJoinPoint(JoiningContext joiningContext, XJpaTableMetadata XJpaTableMetadata, boolean softDeleteEnabled) {
+    private final Class entityType;
+
+    private final String tableName;
+
+    public XJpaJoinPoint(JoiningContext joiningContext, XJpaTableMetadata xJpaTableMetadata, boolean softDeleteEnabled) {
         this.joiningContext = joiningContext;
-        this.XJpaTableMetadata = XJpaTableMetadata;
+        this.xJpaTableMetadata = xJpaTableMetadata;
         this.softDeleteEnabled = softDeleteEnabled;
+        this.entityType = xJpaTableMetadata.entityType();
+        this.tableName = TableUtil.getTableNameByEntityType(entityType);
+        joiningContext.joinPointRegister(this);
+    }
+
+    public XJpaJoinPoint(JoiningContext joiningContext, Class entityType, boolean softDeleteEnabled) {
+        this.joiningContext = joiningContext;
+        this.xJpaTableMetadata = null;
+        this.softDeleteEnabled = softDeleteEnabled;
+        this.entityType = entityType;
+        this.tableName = TableUtil.getTableNameByEntityType(entityType);
         joiningContext.joinPointRegister(this);
     }
 
     @Override
     public Class getEntityType() {
-        return null;
+        return entityType;
     }
 
     @Override
     public String getTableName() {
-        return null;
+        return tableName;
     }
 
     @Override
@@ -41,11 +59,20 @@ public class XJpaJoinPoint implements JoinPoint{
 
     @Override
     public TableColumn columnDef(String columnName) {
-        return null;
+        return new JoinPointTableColumn(this, columnName);
     }
 
     @Override
     public boolean isSoftDeleteEnabled() {
         return softDeleteEnabled;
+    }
+
+    @Override
+    public int getJoiningOrder() {
+        return joiningContext.getJoiningOrder(this);
+    }
+
+    XJpaTableMetadata getXJpaTableMetadata() {
+        return xJpaTableMetadata;
     }
 }

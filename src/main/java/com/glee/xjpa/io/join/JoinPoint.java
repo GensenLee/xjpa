@@ -1,5 +1,6 @@
 package com.glee.xjpa.io.join;
 
+import com.glee.xjpa.io.column.JoiningTable;
 import com.glee.xjpa.io.column.TableColumn;
 
 /**
@@ -8,7 +9,7 @@ import com.glee.xjpa.io.column.TableColumn;
  * @description 连接点
  */
 @SuppressWarnings("rawtypes")
-public interface JoinPoint {
+public interface JoinPoint extends JoiningTable {
 
     Class getEntityType();
 
