@@ -25,7 +25,7 @@ public class UpdateSets {
         return this;
     }
 
-    List<UpdateSetClause> getUpdateFields() {
+    public List<UpdateSetClause> getUpdateFields() {
         return setList;
     }
 }
